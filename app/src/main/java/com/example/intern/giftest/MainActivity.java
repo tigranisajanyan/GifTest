@@ -1,106 +1,88 @@
 package com.example.intern.giftest;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import pl.droidsonroids.gif.GifDrawable;
-import pl.droidsonroids.gif.GifImageView;
 
 
 public class MainActivity extends AppCompatActivity {
 
-    static {
-        System.loadLibrary("gif");
-    }
-
     private static final String root = Environment.getExternalStorageDirectory().toString();
-    private File myDir = new File(root + "/test_images");
+    //private File myDir = new File(root + "/test_images");
+    private static Context context;
 
-    GifImageView gifImageView;
-    ImageView imageView;
+    private ProgressBar progressBar;
+    private RecyclerView recyclerView;
+    private StaggeredGridLayoutManager staggeredGridLayoutManager;
+    private RecyclerView.ItemAnimator itemAnimator;
 
-    Button button;
-    int frameCount;
-    int duration;
-    GifDrawable gifDrawable = null;
-    AnimatedGifEncoder animatedGifEncoder;
+    private GifDrawable gifDrawable = null;
+    private AnimatedGifEncoder animatedGifEncoder;
+
+    private CustomGalleryAdapter customGalleryAdapter;
+    private ArrayList<CustomGalleryItem> customGalleryArrayList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        gifImageView = (GifImageView) findViewById(R.id.gif_image);
-        imageView = (ImageView) findViewById(R.id.image);
+        init();
 
+    }
 
-        try {
-            gifDrawable = new GifDrawable(getResources(), R.drawable.open);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        gifDrawable.setSpeed(2.0f);
-        Log.d("gagagagagag", gifDrawable.getDuration() + "");
+    public void init() {
 
+        Utils.initImageLoader(getApplicationContext());
+        ImageLoader.getInstance().clearMemoryCache();
+        ImageLoader.getInstance().clearDiskCache();
 
-        gifImageView.setImageDrawable(gifDrawable);
+        context = this;
+        Utils.craeteDir("test_images");
 
-        frameCount = gifDrawable.getNumberOfFrames();
-        duration = gifDrawable.getDuration();
+        customGalleryAdapter = new CustomGalleryAdapter(customGalleryArrayList, this);
+
+        recyclerView = (RecyclerView) findViewById(R.id.gallery_rec_view);
+        staggeredGridLayoutManager = new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
+        itemAnimator = new DefaultItemAnimator();
+
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setClipToPadding(true);
+        recyclerView.setLayoutManager(staggeredGridLayoutManager);
+        recyclerView.setItemAnimator(itemAnimator);
+
+        recyclerView.setAdapter(customGalleryAdapter);
+        recyclerView.addItemDecoration(new SpacesItemDecoration(2));
+
+        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        progressBar.setVisibility(View.GONE);
+
+        new MyTask().execute();
 
         animatedGifEncoder = new AnimatedGifEncoder();
-        animatedGifEncoder.setFrameRate(5);
-
-        button = (Button) findViewById(R.id.but);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                imageView.setImageBitmap(gifDrawable.seekToFrameAndGet(gifDrawable.getNumberOfFrames() - 1));
-
-
-                Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.aaa);
-                Bitmap mutableBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
-                Canvas canvas = new Canvas(mutableBitmap);
-                ArrayList<Bitmap> bitmaps = new ArrayList<Bitmap>();
-                for (int i = 0; i < 4; i++) {
-
-                    //save(gifDrawable.seekToFrameAndGet(i), i);
-                    bitmaps.add(mutableBitmap);
-                    animatedGifEncoder.addFrame(mutableBitmap);
-
-                }
-
-                FileOutputStream outStream = null;
-                try {
-                    outStream = new FileOutputStream(myDir + "/test.gif");
-                    outStream.write(generateGIF(bitmaps));
-                    outStream.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                Log.d("gagagaga","done");
-
-            }
-        });
 
     }
 
@@ -115,35 +97,82 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
+
+            new MyTask1().execute();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    private native String helloLog();
+    public static Context getContext() {
+        return context;
+    }
 
-    //ndk.dir=/Users/intern/Documents/ndk/android-ndk-r10e
+    class MyTask extends AsyncTask<Void, Void, Void> {
 
-    public void save(Bitmap bitmap, int name) {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
 
-        String fname = "image_" + String.format("%03d", name) + ".jpg";
+        @Override
+        protected Void doInBackground(Void... params) {
+            customGalleryArrayList.addAll(Utils.getGalleryPhotos(MainActivity.this));
+            return null;
+        }
 
-        try {
-            File file = new File(myDir, fname);
-            if (file.exists()) {
-                file.delete();
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            customGalleryAdapter.notifyDataSetChanged();
+        }
+    }
+
+    class MyTask1 extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressBar.setVisibility(View.VISIBLE);
+            String[] pathsForDecoding = new String[customGalleryAdapter.getSelected().size()];
+            for (int i = 0; i < customGalleryAdapter.getSelected().size(); i++) {
+                pathsForDecoding[i] = customGalleryAdapter.getSelected().get(i).toString();
+            }
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            ArrayList<Bitmap> bitmaps = new ArrayList<>();
+            for (int i = 0; i < customGalleryAdapter.getSelected().size(); i++) {
+                Bitmap bitmap = ImageLoader.getInstance().loadImageSync("file://" + customGalleryAdapter.getSelected().get(i).toString());
+                bitmap = Utils.scaleCenterCrop(bitmap, 300, 300);
+                Bitmap mutableBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+                bitmaps.add(mutableBitmap);
+                animatedGifEncoder.addFrame(mutableBitmap);
+            }
+            FileOutputStream outStream = null;
+            try {
+                outStream = new FileOutputStream(root + "/test.gif");
+                outStream.write(generateGIF(bitmaps));
+                outStream.close();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 
-            FileOutputStream out = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-            out.flush();
-            out.close();
-            bitmap.recycle();
+            return null;
+        }
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(getApplicationContext(), "Error while SaveToMemory", Toast.LENGTH_SHORT).show();
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+
+            progressBar.setVisibility(View.GONE);
+            Intent intent = new Intent(getContext(), SecondActivity.class);
+            intent.putExtra("path", root + "/test.gif");
+            startActivity(intent);
+            finish();
         }
     }
 
@@ -151,12 +180,13 @@ public class MainActivity extends AppCompatActivity {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         AnimatedGifEncoder encoder = new AnimatedGifEncoder();
         encoder.start(bos);
+        encoder.setRepeat(0);
+        //encoder.setDelay(500);
         for (Bitmap bitmap : bitmaps) {
             encoder.addFrame(bitmap);
         }
         encoder.finish();
         return bos.toByteArray();
     }
-
 
 }

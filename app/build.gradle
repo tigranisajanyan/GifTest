@@ -30,4 +30,6 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':android-gif-drawable-master')
     compile 'com.android.support:appcompat-v7:22.2.0'
+    compile files('libs/universal-image-loader-1.9.3.jar')
+    compile 'com.android.support:recyclerview-v7:22.2.0'
 }
