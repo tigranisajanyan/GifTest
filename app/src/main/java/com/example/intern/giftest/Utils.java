@@ -105,7 +105,7 @@ public class Utils {
             height = bounds.outWidth;
         }
 
-        DisplayMetrics metrics = MainActivity.getContext().getResources().getDisplayMetrics();
+        DisplayMetrics metrics = GalleryActivity.getContext().getResources().getDisplayMetrics();
         double halfWidth = metrics.widthPixels / 3;
         double a = width / halfWidth;
         double halfHeight = height / a;
@@ -119,7 +119,7 @@ public class Utils {
     public static double getBitmapWidth()  {
 
 
-        DisplayMetrics metrics = MainActivity.getContext().getResources().getDisplayMetrics();
+        DisplayMetrics metrics = GalleryActivity.getContext().getResources().getDisplayMetrics();
         double halfWidth = metrics.widthPixels / 3;
 
         return halfWidth;
@@ -153,7 +153,7 @@ public class Utils {
             height = bounds.outWidth;
         }
 
-        DisplayMetrics metrics = MainActivity.getContext().getResources().getDisplayMetrics();
+        DisplayMetrics metrics = GalleryActivity.getContext().getResources().getDisplayMetrics();
         double halfWidth = metrics.widthPixels / 3;
         double a = width / halfWidth;
         double halfHeight = height / a;
@@ -237,8 +237,8 @@ public class Utils {
     }
 
 
-    public static ArrayList<CustomGalleryItem> getGalleryPhotos(Activity activity) {
-        ArrayList<CustomGalleryItem> galleryList = new ArrayList();
+    public static ArrayList<GalleryItem> getGalleryPhotos(Activity activity) {
+        ArrayList<GalleryItem> galleryList = new ArrayList();
 
         try {
             final String[] columns = {MediaStore.Images.Media.DATA,
@@ -252,7 +252,7 @@ public class Utils {
             if (imagecursor != null && imagecursor.getCount() > 0) {
 
                 while (imagecursor.moveToNext()) {
-                    CustomGalleryItem item = new CustomGalleryItem();
+                    GalleryItem item = new GalleryItem();
 
                     int dataColumnIndex = imagecursor
                             .getColumnIndex(MediaStore.Images.Media.DATA);
