@@ -122,7 +122,7 @@ public class ShootingGifActivity extends ActionBarActivity {
             loadFFMpegBinary();
 
             String uri = root + "/myvideo1.mp4";
-            final String videoToFrame = "-i " + uri + " -r 25 -an -f image2 " + root + "/test_images/" + "frame_%03d.jpg";
+            final String videoToFrame = "-i " + uri + " -r 15 -an -f image2 " + root + "/test_images/" + "frame_%03d.jpg";
 
             final FFmpeg fFmpeg = new FFmpeg(ShootingGifActivity.this);
             try {
@@ -131,7 +131,7 @@ public class ShootingGifActivity extends ActionBarActivity {
                     public void onSuccess(String message) {
                         ArrayList<String> strings=new ArrayList<>();
                         File[] files=new File(root+"/test_images").listFiles();
-                        for (int i=0;i<5;i++){
+                        for (int i=0;i<files.length;i++){
                             strings.add(files[i].getAbsolutePath());
                         }
                         Intent intent = new Intent(getApplicationContext(), MakeGifActivity.class);
