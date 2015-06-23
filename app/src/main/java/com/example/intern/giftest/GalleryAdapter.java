@@ -45,7 +45,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
                 if (array.get(position).isSeleted()) {
                     array.get(position).setIsSeleted(false);
                     actionBar.setTitle(getSelected().size() + " Selected");
-                    if (getSelected().size()<1){
+                    if (getSelected().size() < 1) {
                         actionBar.setTitle("GifTest");
                     }
 

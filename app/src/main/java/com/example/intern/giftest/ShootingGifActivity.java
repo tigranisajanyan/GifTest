@@ -1,16 +1,12 @@
 package com.example.intern.giftest;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
-import android.media.MediaMetadataRetriever;
-import android.media.MediaPlayer;
 import android.media.MediaRecorder;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -20,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.hiteshsondhi88.libffmpeg.FFmpeg;
@@ -27,15 +24,10 @@ import com.github.hiteshsondhi88.libffmpeg.FFmpegExecuteResponseHandler;
 import com.github.hiteshsondhi88.libffmpeg.LoadBinaryResponseHandler;
 import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegCommandAlreadyRunningException;
 import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegNotSupportedException;
-import com.nostra13.universalimageloader.core.ImageLoader;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-
-import pl.droidsonroids.gif.GifDrawable;
 
 
 public class ShootingGifActivity extends ActionBarActivity {
@@ -46,7 +38,14 @@ public class ShootingGifActivity extends ActionBarActivity {
     private Button capture, switchCamera;
     private Context context;
     private LinearLayout cameraPreviewLayout;
+    private TextView secondsText;
+    private TextView frameText;
     private boolean cameraFront = false;
+
+
+    int currentCapturedTime;
+    int capturedTime;
+    Thread myThread = null;
 
     private static final String root = Environment.getExternalStorageDirectory().toString();
 
@@ -80,8 +79,6 @@ public class ShootingGifActivity extends ActionBarActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        // when on Pause, release camera in order to be used from other
-        // applications
         releaseCamera();
     }
 
@@ -101,43 +98,93 @@ public class ShootingGifActivity extends ActionBarActivity {
 
         cameraPreviewLayout.addView(cameraPreview);
 
+        secondsText = (TextView) findViewById(R.id.text_seconds);
+        frameText = (TextView) findViewById(R.id.text_frames);
+
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+
+            final ProgressDialog progressDialog = new ProgressDialog(context);
+            progressDialog.setTitle("Generating Frames");
+            progressDialog.setMessage("Please Wait");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+
             loadFFMpegBinary();
 
             String uri = root + "/myvideo1.mp4";
-            final String videoToFrame = "-i " + uri + " -r 15 -an -f image2 " + root + "/test_images/" + "frame_%03d.jpg";
+
+            final String dd = "-i " + root + "/test_images/" + "frame_%03d.jpg" + " -vf transpose=1 -strict -2 " + root + "/test_images/" + "frame_%03d.jpg";
+            final String videoToFrame = "-i " + uri + " -r 2 -an -f image2 " + root + "/test_images/" + "frame_%03d.jpg";
 
             final FFmpeg fFmpeg = new FFmpeg(ShootingGifActivity.this);
             try {
                 fFmpeg.execute(videoToFrame, new FFmpegExecuteResponseHandler() {
                     @Override
                     public void onSuccess(String message) {
-                        ArrayList<String> strings=new ArrayList<>();
-                        File[] files=new File(root+"/test_images").listFiles();
-                        for (int i=0;i<files.length;i++){
+
+                        try {
+                            fFmpeg.execute(dd, new FFmpegExecuteResponseHandler() {
+                                @Override
+                                public void onSuccess(String message) {
+                                    ArrayList<String> strings = new ArrayList<>();
+                                    File[] files = new File(root + "/test_images").listFiles();
+                                    for (int i = 0; i < files.length; i++) {
+                                        strings.add(files[i].getAbsolutePath());
+                                    }
+                                    Intent intent = new Intent(getApplicationContext(), MakeGifActivity.class);
+                                    intent.putStringArrayListExtra("image_paths", strings);
+                                    startActivity(intent);
+                                    progressDialog.dismiss();
+                                    finish();
+                                }
+
+                                @Override
+                                public void onProgress(String message) {
+
+                                }
+
+                                @Override
+                                public void onFailure(String message) {
+
+                                }
+
+                                @Override
+                                public void onStart() {
+
+                                }
+
+                                @Override
+                                public void onFinish() {
+
+                                }
+                            });
+                        } catch (FFmpegCommandAlreadyRunningException e) {
+                            e.printStackTrace();
+                        }
+                        /*ArrayList<String> strings = new ArrayList<>();
+                        File[] files = new File(root + "/test_images").listFiles();
+                        for (int i = 0; i < files.length; i++) {
                             strings.add(files[i].getAbsolutePath());
                         }
                         Intent intent = new Intent(getApplicationContext(), MakeGifActivity.class);
                         intent.putStringArrayListExtra("image_paths", strings);
                         startActivity(intent);
-                        finish();
+                        finish();*/
+
                     }
 
                     @Override
@@ -164,10 +211,6 @@ public class ShootingGifActivity extends ActionBarActivity {
             } catch (FFmpegCommandAlreadyRunningException e) {
                 e.printStackTrace();
             }
-            /*Intent intent = new Intent(getApplicationContext(), MakeGifActivity.class);
-            intent.putStringArrayListExtra("image_paths", strings);
-            startActivity(intent);
-            finish();*/
             return true;
         }
 
@@ -325,6 +368,8 @@ public class ShootingGifActivity extends ActionBarActivity {
         public void onClick(View v) {
             if (recording) {
                 // stop recording and release camera
+                myThread.interrupt();
+
                 mediaRecorder.stop(); // stop the recording
                 releaseMediaRecorder(); // release the MediaRecorder object
                 Toast.makeText(ShootingGifActivity.this, "Video captured!", Toast.LENGTH_LONG).show();
@@ -334,6 +379,13 @@ public class ShootingGifActivity extends ActionBarActivity {
                     Toast.makeText(ShootingGifActivity.this, "Fail in prepareMediaRecorder()!\n - Ended -", Toast.LENGTH_LONG).show();
                     finish();
                 }
+
+                currentCapturedTime = 0;
+
+                Runnable myRunnableThread = new CountDownRunner();
+                myThread = new Thread(myRunnableThread);
+                myThread.start();
+
                 // work on UiThread for better performance
                 runOnUiThread(new Runnable() {
                     public void run() {
@@ -364,6 +416,43 @@ public class ShootingGifActivity extends ActionBarActivity {
             });
         } catch (FFmpegNotSupportedException e) {
 
+        }
+    }
+
+    public void doWork() {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                try {
+
+
+                    secondsText.setText("sec: " + currentCapturedTime / 10.0);
+                    frameText.setText("frame: " + currentCapturedTime / 5);
+                    Log.d("gagagag", "Time  " + capturedTime / 10.0 + "/" + currentCapturedTime / 10.0);
+
+                    currentCapturedTime++;
+                    if (currentCapturedTime == capturedTime) {
+                        captrureListener.onClick(capture);
+                    }
+
+                } catch (Exception e) {
+                }
+            }
+        });
+    }
+
+
+    class CountDownRunner implements Runnable {
+        // @Override
+        public void run() {
+            while (!Thread.currentThread().isInterrupted()) {
+                try {
+                    doWork();
+                    Thread.sleep(100); // Pause of 1 Second
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                } catch (Exception e) {
+                }
+            }
         }
     }
 

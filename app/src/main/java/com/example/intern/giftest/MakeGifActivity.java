@@ -1,20 +1,22 @@
 package com.example.intern.giftest;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.media.MediaMetadataRetriever;
-import android.media.MediaPlayer;
-import android.net.Uri;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ProgressBar;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
@@ -26,6 +28,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import pl.droidsonroids.gif.AnimationListener;
 import pl.droidsonroids.gif.GifDrawable;
 import pl.droidsonroids.gif.GifImageView;
 
@@ -38,12 +41,20 @@ public class MakeGifActivity extends ActionBarActivity {
 
     private GifImageView gifImageView;
     private SeekBar seekBar;
+    private SeekBar seekBarSize;
     private Button button;
-    private ProgressBar progressBar;
+
+    private RecyclerView recyclerView;
+    private StaggeredGridLayoutManager staggeredGridLayoutManager;
+    private RecyclerView.ItemAnimator itemAnimator;
+    private Adapter galleryAdapter;
 
     private GifDrawable gifDrawable = null;
 
     private Intent intent;
+    private ProgressDialog progressDialog;
+
+    private int gifImageSize;
 
     public static final float min = 0.5f;
 
@@ -53,20 +64,37 @@ public class MakeGifActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_second);
+        setContentView(R.layout.activity_make_gif);
 
         intent = getIntent();
         arrayList = intent.getStringArrayListExtra("image_paths");
 
-
-
         gifImageView = (GifImageView) findViewById(R.id.gif_image);
         seekBar = (SeekBar) findViewById(R.id.seek_bar);
+        seekBar.setProgress(7);
+        seekBarSize = (SeekBar) findViewById(R.id.seek_bar_size);
+        seekBarSize.setProgress(50);
         button = (Button) findViewById(R.id.but);
-        progressBar = (ProgressBar) findViewById(R.id.progress_bar);
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Please Wait");
+        progressDialog.show();
+        galleryAdapter = new Adapter(arrayList, this, getSupportActionBar());
+
+        recyclerView = (RecyclerView) findViewById(R.id.rec_view);
+        staggeredGridLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL);
+        itemAnimator = new DefaultItemAnimator();
+
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setClipToPadding(true);
+        recyclerView.setLayoutManager(staggeredGridLayoutManager);
+        recyclerView.setItemAnimator(itemAnimator);
+
+        recyclerView.setAdapter(galleryAdapter);
+        recyclerView.addItemDecoration(new SpacesItemDecoration(1));
 
         new MyTask().execute();
-
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -85,15 +113,29 @@ public class MakeGifActivity extends ActionBarActivity {
             }
         });
 
+        seekBarSize.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(gifImageSize + 2 * (progress - 50), gifImageSize + 2 * (progress - 50));
+                layoutParams.setMargins(0, 20, 0, 0);
+                gifImageView.setLayoutParams(layoutParams);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                for (int i = 0; i < 10; i++) {
-                    if (gifDrawable.getCurrentFrameIndex() == 0) {
-                        gifDrawable.seekToFrame(2);
-                    }
-                }
                 /*Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.aaa);
                 Bitmap mutableBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
                 ArrayList<Bitmap> bitmaps = new ArrayList<Bitmap>();
@@ -113,8 +155,6 @@ public class MakeGifActivity extends ActionBarActivity {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }*/
-
-                Log.d("gagagaga", "done");
 
             }
         });
@@ -208,20 +248,14 @@ public class MakeGifActivity extends ActionBarActivity {
             gifPath = root + "/test.gif";
             try {
                 gifDrawable = new GifDrawable(gifPath);
-                gifDrawable.setSpeed(0.5f);
             } catch (IOException e) {
                 e.printStackTrace();
             }
             gifImageView.setImageDrawable(gifDrawable);
-            progressBar.setVisibility(View.GONE);
-            seekBar.setVisibility(View.VISIBLE);
-            gifImageView.setVisibility(View.VISIBLE);
-            button.setVisibility(View.VISIBLE);
-            Toast.makeText(getApplicationContext(), "Done", Toast.LENGTH_LONG).show();
+            gifImageSize = gifImageView.getWidth();
+            progressDialog.dismiss();
 
         }
     }
-
-
 
 }

@@ -12,8 +12,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.nostra13.universalimageloader.core.ImageLoader;
-
 import java.util.ArrayList;
 
 

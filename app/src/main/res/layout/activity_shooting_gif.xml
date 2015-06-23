@@ -7,6 +7,25 @@
     tools:context="com.example.intern.giftest.ShootingGifActivity">
 
     <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/text_seconds"
+            android:text="sec: "/>
+        <TextView
+            android:layout_marginLeft="30dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/text_frames"
+            android:text="frame: "/>
+        
+    </LinearLayout>
+    <LinearLayout
+        android:layout_marginTop="5dp"
         android:id="@+id/camera_preview"
         android:layout_width="260dp"
         android:layout_height="400dp"
