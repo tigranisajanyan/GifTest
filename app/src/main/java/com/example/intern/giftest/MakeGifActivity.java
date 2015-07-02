@@ -42,12 +42,11 @@ public class MakeGifActivity extends ActionBarActivity {
     private GifImageView gifImageView;
     private SeekBar seekBar;
     private SeekBar seekBarSize;
-    private Button button;
 
     private RecyclerView recyclerView;
     private StaggeredGridLayoutManager staggeredGridLayoutManager;
     private RecyclerView.ItemAnimator itemAnimator;
-    private Adapter galleryAdapter;
+    private Adapter adapter;
 
     private GifDrawable gifDrawable = null;
 
@@ -55,8 +54,10 @@ public class MakeGifActivity extends ActionBarActivity {
     private ProgressDialog progressDialog;
 
     private int gifImageSize;
+    private int frameCount;
+    private int speed;
 
-    public static final float min = 0.5f;
+    public static final float min = 0.1f;
 
     private ArrayList<String> arrayList = new ArrayList<>();
     private String gifPath;
@@ -71,16 +72,15 @@ public class MakeGifActivity extends ActionBarActivity {
 
         gifImageView = (GifImageView) findViewById(R.id.gif_image);
         seekBar = (SeekBar) findViewById(R.id.seek_bar);
-        seekBar.setProgress(7);
+        seekBar.setProgress(9);
         seekBarSize = (SeekBar) findViewById(R.id.seek_bar_size);
         seekBarSize.setProgress(50);
-        button = (Button) findViewById(R.id.but);
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
         progressDialog.setMessage("Please Wait");
         progressDialog.show();
-        galleryAdapter = new Adapter(arrayList, this, getSupportActionBar());
+        adapter = new Adapter(arrayList, this);
 
         recyclerView = (RecyclerView) findViewById(R.id.rec_view);
         staggeredGridLayoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.HORIZONTAL);
@@ -91,7 +91,7 @@ public class MakeGifActivity extends ActionBarActivity {
         recyclerView.setLayoutManager(staggeredGridLayoutManager);
         recyclerView.setItemAnimator(itemAnimator);
 
-        recyclerView.setAdapter(galleryAdapter);
+        recyclerView.setAdapter(adapter);
         recyclerView.addItemDecoration(new SpacesItemDecoration(1));
 
         new MyTask().execute();
@@ -99,6 +99,7 @@ public class MakeGifActivity extends ActionBarActivity {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                speed = (1000 - (progress * 49));
                 gifDrawable.setSpeed(min + (progress / 10.0f));
             }
 
@@ -132,33 +133,6 @@ public class MakeGifActivity extends ActionBarActivity {
             }
         });
 
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                /*Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.aaa);
-                Bitmap mutableBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
-                ArrayList<Bitmap> bitmaps = new ArrayList<Bitmap>();
-                for (int i = 0; i < 4; i++) {
-
-                    //save(gifDrawable.seekToFrameAndGet(i), i);
-                    bitmaps.add(mutableBitmap);
-                    animatedGifEncoder.addFrame(mutableBitmap);
-
-                }
-
-                FileOutputStream outStream = null;
-                try {
-                    outStream = new FileOutputStream(myDir + "/test.gif");
-                    outStream.write(generateGIF(bitmaps));
-                    outStream.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }*/
-
-            }
-        });
-
     }
 
     @Override
@@ -172,38 +146,34 @@ public class MakeGifActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
+
+            ArrayList<Bitmap> bitmaps = new ArrayList<>();
+            for (int i = 0; i < arrayList.size(); i++) {
+                Bitmap bitmap = ImageLoader.getInstance().loadImageSync("file://" + arrayList.get(i));
+                bitmap = Utils.scaleCenterCrop(bitmap, 400, 400);
+                Bitmap mutableBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+                bitmaps.add(mutableBitmap);
+            }
+            FileOutputStream outStream = null;
+            try {
+                outStream = new FileOutputStream(root + "/test_images/test.gif");
+                outStream.write(generateGIF(bitmaps, speed));
+                outStream.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    public void save(Bitmap bitmap, int name) {
-
-        String fname = "image_" + String.format("%03d", name) + ".jpg";
-
-        try {
-            File file = new File(myDir, fname);
-            if (file.exists()) {
-                file.delete();
-            }
-
-            FileOutputStream out = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-            out.flush();
-            out.close();
-            bitmap.recycle();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(getApplicationContext(), "Error while SaveToMemory", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    public byte[] generateGIF(ArrayList<Bitmap> bitmaps) {
+    public byte[] generateGIF(ArrayList<Bitmap> bitmaps, int speed) {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         AnimatedGifEncoder encoder = new AnimatedGifEncoder();
         encoder.start(bos);
+        encoder.setDelay(speed);
         encoder.setRepeat(0);
         for (Bitmap bitmap : bitmaps) {
             encoder.addFrame(bitmap);
@@ -232,7 +202,7 @@ public class MakeGifActivity extends ActionBarActivity {
             FileOutputStream outStream = null;
             try {
                 outStream = new FileOutputStream(root + "/test.gif");
-                outStream.write(generateGIF(bitmaps));
+                outStream.write(generateGIF(bitmaps, 100));
                 outStream.close();
             } catch (Exception e) {
                 e.printStackTrace();

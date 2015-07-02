@@ -19,7 +19,7 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginTop="10dp"
-        android:max="15" />
+        android:max="20" />
 
     <SeekBar
         android:id="@+id/seek_bar_size"
@@ -29,12 +29,6 @@
         android:layout_marginRight="20dp"
         android:layout_marginTop="10dp"
         android:max="100" />
-
-    <Button
-        android:id="@+id/but"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="ok" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rec_view"

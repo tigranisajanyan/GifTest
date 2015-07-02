@@ -1,19 +1,35 @@
 package com.example.intern.giftest;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.SurfaceTexture;
+import android.hardware.Camera;
+import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
+
+import java.io.File;
+import java.io.IOException;
 
 public class MainActivity extends ActionBarActivity {
 
     private Button makeGifButton;
     private Button shootingGifButton;
+    private static final String root = Environment.getExternalStorageDirectory().toString();
+    private File myDir = new File(root + "/test_images");
+
+    private boolean turnOn = false;
+
+    static {
+        System.loadLibrary("gif");
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,10 +74,66 @@ public class MainActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
+
+            for (int i=0;i<15;i++){
+                turnOnFlashLight();
+                try {
+                    Thread.sleep(20);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                turnOffFlashLight();
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            /*if (turnOn) {
+                turnOffFlashLight();
+                turnOn = false;
+            } else {
+                turnOnFlashLight();
+                turnOn = true;
+            }*/
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public static native String helloLog();
+
+    public static native int gog();
+
+    Camera cam = null;
+
+    public void turnOnFlashLight() {
+        try {
+            if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)) {
+                cam = Camera.open();
+                Camera.Parameters p = cam.getParameters();
+                p.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+                cam.setParameters(p);
+                cam.startPreview();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(getBaseContext(), "Exception throws in turning on flashlight.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void turnOffFlashLight() {
+        try {
+            if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)) {
+                cam.stopPreview();
+                cam.release();
+                cam = null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(getBaseContext(), "Exception throws in turning off flashlight.", Toast.LENGTH_SHORT).show();
+        }
     }
 
 }

@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/text_frames"
             android:text="frame: "/>
-        
+
     </LinearLayout>
     <LinearLayout
         android:layout_marginTop="5dp"

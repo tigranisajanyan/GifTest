@@ -22,18 +22,16 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
     public static final String FILE_PREFIX = "file://";
     private ArrayList<String> array;
     private Context context;
-    private ActionBar actionBar;
 
-    public Adapter(ArrayList<String> arr, Context c, ActionBar actionBar) {
+    public Adapter(ArrayList<String> arr, Context c) {
 
-        this.actionBar = actionBar;
         array = arr;
         context = c;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(context).inflate(R.layout.gallery_item, parent, false);
+        View v = LayoutInflater.from(context).inflate(R.layout.item, parent, false);
         return new ViewHolder(v);
     }
 
@@ -47,7 +45,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
                 @Override
                 public void onLoadingStarted(String imageUri, View view) {
-                    //holder.icon.setImageBitmap(null);
+                    holder.icon.setImageBitmap(null);
                     super.onLoadingStarted(imageUri, view);
                 }
 
@@ -74,14 +72,11 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
     class ViewHolder extends RecyclerView.ViewHolder {
 
         private ImageView icon;
-        private ImageView select;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
-            icon = (ImageView) itemView.findViewById(R.id.gallery_image_item);
-            select = (ImageView) itemView.findViewById(R.id.gallery_item_selected);
-            select.setVisibility(View.VISIBLE);
+            icon = (ImageView) itemView.findViewById(R.id.image_item);
         }
     }
 

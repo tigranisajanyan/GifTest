@@ -25,8 +25,8 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
     public GalleryAdapter(ArrayList<GalleryItem> arr, Context c, ActionBar actionBar) {
 
         this.actionBar = actionBar;
-        array = arr;
-        context = c;
+        this.array = arr;
+        this.context = c;
     }
 
     @Override
@@ -110,17 +110,6 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
         return array.get(i).getImagePath();
     }
 
-    public void addAll(ArrayList<GalleryItem> files) {
-
-        try {
-            this.array.clear();
-            this.array.addAll(files);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        notifyDataSetChanged();
-    }
-
     public ArrayList<String> getSelected() {
         ArrayList<String> arrayList = new ArrayList<>();
         for (int i = 0; i < array.size(); i++) {
@@ -130,15 +119,6 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
             }
         }
         return arrayList;
-    }
-
-    public void deselectAll() {
-        for (int i = 0; i < array.size(); i++) {
-            if (array.get(i).isSeleted() == true) {
-                array.get(i).setIsSeleted(false);
-            }
-        }
-        notifyDataSetChanged();
     }
 
 }

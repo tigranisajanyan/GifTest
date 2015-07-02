@@ -32,28 +32,6 @@ import java.util.Collections;
 
 public class Utils {
 
-    public static Bitmap currectlyOrientation(String file) throws IOException {
-
-        Bitmap bm = decodeSampledBitmapFromResource(new File(file), 600, 600);
-        ExifInterface exif = null;
-        try {
-            exif = new ExifInterface(file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        String orientString = exif.getAttribute(ExifInterface.TAG_ORIENTATION);
-        int orientation = orientString != null ? Integer.parseInt(orientString) : ExifInterface.ORIENTATION_NORMAL;
-        int rotationAngle = 0;
-        if (orientation == ExifInterface.ORIENTATION_ROTATE_90) rotationAngle = 90;
-        if (orientation == ExifInterface.ORIENTATION_ROTATE_180) rotationAngle = 180;
-        if (orientation == ExifInterface.ORIENTATION_ROTATE_270) rotationAngle = 270;
-
-        Matrix matrix = new Matrix();
-        matrix.setRotate(rotationAngle);
-        Bitmap rotatedBitmap = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(), bm.getHeight(), matrix, true);
-        return rotatedBitmap;
-    }
-
     public static int calculateInSampleSize(
             BitmapFactory.Options options, int reqWidth, int reqHeight) {
 
@@ -78,46 +56,7 @@ public class Utils {
         return BitmapFactory.decodeFile(file1.toString(), options);
     }
 
-    public static Bitmap getSimpleBitmaps(String file) throws IOException {
-
-        BitmapFactory.Options bounds = new BitmapFactory.Options();
-        bounds.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(file, bounds);
-        int width = bounds.outWidth;
-        int height = bounds.outHeight;
-
-        ExifInterface exif = null;
-        try {
-            exif = new ExifInterface(file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        String orientString = exif.getAttribute(ExifInterface.TAG_ORIENTATION);
-        int orientation = orientString != null ? Integer.parseInt(orientString) : ExifInterface.ORIENTATION_NORMAL;
-
-        int rotationAngle = 0;
-        if (orientation == ExifInterface.ORIENTATION_ROTATE_90) rotationAngle = 90;
-        if (orientation == ExifInterface.ORIENTATION_ROTATE_180) rotationAngle = 180;
-        if (orientation == ExifInterface.ORIENTATION_ROTATE_270) rotationAngle = 270;
-
-        if (rotationAngle == 90 || rotationAngle == 270) {
-            width = bounds.outHeight;
-            height = bounds.outWidth;
-        }
-
-        DisplayMetrics metrics = GalleryActivity.getContext().getResources().getDisplayMetrics();
-        double halfWidth = metrics.widthPixels / 3;
-        double a = width / halfWidth;
-        double halfHeight = height / a;
-
-        Bitmap bm = Bitmap.createBitmap(10, 10, Bitmap.Config.RGB_565);
-        bm.eraseColor(Color.LTGRAY);
-        bm = scaleCenterCrop(bm, (int) halfHeight, (int) halfWidth);
-        return bm;
-    }
-
     public static double getBitmapWidth()  {
-
 
         DisplayMetrics metrics = GalleryActivity.getContext().getResources().getDisplayMetrics();
         double halfWidth = metrics.widthPixels / 3;
@@ -194,6 +133,7 @@ public class Utils {
         return dest;
     }
 
+
     public static void initImageLoader(Context context) {
         try {
             String CACHE_DIR = Environment.getExternalStorageDirectory()
@@ -236,7 +176,6 @@ public class Utils {
         }
     }
 
-
     public static ArrayList<GalleryItem> getGalleryPhotos(Activity activity) {
         ArrayList<GalleryItem> galleryList = new ArrayList();
 
@@ -273,37 +212,6 @@ public class Utils {
         return galleryList;
     }
 
-
-    public static ArrayList<String> getGalleryPhotos1(Activity activity) {
-        ArrayList<String> galleryList = new ArrayList();
-
-        try {
-            final String[] columns = {MediaStore.Images.Media.DATA,
-                    MediaStore.Images.Media._ID};
-            final String orderBy = MediaStore.Images.Media._ID;
-
-            Cursor imagecursor = activity.managedQuery(
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI, columns,
-                    null, null, orderBy);
-
-            if (imagecursor != null && imagecursor.getCount() > 0) {
-
-                while (imagecursor.moveToNext()) {
-
-                    int dataColumnIndex = imagecursor
-                            .getColumnIndex(MediaStore.Images.Media.DATA);
-
-                    galleryList.add(imagecursor.getString(dataColumnIndex));
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        // show newest photo at beginning of the list
-        Collections.reverse(galleryList);
-        return galleryList;
-    }
 
     public static void clearDir(File dir) {
         try {

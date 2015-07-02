@@ -4,9 +4,12 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
+import android.media.MediaMetadataRetriever;
 import android.media.MediaRecorder;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -19,15 +22,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.hiteshsondhi88.libffmpeg.FFmpeg;
-import com.github.hiteshsondhi88.libffmpeg.FFmpegExecuteResponseHandler;
-import com.github.hiteshsondhi88.libffmpeg.LoadBinaryResponseHandler;
-import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegCommandAlreadyRunningException;
-import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegNotSupportedException;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import pl.droidsonroids.gif.GifDrawable;
 
 
 public class ShootingGifActivity extends ActionBarActivity {
@@ -42,12 +44,13 @@ public class ShootingGifActivity extends ActionBarActivity {
     private TextView frameText;
     private boolean cameraFront = false;
 
-
-    int currentCapturedTime;
-    int capturedTime;
-    Thread myThread = null;
-
     private static final String root = Environment.getExternalStorageDirectory().toString();
+    private File myDir = new File(root + "/test_images");
+
+    private int currentCapturedTime;
+    private int capturedTime;
+    private Thread myThread = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,7 +120,7 @@ public class ShootingGifActivity extends ActionBarActivity {
 
         if (id == R.id.action_settings) {
 
-            final ProgressDialog progressDialog = new ProgressDialog(context);
+            /*final ProgressDialog progressDialog = new ProgressDialog(context);
             progressDialog.setTitle("Generating Frames");
             progressDialog.setMessage("Please Wait");
             progressDialog.setCancelable(false);
@@ -127,8 +130,8 @@ public class ShootingGifActivity extends ActionBarActivity {
 
             String uri = root + "/myvideo1.mp4";
 
-            final String dd = "-i " + root + "/test_images/" + "frame_%03d.jpg" + " -vf transpose=1 -strict -2 " + root + "/test_images/" + "frame_%03d.jpg";
-            final String videoToFrame = "-i " + uri + " -r 2 -an -f image2 " + root + "/test_images/" + "frame_%03d.jpg";
+            final String[] dd = new String[]{" -i " + root + "/test_images/" + "frame_%03d.jpg" + " -vf transpose=1 -strict -2 " + root + "/test_images/" + "frame_%03d.jpg"};
+            final String[] videoToFrame = new String[]{" -i " + uri + " -r 2 -an -f image2 " + root + "/test_images/" + "frame_%03d.jpg"};
 
             final FFmpeg fFmpeg = new FFmpeg(ShootingGifActivity.this);
             try {
@@ -147,6 +150,7 @@ public class ShootingGifActivity extends ActionBarActivity {
                                     }
                                     Intent intent = new Intent(getApplicationContext(), MakeGifActivity.class);
                                     intent.putStringArrayListExtra("image_paths", strings);
+                                    intent.putExtra("frame_count", frameText.getText());
                                     startActivity(intent);
                                     progressDialog.dismiss();
                                     finish();
@@ -175,16 +179,6 @@ public class ShootingGifActivity extends ActionBarActivity {
                         } catch (FFmpegCommandAlreadyRunningException e) {
                             e.printStackTrace();
                         }
-                        /*ArrayList<String> strings = new ArrayList<>();
-                        File[] files = new File(root + "/test_images").listFiles();
-                        for (int i = 0; i < files.length; i++) {
-                            strings.add(files[i].getAbsolutePath());
-                        }
-                        Intent intent = new Intent(getApplicationContext(), MakeGifActivity.class);
-                        intent.putStringArrayListExtra("image_paths", strings);
-                        startActivity(intent);
-                        finish();*/
-
                     }
 
                     @Override
@@ -210,7 +204,11 @@ public class ShootingGifActivity extends ActionBarActivity {
                 });
             } catch (FFmpegCommandAlreadyRunningException e) {
                 e.printStackTrace();
-            }
+            }*/
+
+            //new MyTask().execute();
+
+
             return true;
         }
 
@@ -405,7 +403,7 @@ public class ShootingGifActivity extends ActionBarActivity {
         }
     };
 
-    private void loadFFMpegBinary() {
+    /*private void loadFFMpegBinary() {
         try {
 
             new FFmpeg(ShootingGifActivity.this).loadBinary(new LoadBinaryResponseHandler() {
@@ -417,17 +415,16 @@ public class ShootingGifActivity extends ActionBarActivity {
         } catch (FFmpegNotSupportedException e) {
 
         }
-    }
+    }*/
+
 
     public void doWork() {
         runOnUiThread(new Runnable() {
             public void run() {
                 try {
 
-
                     secondsText.setText("sec: " + currentCapturedTime / 10.0);
                     frameText.setText("frame: " + currentCapturedTime / 5);
-                    Log.d("gagagag", "Time  " + capturedTime / 10.0 + "/" + currentCapturedTime / 10.0);
 
                     currentCapturedTime++;
                     if (currentCapturedTime == capturedTime) {
@@ -440,19 +437,86 @@ public class ShootingGifActivity extends ActionBarActivity {
         });
     }
 
-
     class CountDownRunner implements Runnable {
         // @Override
         public void run() {
             while (!Thread.currentThread().isInterrupted()) {
                 try {
                     doWork();
-                    Thread.sleep(100); // Pause of 1 Second
+                    Thread.sleep(100);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 } catch (Exception e) {
                 }
             }
+        }
+    }
+
+    class MyTask extends AsyncTask<Void, Void, Void> {
+
+        final ProgressDialog progressDialog = new ProgressDialog(context);
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            progressDialog.setTitle("Generating Frames");
+            progressDialog.setMessage("Please Wait");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+            retriever.setDataSource(root + "/myvideo1.mp4");
+            String time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+
+            long timeInmillisec = Long.parseLong(time);
+            long duration = timeInmillisec / 1000;
+            long hours = duration / 3600;
+            long minutes = (duration - hours * 3600) / 60;
+            long seconds = duration - (hours * 3600 + minutes * 60);
+            Log.d("gagaga", "" + timeInmillisec);
+            for (int i = 0; i <= 10; i++) {
+                try {
+                    File file = new File(myDir, "gag" + i + ".jpg");
+                    Bitmap bitmap = retriever.getFrameAtTime(50000 * i, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
+                    if (file.exists()) {
+                        file.delete();
+                    }
+
+                    FileOutputStream out = new FileOutputStream(file);
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+                    out.flush();
+                    out.close();
+                    bitmap.recycle();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(getApplicationContext(), "Error while SaveToMemory", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            ArrayList<String> strings = new ArrayList<>();
+            File[] files = new File(root + "/test_images").listFiles();
+            for (int i = 0; i < files.length; i++) {
+                strings.add(files[i].getAbsolutePath());
+            }
+            Intent intent = new Intent(getApplicationContext(), MakeGifActivity.class);
+            intent.putStringArrayListExtra("image_paths", strings);
+            intent.putExtra("frame_count", frameText.getText());
+            startActivity(intent);
+            progressDialog.dismiss();
+            finish();
+
         }
     }
 

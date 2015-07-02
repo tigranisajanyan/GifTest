@@ -10,13 +10,15 @@
         android:id="@+id/make_gif_button"
         android:layout_width="120dp"
         android:layout_height="wrap_content"
-        android:text="make gif" />
+        android:text="make gif"
+        android:textColor="#0192E6" />
 
     <Button
         android:id="@+id/shooting_gif_button"
         android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:text="shooting gif" />
+        android:text="shooting gif"
+        android:textColor="#0192E6" />
 
 </LinearLayout>
