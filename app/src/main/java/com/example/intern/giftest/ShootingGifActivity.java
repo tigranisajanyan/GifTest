@@ -22,6 +22,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.hiteshsondhi88.libffmpeg.FFmpeg;
+import com.github.hiteshsondhi88.libffmpeg.FFmpegExecuteResponseHandler;
+import com.github.hiteshsondhi88.libffmpeg.LoadBinaryResponseHandler;
+import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegCommandAlreadyRunningException;
+import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegNotSupportedException;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.io.File;
@@ -120,7 +125,7 @@ public class ShootingGifActivity extends ActionBarActivity {
 
         if (id == R.id.action_settings) {
 
-            /*final ProgressDialog progressDialog = new ProgressDialog(context);
+            final ProgressDialog progressDialog = new ProgressDialog(context);
             progressDialog.setTitle("Generating Frames");
             progressDialog.setMessage("Please Wait");
             progressDialog.setCancelable(false);
@@ -130,8 +135,8 @@ public class ShootingGifActivity extends ActionBarActivity {
 
             String uri = root + "/myvideo1.mp4";
 
-            final String[] dd = new String[]{" -i " + root + "/test_images/" + "frame_%03d.jpg" + " -vf transpose=1 -strict -2 " + root + "/test_images/" + "frame_%03d.jpg"};
-            final String[] videoToFrame = new String[]{" -i " + uri + " -r 2 -an -f image2 " + root + "/test_images/" + "frame_%03d.jpg"};
+            final String dd = " -i " + root + "/test_images/" + "frame_%03d.jpg" + " -vf transpose=1 -strict -2 " + root + "/test_images/" + "frame_%03d.jpg";
+            final String videoToFrame = " -i " + uri + " -r 2 -an -f image2 " + root + "/test_images/" + "frame_%03d.jpg";
 
             final FFmpeg fFmpeg = new FFmpeg(ShootingGifActivity.this);
             try {
@@ -204,7 +209,7 @@ public class ShootingGifActivity extends ActionBarActivity {
                 });
             } catch (FFmpegCommandAlreadyRunningException e) {
                 e.printStackTrace();
-            }*/
+            }
 
             //new MyTask().execute();
 
@@ -403,7 +408,7 @@ public class ShootingGifActivity extends ActionBarActivity {
         }
     };
 
-    /*private void loadFFMpegBinary() {
+    private void loadFFMpegBinary() {
         try {
 
             new FFmpeg(ShootingGifActivity.this).loadBinary(new LoadBinaryResponseHandler() {
@@ -415,7 +420,7 @@ public class ShootingGifActivity extends ActionBarActivity {
         } catch (FFmpegNotSupportedException e) {
 
         }
-    }*/
+    }
 
 
     public void doWork() {

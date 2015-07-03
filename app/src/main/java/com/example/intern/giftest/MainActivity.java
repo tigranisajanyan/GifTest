@@ -2,6 +2,8 @@ package com.example.intern.giftest;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.os.Environment;
@@ -13,7 +15,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.libvpx.LibVpxDec;
+import com.google.libvpx.LibVpxEnc;
+import com.google.libvpx.LibVpxEncConfig;
+import com.google.libvpx.LibVpxException;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.socialin.android.encoder.Encoder;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,8 +63,12 @@ public class MainActivity extends ActionBarActivity {
         shootingGifButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), ShootingGifActivity.class);
-                startActivity(intent);
+                /*Intent intent = new Intent(getApplicationContext(), ShootingGifActivity.class);
+                startActivity(intent);*/
+                Encoder encoder=new Encoder();
+                encoder.init(200,200,25,null);
+                encoder.addFrame(Bitmap.createBitmap(200,200, Bitmap.Config.RGB_565),20);
+                encoder.startVideoGeneration(new File(root,"vid.webm"));
             }
         });
 

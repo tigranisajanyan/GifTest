@@ -1,0 +1,47 @@
+ECLIPSE ANDROID PROJECT IMPORT SUMMARY
+======================================
+
+Ignored Files:
+--------------
+The following files were *not* copied into the new Gradle project; you
+should evaluate whether these are still needed in your project and if
+so manually move them:
+
+* android/
+* android/org/
+* android/org/jcodec/
+* android/org/jcodec/api/
+* android/org/jcodec/api/android/
+* android/org/jcodec/api/android/FrameGrab.java
+* android/org/jcodec/api/android/SequenceEncoder.java
+* android/org/jcodec/api/android/SequenceMuxer.java
+* android/org/jcodec/common/
+* android/org/jcodec/common/AndroidUtil.java
+* android/org/jcodec/scale/
+* android/org/jcodec/scale/BitmapUtil.java
+* proguard-project.txt
+
+Moved Files:
+------------
+Android Gradle projects use a different directory structure than ADT
+Eclipse projects. Here's how the projects were restructured:
+
+* AndroidManifest.xml => jcodec/src/main/AndroidManifest.xml
+* res/ => jcodec/src/main/res/
+* src/ => jcodec/src/main/java/
+* src/org/jcodec/testing/jm.conf => jcodec/src/main/resources/org/jcodec/testing/jm.conf
+
+Next Steps:
+-----------
+You can now build the project. The Gradle project needs network
+connectivity to download dependencies.
+
+Bugs:
+-----
+If for some reason your project does not build, and you determine that
+it is due to a bug or limitation of the Eclipse to Gradle importer,
+please file a bug at http://b.android.com with category
+Component-Tools.
+
+(This import summary is for your information only, and can be deleted
+after import once you are satisfied with the results.)
