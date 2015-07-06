@@ -22,11 +22,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.hiteshsondhi88.libffmpeg.FFmpeg;
+/*import com.github.hiteshsondhi88.libffmpeg.FFmpeg;
 import com.github.hiteshsondhi88.libffmpeg.FFmpegExecuteResponseHandler;
 import com.github.hiteshsondhi88.libffmpeg.LoadBinaryResponseHandler;
 import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegCommandAlreadyRunningException;
-import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegNotSupportedException;
+import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegNotSupportedException;*/
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.io.File;
@@ -131,7 +131,7 @@ public class ShootingGifActivity extends ActionBarActivity {
             progressDialog.setCancelable(false);
             progressDialog.show();
 
-            loadFFMpegBinary();
+            /*loadFFMpegBinary();
 
             String uri = root + "/myvideo1.mp4";
 
@@ -209,7 +209,7 @@ public class ShootingGifActivity extends ActionBarActivity {
                 });
             } catch (FFmpegCommandAlreadyRunningException e) {
                 e.printStackTrace();
-            }
+            }*/
 
             //new MyTask().execute();
 
@@ -408,7 +408,7 @@ public class ShootingGifActivity extends ActionBarActivity {
         }
     };
 
-    private void loadFFMpegBinary() {
+    /*private void loadFFMpegBinary() {
         try {
 
             new FFmpeg(ShootingGifActivity.this).loadBinary(new LoadBinaryResponseHandler() {
@@ -420,7 +420,7 @@ public class ShootingGifActivity extends ActionBarActivity {
         } catch (FFmpegNotSupportedException e) {
 
         }
-    }
+    }*/
 
 
     public void doWork() {

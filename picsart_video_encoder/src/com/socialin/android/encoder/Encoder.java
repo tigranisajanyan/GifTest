@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import com.google.libvorbis.AudioFrame;
 import com.google.libvorbis.VorbisEncConfig;
@@ -13,6 +14,7 @@ import com.google.libvorbis.VorbisEncoderC;
 import com.google.libvorbis.VorbisException;
 import com.google.libvpx.LibVpxEnc;
 import com.google.libvpx.LibVpxEncConfig;
+import com.google.libvpx.LibVpxException;
 import com.google.libvpx.Rational;
 import com.google.libvpx.VpxCodecCxPkt;
 import com.google.libwebm.mkvmuxer.AudioTrack;
@@ -67,7 +69,8 @@ public class Encoder implements VideoEncoderFactory {
         this.videoWidth = videoWidth;
         this.fps = fps;
         this.audioFile = audioFile;
-    }
+
+	}
 
     @Override
     public boolean startVideoGeneration(File outputFile) {
@@ -77,7 +80,6 @@ public class Encoder implements VideoEncoderFactory {
 			encoderConfig = new LibVpxEncConfig(videoWidth, videoHeight);
 			encoderConfig.setRCTargetBitrate(400000);
 			encoderConfig.setTimebase(1, 1000000000);
-			// encoderConfig.set
 			encoderConfig.setRCBufInitialSz(500);
 			encoderConfig.setRCBufOptimalSz(600);
 			encoderConfig.setRCBufSz(1000);
@@ -201,8 +203,10 @@ public class Encoder implements VideoEncoderFactory {
 		return audioFile == null ? addFrameWithouthAudio(bitmap, frameDurationInMilliseconds) : addFrameWithAudio(bitmap, frameDurationInMilliseconds);
 	}
 
-	private boolean addFrameWithouthAudio(Bitmap bitmap, long frameDurationInMilliseconds) {
+	public boolean addFrameWithouthAudio(Bitmap bitmap, long frameDurationInMilliseconds) {
 		try {
+			encoder=new LibVpxEnc(new LibVpxEncConfig(200,200));
+			muxerSegment = new Segment();
 			byte[] frame = bitmapToByteBuffer(bitmap);
 			long frameDuration = frameDurationInMilliseconds * 1000000;
 			ArrayList<VpxCodecCxPkt> encPkt = encoder.convertByteEncodeFrame(frame, lastFrameTime, frameDuration, fourcc);

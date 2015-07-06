@@ -9,6 +9,7 @@ import android.hardware.Camera;
 import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,11 +20,17 @@ import com.google.libvpx.LibVpxDec;
 import com.google.libvpx.LibVpxEnc;
 import com.google.libvpx.LibVpxEncConfig;
 import com.google.libvpx.LibVpxException;
+import com.google.libvpx.Rational;
+import com.google.libvpx.VpxCodecCxPkt;
+import com.google.libwebm.mkvmuxer.MkvWriter;
+import com.google.utils.WebmWriter;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.socialin.android.encoder.Encoder;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -65,10 +72,15 @@ public class MainActivity extends ActionBarActivity {
             public void onClick(View v) {
                 /*Intent intent = new Intent(getApplicationContext(), ShootingGifActivity.class);
                 startActivity(intent);*/
-                Encoder encoder=new Encoder();
-                encoder.init(200,200,25,null);
-                encoder.addFrame(Bitmap.createBitmap(200,200, Bitmap.Config.RGB_565),20);
-                encoder.startVideoGeneration(new File(root,"vid.webm"));
+
+                Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.aaa);
+                File file = new File(root, "vid.webm");
+                ByteBuffer b = ByteBuffer.allocate(bitmap.getByteCount());
+                bitmap.copyPixelsToBuffer(b);
+                byte[] bitmapdata = b.array();
+                b.clear();
+                EncodeByteRgbFrameExample.encodeByteRgbFrameExample(file.toString(), bitmapdata, LibVpxEnc.FOURCC_ABGR, bitmap.getWidth(), bitmap.getHeight(), 10, 1, 100, new StringBuilder());
+
             }
         });
 
@@ -86,7 +98,7 @@ public class MainActivity extends ActionBarActivity {
 
         if (id == R.id.action_settings) {
 
-            for (int i=0;i<15;i++){
+            for (int i = 0; i < 15; i++) {
                 turnOnFlashLight();
                 try {
                     Thread.sleep(20);
