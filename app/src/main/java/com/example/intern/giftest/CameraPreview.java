@@ -11,6 +11,9 @@ import java.io.IOException;
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
     private SurfaceHolder mHolder;
     private Camera mCamera;
+    private int width;
+    private int height;
+    int orientation = 90;
 
     public CameraPreview(Context context, Camera camera) {
         super(context);
@@ -26,7 +29,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             // create the surface and start camera preview
             if (mCamera == null) {
                 mCamera.setPreviewDisplay(holder);
-                //mCamera.setDisplayOrientation(90);
+                mCamera.setDisplayOrientation(90);
                 mCamera.startPreview();
             }
         } catch (IOException e) {
@@ -51,10 +54,13 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         setCamera(camera);
         try {
             Camera.Parameters parameters = mCamera.getParameters();
-            parameters.setPreviewSize(parameters.getSupportedPreviewSizes().get(1).width, parameters.getSupportedPreviewSizes().get(1).height);
-            //parameters.setPreviewSize(getBestPreviewSize(mCamera,1000,1000).width, getBestPreviewSize(mCamera,1000,1000).height);
+            width = parameters.getSupportedPreviewSizes().get(1).width;
+            height = parameters.getSupportedPreviewSizes().get(1).height;
+
+            Log.d("gagaga", width + "  /  " + height);
+            parameters.setPreviewSize(width, height);
             mCamera.setPreviewDisplay(mHolder);
-            mCamera.setDisplayOrientation(90);
+            mCamera.setDisplayOrientation(orientation);
             mCamera.setParameters(parameters);
             mCamera.startPreview();
         } catch (Exception e) {
@@ -80,7 +86,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
     }
 
-    private Camera.Size getBestPreviewSize(Camera camera, int width, int height) {
+    public Camera.Size getBestPreviewSize(Camera camera, int width, int height) {
         Camera.Size result = null;
         Camera.Parameters p = camera.getParameters();
         for (Camera.Size size : p.getSupportedPreviewSizes()) {
@@ -99,6 +105,10 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         }
         return result;
 
+    }
+
+    public void setOrientation(int d){
+        orientation = d;
     }
 
 }

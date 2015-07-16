@@ -5,36 +5,16 @@
 #define DEBUG_TAG "NDK_MainActivity"
 
 
-JNIEXPORT jstring JNICALL Java_com_example_intern_giftest_MainActivity_helloLog(JNIEnv * env, jobject this) {
+JNIEXPORT jint JNICALL Java_com_example_intern_giftest_MainActivity_helloLog(JNIEnv * env, jobject this) {
 
-     return (*env)->NewStringUTF(env, "Hello from native code!");
+  jclass cls = (*env)->GetObjectClass(env, this);
+  jmethodID mid = (*env)->GetStaticMethodID(env, cls, "intMethod", "(I)I");
+  jint square = (*env)->CallStaticIntMethod(env, cls, mid, 5);
+     return square;
 
 }
 
-JNIEXPORT jstring JNICALL Java_com_example_intern_giftest_MainActivity_gog(JNIEnv * env, jobject this) {
-
-      int i;
-      int ds_ret;
-
-      char* newstring;
-
-      jstring ret = 0;
-
-      newstring = (char*)malloc(30);
-
-      if(newstring == NULL)
-      {
-          return ret;
-      }
-
-      memset(newstring, 0, 30);
-
-      newstring = "foo: Test program of JNI.\\n";
-
-
-      ret = (*env)->NewStringUTF(env, newstring);
-
-      free(newstring);
-
-      return ret;
+JNIEXPORT jint JNICALL Java_Sample1_intMethod (JNIEnv *env, jobject this, jint num) {
+    return num * num;
 }
+

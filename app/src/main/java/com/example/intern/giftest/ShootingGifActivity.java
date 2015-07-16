@@ -3,6 +3,7 @@ package com.example.intern.giftest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.hardware.Camera;
@@ -14,10 +15,12 @@ import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -56,6 +59,9 @@ public class ShootingGifActivity extends ActionBarActivity {
     private int capturedTime;
     private Thread myThread = null;
 
+    int width;
+
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,9 +98,14 @@ public class ShootingGifActivity extends ActionBarActivity {
 
     private void init() {
 
-        cameraPreviewLayout = (LinearLayout) findViewById(R.id.camera_preview);
+        Display display = getWindowManager().getDefaultDisplay();
+        width = display.getWidth();  // deprecated
+        int height = display.getHeight();
 
-        cameraPreviewLayout.setLayoutParams(new LinearLayout.LayoutParams(450, 800));
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(450, 720);
+
+        cameraPreviewLayout = (LinearLayout) findViewById(R.id.camera_preview);
+        cameraPreviewLayout.setLayoutParams(layoutParams);
 
         cameraPreview = new CameraPreview(context, camera);
 
@@ -125,11 +136,18 @@ public class ShootingGifActivity extends ActionBarActivity {
 
         if (id == R.id.action_settings) {
 
-            final ProgressDialog progressDialog = new ProgressDialog(context);
+            progressDialog = new ProgressDialog(context);
             progressDialog.setTitle("Generating Frames");
             progressDialog.setMessage("Please Wait");
             progressDialog.setCancelable(false);
             progressDialog.show();
+
+           /* Intent msgIntent = new Intent(ShootingGifActivity.this, SimpleIntentService.class);
+            msgIntent.putExtra("name", "myvideo1.mp4");
+            startService(msgIntent);*/
+
+            new MyTask1().execute();
+
 
             /*loadFFMpegBinary();
 
@@ -220,6 +238,43 @@ public class ShootingGifActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    class MyTask1 extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            ExtractMpegFramesTest extractMpegFramesTest = new ExtractMpegFramesTest();
+            try {
+                extractMpegFramesTest.testExtractMpegFrames("myvideo1.mp4");
+
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+            ArrayList<String> strings = new ArrayList<>();
+            File[] files = new File(root + "/test_images").listFiles();
+            for (int i = 0; i < files.length; i++) {
+                strings.add(files[i].getAbsolutePath());
+            }
+            Intent intent = new Intent(getApplicationContext(), MakeGifActivity.class);
+            intent.putStringArrayListExtra("image_paths", strings);
+            intent.putExtra("frame_count", frameText.getText());
+            startActivity(intent);
+            progressDialog.dismiss();
+            finish();
+        }
+    }
+
     private int findFrontFacingCamera() {
         int cameraId = -1;
         // Search for the front facing camera
@@ -274,7 +329,7 @@ public class ShootingGifActivity extends ActionBarActivity {
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
         mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
 
-        mediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_480P));
+        mediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_720P));
 
 
         mediaRecorder.setOrientationHint(90);

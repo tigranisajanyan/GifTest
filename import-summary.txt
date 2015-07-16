@@ -21,15 +21,41 @@ so manually move them:
 * android/org/jcodec/scale/BitmapUtil.java
 * proguard-project.txt
 
+Replaced Jars with Dependencies:
+--------------------------------
+The importer recognized the following .jar files as third party
+libraries and replaced them with Gradle dependencies instead. This has
+the advantage that more explicit version information is known, and the
+libraries can be updated automatically. However, it is possible that
+the .jar file in your project was of an older version than the
+dependency we picked, which could render the project not compileable.
+You can disable the jar replacement in the import wizard and try again:
+
+android-support-v4.jar => com.android.support:support-v4:18.+
+
 Moved Files:
 ------------
 Android Gradle projects use a different directory structure than ADT
 Eclipse projects. Here's how the projects were restructured:
 
-* AndroidManifest.xml => jcodec/src/main/AndroidManifest.xml
-* res/ => jcodec/src/main/res/
-* src/ => jcodec/src/main/java/
-* src/org/jcodec/testing/jm.conf => jcodec/src/main/resources/org/jcodec/testing/jm.conf
+* AndroidManifest.xml => android/src/main/AndroidManifest.xml
+* res/ => android/src/main/res/
+* /Users/intern/Downloads/jcodec-master/android/src/ => android/src/main/java/
+* /Users/intern/Downloads/jcodec-master/android/src/org/jcodec/testing/jm.conf => android/src/main/resources/org/jcodec/testing/jm.conf
+
+Missing Android Support Repository:
+-----------------------------------
+Some useful libraries, such as the Android Support Library, are
+installed from a special Maven repository, which should be installed
+via the SDK manager.
+
+It looks like this library is missing from your SDK installation at:
+null
+
+To install it, open the SDK manager, and in the Extras category,
+select "Android Support Repository". You may also want to install the
+"Google Repository" if you want to use libraries like Google Play
+Services.
 
 Next Steps:
 -----------

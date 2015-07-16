@@ -6,7 +6,6 @@ import java.util.ArrayList;
 
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
-import android.util.Log;
 
 import com.google.libvorbis.AudioFrame;
 import com.google.libvorbis.VorbisEncConfig;
@@ -14,7 +13,6 @@ import com.google.libvorbis.VorbisEncoderC;
 import com.google.libvorbis.VorbisException;
 import com.google.libvpx.LibVpxEnc;
 import com.google.libvpx.LibVpxEncConfig;
-import com.google.libvpx.LibVpxException;
 import com.google.libvpx.Rational;
 import com.google.libvpx.VpxCodecCxPkt;
 import com.google.libwebm.mkvmuxer.AudioTrack;
@@ -63,23 +61,23 @@ public class Encoder implements VideoEncoderFactory {
 		return m + "." + s + "." + mil;
 	}
 
-    @Override
-    public void init(int videoWidth, int videoHeight, int fps, File audioFile) {
-        this.videoHeight = videoHeight;
-        this.videoWidth = videoWidth;
-        this.fps = fps;
-        this.audioFile = audioFile;
-
+	@Override
+	public void init(int videoWidth, int videoHeight, int fps, File audioFile) {
+		this.videoHeight = videoHeight;
+		this.videoWidth = videoWidth;
+		this.fps = fps;
+		this.audioFile = audioFile;
 	}
 
-    @Override
-    public boolean startVideoGeneration(File outputFile) {
+	@Override
+	public boolean startVideoGeneration(File outputFile) {
 		try {
 			framesIn = 0;
 			this.outputFile = outputFile;
 			encoderConfig = new LibVpxEncConfig(videoWidth, videoHeight);
 			encoderConfig.setRCTargetBitrate(400000);
 			encoderConfig.setTimebase(1, 1000000000);
+			// encoderConfig.set
 			encoderConfig.setRCBufInitialSz(500);
 			encoderConfig.setRCBufOptimalSz(600);
 			encoderConfig.setRCBufSz(1000);
@@ -165,7 +163,7 @@ public class Encoder implements VideoEncoderFactory {
 		return true;
 	}
 
-    @Override
+	@Override
 	public boolean endVideoGeneration() {
 		if (!muxerSegment.finalizeSegment()) {
 			error.append("Finalization of segment failed.");
@@ -184,7 +182,7 @@ public class Encoder implements VideoEncoderFactory {
 		return true;
 	}
 
-    @Override
+	@Override
 	public boolean cancelVideoGeneration() {
 		endVideoGeneration();
 		return outputFile.delete();
@@ -198,15 +196,13 @@ public class Encoder implements VideoEncoderFactory {
 		return addFrame(bitmap, nextFrameStart - frameStart);
 	}
 
-    @Override
+	@Override
 	public boolean addFrame(Bitmap bitmap, long frameDurationInMilliseconds) {
 		return audioFile == null ? addFrameWithouthAudio(bitmap, frameDurationInMilliseconds) : addFrameWithAudio(bitmap, frameDurationInMilliseconds);
 	}
 
-	public boolean addFrameWithouthAudio(Bitmap bitmap, long frameDurationInMilliseconds) {
+	private boolean addFrameWithouthAudio(Bitmap bitmap, long frameDurationInMilliseconds) {
 		try {
-			encoder=new LibVpxEnc(new LibVpxEncConfig(200,200));
-			muxerSegment = new Segment();
 			byte[] frame = bitmapToByteBuffer(bitmap);
 			long frameDuration = frameDurationInMilliseconds * 1000000;
 			ArrayList<VpxCodecCxPkt> encPkt = encoder.convertByteEncodeFrame(frame, lastFrameTime, frameDuration, fourcc);
