@@ -21,4 +21,12 @@
         android:text="shooting gif"
         android:textColor="#0192E6" />
 
+    <Button
+        android:id="@+id/video_to_gif_button"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="video to gif"
+        android:textColor="#0192E6" />
+
 </LinearLayout>

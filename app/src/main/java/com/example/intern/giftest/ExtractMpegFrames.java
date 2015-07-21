@@ -20,7 +20,6 @@ import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
 import android.os.Environment;
 import android.test.AndroidTestCase;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Surface;
 
@@ -50,22 +49,32 @@ import java.nio.FloatBuffer;
  * (This was derived from bits and pieces of CTS tests, and is packaged as such, but is not
  * currently part of CTS.)
  */
-public class ExtractMpegFramesTest extends AndroidTestCase {
-    private static final String TAG = "ExtractMpegFramesTest";
-    private static final boolean VERBOSE = false;           // lots of logging
+public class ExtractMpegFrames extends AndroidTestCase {
+
+
+    private static final String TAG = "ExtractMpegFrames";
+    private static final boolean VERBOSE = false;        // lots of logging
 
     // where to find files (note: requires WRITE_EXTERNAL_STORAGE permission)
     private static final File FILES_DIR = Environment.getExternalStorageDirectory();
-    private static String INPUT_FILE = "VID1.mp4";
+    private static String INPUT_FILE_PATH = "";
+    private static String OUTPUT_DIR = FILES_DIR + "/test_images";
+
     private static int MAX_FRAMES = 0;       // stop extracting after this many
     private static boolean isPortriet = false;
-    private static OnFinishChangedListener onFinishChangedListener;
+    private int savedFrameWidth = 360;
+    private int savedFrameHeight = 640;
+
 
     /**
      * test entry point
      */
-    public void testExtractMpegFrames(String fileName) throws Throwable {
-        INPUT_FILE=fileName;
+    public void extractMpegFrames(String filePath, int frameWidth, int frameHeight, String outputDir) throws Throwable {
+
+        INPUT_FILE_PATH = filePath;
+        savedFrameHeight = frameHeight;
+        savedFrameWidth = frameWidth;
+        OUTPUT_DIR = outputDir;
         ExtractMpegFramesWrapper.runTest(this);
 
     }
@@ -79,9 +88,9 @@ public class ExtractMpegFramesTest extends AndroidTestCase {
      */
     private static class ExtractMpegFramesWrapper implements Runnable {
         private Throwable mThrowable;
-        private ExtractMpegFramesTest mTest;
+        private ExtractMpegFrames mTest;
 
-        private ExtractMpegFramesWrapper(ExtractMpegFramesTest test) {
+        private ExtractMpegFramesWrapper(ExtractMpegFrames test) {
             mTest = test;
         }
 
@@ -97,7 +106,7 @@ public class ExtractMpegFramesTest extends AndroidTestCase {
         /**
          * Entry point.
          */
-        public static void runTest(ExtractMpegFramesTest obj) throws Throwable {
+        public static void runTest(ExtractMpegFrames obj) throws Throwable {
             ExtractMpegFramesWrapper wrapper = new ExtractMpegFramesWrapper(obj);
             Thread th = new Thread(wrapper, "codec test");
             th.start();
@@ -117,18 +126,15 @@ public class ExtractMpegFramesTest extends AndroidTestCase {
      * you're extracting frames you don't want black bars.
      */
     private void extractMpegFrames() throws IOException {
+
         MediaCodec decoder = null;
         CodecOutputSurface outputSurface = null;
         MediaExtractor extractor = null;
         int width;
         int height;
 
-        int saveWidth = 480;
-        int saveHeight = 640;
-
-
         try {
-            File inputFile = new File(FILES_DIR, INPUT_FILE);   // must be an absolute path
+            File inputFile = new File(INPUT_FILE_PATH);   // must be an absolute path
             // The MediaExtractor error messages aren't very useful.  Check to see if the input
             // file exists so we can throw a better one if it's not there.
             if (!inputFile.canRead()) {
@@ -143,24 +149,24 @@ public class ExtractMpegFramesTest extends AndroidTestCase {
             }
             extractor.selectTrack(trackIndex);
 
-            /*
-                Checking orientation by degree
-             */
 
+            // Checking orientation by degree
             MediaFormat format = extractor.getTrackFormat(trackIndex);
             MediaMetadataRetriever mediaMetadataRetriever = new MediaMetadataRetriever();
             mediaMetadataRetriever.setDataSource(inputFile.getAbsolutePath());
             String orientation = mediaMetadataRetriever.extractMetadata(
                     MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION);
+
             String duration = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+
             MAX_FRAMES = (int) (25 * Integer.parseInt(duration) / 1000);
 
-            Log.d("gagagagag", "duration" + duration);
+            Log.d(TAG, "video duration: " + duration);
 
             height = format.getInteger(MediaFormat.KEY_HEIGHT);
             width = format.getInteger(MediaFormat.KEY_WIDTH);
 
-            Log.d("gagagagag", height + " / " + width);
+            Log.d(TAG, height + "  :  " + width);
 
             if (Integer.parseInt(orientation) == 90 || Integer.parseInt(orientation) == 270) {
                 isPortriet = true;
@@ -168,14 +174,14 @@ public class ExtractMpegFramesTest extends AndroidTestCase {
                 isPortriet = false;
             }
 
-            Log.d("gagagagagaga", "isport" + isPortriet);
+            Log.d(TAG, "isportriet:  " + isPortriet);
 
             if (isPortriet) {
-                saveHeight = width / 3;
-                saveWidth = height / 3;
+                savedFrameHeight = width / 3;
+                savedFrameWidth = height / 3;
             } else {
-                saveHeight = height / 3;
-                saveWidth = width / 3;
+                savedFrameHeight = height / 3;
+                savedFrameWidth = width / 3;
             }
 
             if (VERBOSE) {
@@ -184,14 +190,14 @@ public class ExtractMpegFramesTest extends AndroidTestCase {
             }
 
             // Could use width/height from the MediaFormat to get full-size frames.
-            outputSurface = new CodecOutputSurface(saveWidth, saveHeight);
+            outputSurface = new CodecOutputSurface(savedFrameWidth, savedFrameHeight);
 
             // Create a MediaCodec decoder, and configure it with the MediaFormat from the
             // extractor.  It's very important to use the format from the extractor because
             // it contains a copy of the CSD-0/CSD-1 codec-specific data chunks.
             String mime = format.getString(MediaFormat.KEY_MIME);
             decoder = MediaCodec.createDecoderByType(mime);
-            Log.d("gagagagag", "Mime= " + mime);
+            Log.d(TAG, "Mime :  " + mime);
             decoder.configure(format, outputSurface.getSurface(), null, 0);
             decoder.start();
 
@@ -325,13 +331,13 @@ public class ExtractMpegFramesTest extends AndroidTestCase {
                         }
 
                         if (decodeCount < MAX_FRAMES) {
-                            File outputFile = new File(FILES_DIR + "/test_images",
+                            File outputFile = new File(OUTPUT_DIR,
                                     String.format("frame-%03d.png", decodeCount));
                             long startWhen = System.nanoTime();
                             outputSurface.saveFrame(outputFile.toString());
                             frameSaveTime += System.nanoTime() - startWhen;
 
-                            Log.d("gagagagagagaga", decodeCount + " / " + MAX_FRAMES);
+                            Log.d(TAG, decodeCount + " / " + MAX_FRAMES);
                         }
                         decodeCount++;
                     }
@@ -344,10 +350,6 @@ public class ExtractMpegFramesTest extends AndroidTestCase {
                 (frameSaveTime / numSaved / 1000) + " us per frame");
 
 
-    }
-
-    public void setOnFinishChangedListener(OnFinishChangedListener l) {
-        onFinishChangedListener = l;
     }
 
 
@@ -364,7 +366,7 @@ public class ExtractMpegFramesTest extends AndroidTestCase {
      */
     private static class CodecOutputSurface
             implements SurfaceTexture.OnFrameAvailableListener {
-        private ExtractMpegFramesTest.STextureRender mTextureRender;
+        private ExtractMpegFrames.STextureRender mTextureRender;
         private SurfaceTexture mSurfaceTexture;
         private Surface mSurface;
 
@@ -400,7 +402,7 @@ public class ExtractMpegFramesTest extends AndroidTestCase {
          * Creates interconnected instances of TextureRender, SurfaceTexture, and Surface.
          */
         private void setup() {
-            mTextureRender = new ExtractMpegFramesTest.STextureRender();
+            mTextureRender = new ExtractMpegFrames.STextureRender();
             mTextureRender.surfaceCreated();
 
             if (VERBOSE) Log.d(TAG, "textureID=" + mTextureRender.getTextureId());
@@ -622,16 +624,14 @@ public class ExtractMpegFramesTest extends AndroidTestCase {
                 mPixelBuf.rewind();
                 bmp.copyPixelsFromBuffer(mPixelBuf);
 
+
                 if (isPortriet) {
 
                     Matrix m = new Matrix();
                     m.postRotate(180);
                     m.preScale(-1, 1);
                     bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), m, false);
-                    //dst.setDensity(DisplayMetrics.DENSITY_DEFAULT);
-                    /*Matrix m = new Matrix();
-                    m.postRotate(180);
-                    bmp = Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), m, false);*/
+
                 }
 
                 bmp.compress(Bitmap.CompressFormat.PNG, 90, bos);
@@ -873,4 +873,5 @@ public class ExtractMpegFramesTest extends AndroidTestCase {
             }
         }
     }
+
 }

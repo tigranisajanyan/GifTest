@@ -20,10 +20,10 @@ import java.util.ArrayList;
 public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
     public static final String FILE_PREFIX = "file://";
-    private ArrayList<String> array;
+    private ArrayList<GalleryItem> array;
     private Context context;
 
-    public Adapter(ArrayList<String> arr, Context c) {
+    public Adapter(ArrayList<GalleryItem> arr, Context c) {
 
         array = arr;
         context = c;
@@ -38,9 +38,24 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
 
+        holder.icon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (array.get(position).isSeleted()) {
+                    array.get(position).setIsSeleted(false);
+
+                } else {
+                    array.get(position).setIsSeleted(true);
+                }
+
+                holder.selected.setSelected(array
+                        .get(position).isSeleted());
+            }
+        });
+
         try {
 
-            ImageLoader.getInstance().displayImage(FILE_PREFIX + array.get(position)
+            ImageLoader.getInstance().displayImage(FILE_PREFIX + array.get(position).getImagePath()
                     , holder.icon, new SimpleImageLoadingListener() {
 
                 @Override
@@ -58,6 +73,9 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
                 }
             });
 
+            holder.selected
+                    .setSelected(array.get(position).isSeleted());
+
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -72,16 +90,41 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
     class ViewHolder extends RecyclerView.ViewHolder {
 
         private ImageView icon;
+        private ImageView selected;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
             icon = (ImageView) itemView.findViewById(R.id.image_item);
+            selected=(ImageView)itemView.findViewById(R.id.item_selected);
+            selected.setVisibility(View.VISIBLE);
         }
     }
 
     public String getItem(int i) {
-        return array.get(i);
+        return array.get(i).getImagePath();
+    }
+
+    public ArrayList<String> getSelected() {
+        ArrayList<String> arrayList = new ArrayList<>();
+        for (int i = 0; i < array.size(); i++) {
+            if (array.get(i).isSeleted() == true) {
+                arrayList.add(array.get(i).getImagePath());
+
+            }
+        }
+        return arrayList;
+    }
+
+    public ArrayList<Integer> getSel(){
+        ArrayList<Integer> arrayList = new ArrayList<>();
+        for (int i = 0; i < array.size(); i++) {
+            if (array.get(i).isSeleted() == true) {
+                arrayList.add(i);
+
+            }
+        }
+        return arrayList;
     }
 
 }

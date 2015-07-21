@@ -3,24 +3,19 @@ package com.example.intern.giftest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
-import android.media.MediaMetadataRetriever;
 import android.media.MediaRecorder;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,14 +25,10 @@ import com.github.hiteshsondhi88.libffmpeg.FFmpegExecuteResponseHandler;
 import com.github.hiteshsondhi88.libffmpeg.LoadBinaryResponseHandler;
 import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegCommandAlreadyRunningException;
 import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegNotSupportedException;*/
-import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-
-import pl.droidsonroids.gif.GifDrawable;
 
 
 public class ShootingGifActivity extends ActionBarActivity {
@@ -99,10 +90,9 @@ public class ShootingGifActivity extends ActionBarActivity {
     private void init() {
 
         Display display = getWindowManager().getDefaultDisplay();
-        width = display.getWidth();  // deprecated
-        int height = display.getHeight();
+        width = display.getWidth();
 
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(450, 720);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(250, 400);
 
         cameraPreviewLayout = (LinearLayout) findViewById(R.id.camera_preview);
         cameraPreviewLayout.setLayoutParams(layoutParams);
@@ -146,7 +136,22 @@ public class ShootingGifActivity extends ActionBarActivity {
             msgIntent.putExtra("name", "myvideo1.mp4");
             startService(msgIntent);*/
 
-            new MyTask1().execute();
+            //new MyTask1().execute();
+
+            final VideoDecoder videoDecoder =new VideoDecoder(root+"/myvideo1.mp4",400,400, myDir.toString());
+            videoDecoder.extractVideoFrames();
+            videoDecoder.setOnDecodeFinishedListener(new OnDecodeFinishedListener() {
+                @Override
+                public void onFinish(boolean isDone) {
+                    Intent intent = new Intent(getApplicationContext(), MakeGifActivity.class);
+                    intent.putStringArrayListExtra("image_paths", videoDecoder.getSavedFrames());
+                    intent.putExtra("frame_count", frameText.getText());
+                    startActivity(intent);
+                    progressDialog.dismiss();
+                    finish();
+                }
+            });
+
 
 
             /*loadFFMpegBinary();
@@ -248,9 +253,9 @@ public class ShootingGifActivity extends ActionBarActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
-            ExtractMpegFramesTest extractMpegFramesTest = new ExtractMpegFramesTest();
+            ExtractMpegFrames extractMpegFrames = new ExtractMpegFrames();
             try {
-                extractMpegFramesTest.testExtractMpegFrames("myvideo1.mp4");
+                extractMpegFrames.extractMpegFrames(root+"/myvideo1.mp4",400,400, myDir.toString());
 
             } catch (Throwable throwable) {
                 throwable.printStackTrace();
@@ -509,74 +514,6 @@ public class ShootingGifActivity extends ActionBarActivity {
                 } catch (Exception e) {
                 }
             }
-        }
-    }
-
-    class MyTask extends AsyncTask<Void, Void, Void> {
-
-        final ProgressDialog progressDialog = new ProgressDialog(context);
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            progressDialog.setTitle("Generating Frames");
-            progressDialog.setMessage("Please Wait");
-            progressDialog.setCancelable(false);
-            progressDialog.show();
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-
-            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-            retriever.setDataSource(root + "/myvideo1.mp4");
-            String time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-
-            long timeInmillisec = Long.parseLong(time);
-            long duration = timeInmillisec / 1000;
-            long hours = duration / 3600;
-            long minutes = (duration - hours * 3600) / 60;
-            long seconds = duration - (hours * 3600 + minutes * 60);
-            Log.d("gagaga", "" + timeInmillisec);
-            for (int i = 0; i <= 10; i++) {
-                try {
-                    File file = new File(myDir, "gag" + i + ".jpg");
-                    Bitmap bitmap = retriever.getFrameAtTime(50000 * i, MediaMetadataRetriever.OPTION_CLOSEST_SYNC);
-                    if (file.exists()) {
-                        file.delete();
-                    }
-
-                    FileOutputStream out = new FileOutputStream(file);
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-                    out.flush();
-                    out.close();
-                    bitmap.recycle();
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    Toast.makeText(getApplicationContext(), "Error while SaveToMemory", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-            ArrayList<String> strings = new ArrayList<>();
-            File[] files = new File(root + "/test_images").listFiles();
-            for (int i = 0; i < files.length; i++) {
-                strings.add(files[i].getAbsolutePath());
-            }
-            Intent intent = new Intent(getApplicationContext(), MakeGifActivity.class);
-            intent.putStringArrayListExtra("image_paths", strings);
-            intent.putExtra("frame_count", frameText.getText());
-            startActivity(intent);
-            progressDialog.dismiss();
-            finish();
-
         }
     }
 

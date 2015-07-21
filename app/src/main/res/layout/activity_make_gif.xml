@@ -6,10 +6,16 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <pl.droidsonroids.gif.GifImageView
-        android:id="@+id/gif_image"
+    <ImageView
+        android:id="@+id/image"
         android:layout_width="200dp"
         android:layout_height="200dp"
+        android:layout_marginTop="10dp" />
+
+    <pl.droidsonroids.gif.GifImageView
+        android:id="@+id/gif_image"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:layout_marginTop="10dp" />
 
     <SeekBar
