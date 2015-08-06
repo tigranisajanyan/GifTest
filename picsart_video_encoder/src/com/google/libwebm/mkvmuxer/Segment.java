@@ -2,8 +2,6 @@
 
 package com.google.libwebm.mkvmuxer;
 
-import android.util.Log;
-
 import com.google.libwebm.Common;
 
 public class Segment extends Common {

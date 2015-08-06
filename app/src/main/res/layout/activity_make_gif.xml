@@ -18,23 +18,32 @@
         android:layout_height="20dp"
         android:layout_marginTop="10dp" />
 
-    <SeekBar
-        android:id="@+id/seek_bar"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginTop="10dp"
-        android:max="20" />
+        android:orientation="vertical">
 
-    <SeekBar
-        android:id="@+id/seek_bar_size"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="10dp"
-        android:max="100" />
+        <TextView
+            android:id="@+id/delay_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:text="delay: 50 mls" />
+
+        <SeekBar
+            android:id="@+id/seek_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:max="18"
+            android:progress="8" />
+    </LinearLayout>
+
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rec_view"

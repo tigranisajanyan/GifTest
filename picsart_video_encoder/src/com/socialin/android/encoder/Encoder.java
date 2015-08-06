@@ -5,8 +5,9 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.graphics.Bitmap;
-import android.util.Log;
 
 import com.google.libvorbis.AudioFrame;
 import com.google.libvorbis.VorbisEncConfig;
@@ -39,7 +40,7 @@ public class Encoder implements VideoEncoderFactory {
     private SegmentInfo muxerSegmentInfo;
     private Segment muxerSegment;
     private long newVideoTrackNumber;
-    private long lastFrameTime;
+    private long lastFrameTime=0;
     private StringBuilder error = new StringBuilder("Can't encode Video");
     private int framesIn;
     private long newAudioTrackNumber;
@@ -50,6 +51,7 @@ public class Encoder implements VideoEncoderFactory {
     private AudioTrack muxerTrack;
     private final int maxSamplesToRead = 1000;
     private int samplesLeft = 0;
+    private ProgressDialog progressDialog = null;
 
     public Encoder() {
     }
@@ -64,6 +66,7 @@ public class Encoder implements VideoEncoderFactory {
 
     @Override
     public void init(int videoWidth, int videoHeight, int fps, File audioFile) {
+
         this.videoHeight = videoHeight;
         this.videoWidth = videoWidth;
         this.fps = fps;
@@ -78,7 +81,6 @@ public class Encoder implements VideoEncoderFactory {
             encoderConfig = new LibVpxEncConfig(videoWidth, videoHeight);
             encoderConfig.setRCTargetBitrate(400000);
             encoderConfig.setTimebase(1, 1000000000);
-            // encoderConfig.set
             encoderConfig.setRCBufInitialSz(500);
             encoderConfig.setRCBufOptimalSz(600);
             encoderConfig.setRCBufSz(1000);
@@ -190,7 +192,7 @@ public class Encoder implements VideoEncoderFactory {
     }
 
 
-    private boolean addFrame(Bitmap bitmap) {
+    public boolean addFrame(Bitmap bitmap) {
         long frameStart = timeMultiplier.multiply(framesIn).toLong();
         long nextFrameStart = timeMultiplier.multiply(framesIn + 1).toLong();
         framesIn++;

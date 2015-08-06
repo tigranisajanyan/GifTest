@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context="com.example.intern.giftest.MainActivity">
+    tools:context="com.example.intern.giftest.activity.MainActivity">
 
     <Button
         android:id="@+id/make_gif_button"

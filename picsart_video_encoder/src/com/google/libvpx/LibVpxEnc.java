@@ -2,8 +2,6 @@
 // Author: frkoenig@google.com (Fritz Koenig)
 package com.google.libvpx;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 
 /**
