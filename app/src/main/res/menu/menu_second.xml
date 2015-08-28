@@ -3,8 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.intern.giftest.activity.MakeGifActivity">
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
+        android:icon="@mipmap/apply"
+        android:id="@+id/action_save"
+        android:title="Apply"
+        app:showAsAction="always" />
+
+    <item
+        android:icon="@mipmap/next"
+        android:id="@+id/action_export"
         android:title="Save"
         app:showAsAction="always" />
 </menu>
