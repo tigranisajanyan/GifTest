@@ -359,8 +359,6 @@ public class MainView extends View {
             case MotionEvent.ACTION_MOVE:
                 if (itemAction && clipartView != null) {
                     clipartView.touch_move(x, y);
-                    clipartView.setX(clipartView.getCenterX());
-                    clipartView.setY(clipartView.getCenterY());
                     Log.d("gagagag", x + "");
                 }
                 break;
