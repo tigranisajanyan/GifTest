@@ -92,10 +92,10 @@ public class SaveGIFAsyncTask extends AsyncTask<Void, Integer, Void> {
     protected void onPostExecute(Void result) {
         super.onPostExecute(result);
         progressDialog.dismiss();
-        Intent intent = new Intent();
+        /*Intent intent = new Intent();
         intent.setAction(Intent.ACTION_VIEW);
         intent.setDataAndType(Uri.parse(outputDir), "image/gif");
-        context.startActivity(intent);
+        context.startActivity(intent);*/
         Toast.makeText(context, "Done", Toast.LENGTH_LONG).show();
     }
 

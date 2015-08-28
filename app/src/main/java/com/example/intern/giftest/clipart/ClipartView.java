@@ -47,14 +47,6 @@ public class ClipartView extends AbstractItem implements GestureDetector.Gesture
 
     private Bitmap bitmap = null;
 
-    public float getCenterX() {
-        return centerX;
-    }
-
-    public float getCenterY() {
-        return centerY;
-    }
-
     // center coords of this object, pivot point for scaling, so not affected by
     // center-scale
     private float centerX = -1f;
@@ -725,10 +717,12 @@ public class ClipartView extends AbstractItem implements GestureDetector.Gesture
         if (centerX == -1f || centerY == -1f) {
             centerX = viewWidth * 0.5f;
             centerY = viewHeight * 0.5f;
-            setX(centerX * 10 / 27);
-            setY(centerY * 10 / 27);
         }
     }
+
+
+    //////////////////////
+
 
     @Override
     public void onPanStart(PointF p) {
