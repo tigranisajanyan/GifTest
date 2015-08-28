@@ -79,7 +79,6 @@ public class MakeGifActivity extends ActionBarActivity {
 
     private ArrayList<String> arrayList = new ArrayList<>();
     private ArrayList<GalleryItem> array = new ArrayList<>();
-    private ArrayList<Bitmap> bitmaps = new ArrayList<>();
     private ArrayList<Bitmap> selected = new ArrayList<>();
 
 
@@ -122,7 +121,6 @@ public class MakeGifActivity extends ActionBarActivity {
             for (int i = 0; i < arrayList.size(); i++) {
                 Bitmap bitmap = ImageLoader.getInstance().loadImageSync(GifsArtConst.FILE_PREFIX + arrayList.get(i), DisplayImageOptions.createSimple());
                 bitmap = Utils.scaleCenterCrop(bitmap, GifsArtConst.FRAME_SIZE, GifsArtConst.FRAME_SIZE);
-                bitmaps.add(bitmap);
                 GalleryItem galleryItem = new GalleryItem();
                 galleryItem.setImagePath(arrayList.get(i));
                 galleryItem.setBitmap(bitmap);
@@ -144,7 +142,6 @@ public class MakeGifActivity extends ActionBarActivity {
                     m.preScale(-1, 1);
                     Bitmap dst = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), m, false);
                     dst.setDensity(DisplayMetrics.DENSITY_DEFAULT);
-                    bitmaps.add(dst);
                     GalleryItem galleryItem = new GalleryItem();
                     galleryItem.setBitmap(dst);
                     galleryItem.setIsSeleted(true);
@@ -166,7 +163,6 @@ public class MakeGifActivity extends ActionBarActivity {
                     m.preScale(-1, 1);
                     Bitmap dst = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), m, false);
                     dst.setDensity(DisplayMetrics.DENSITY_DEFAULT);
-                    bitmaps.add(dst);
                     GalleryItem galleryItem = new GalleryItem();
                     galleryItem.setBitmap(dst);
                     galleryItem.setIsSeleted(true);
@@ -198,7 +194,7 @@ public class MakeGifActivity extends ActionBarActivity {
         recyclerView.setAdapter(adapter);
         recyclerView.addItemDecoration(new SpacesItemDecoration(1));
 
-        final GifImitation gifImitation = new GifImitation(MakeGifActivity.this, imageView, bitmaps, 500);
+        final GifImitation gifImitation = new GifImitation(MakeGifActivity.this, imageView, array, 500);
         gifImitation.start();
 
         initView();
@@ -273,7 +269,7 @@ public class MakeGifActivity extends ActionBarActivity {
             BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>(maximumPoolSize);
             Executor threadPoolExecutor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, TimeUnit.SECONDS, workQueue);
 
-            SaveGIFAsyncTask saveGIFAsyncTask = new SaveGIFAsyncTask(root + "/test_images/test.gif", bitmaps, speed, MakeGifActivity.this);
+            SaveGIFAsyncTask saveGIFAsyncTask = new SaveGIFAsyncTask(root + "/test_images/test.gif", array, speed, MakeGifActivity.this);
             saveGIFAsyncTask.executeOnExecutor(threadPoolExecutor);
 
             return true;
@@ -341,8 +337,8 @@ public class MakeGifActivity extends ActionBarActivity {
         @Override
         protected Void doInBackground(Void... params) {
 
-            for (int i = 0; i < bitmaps.size(); i++) {
-                Bitmap resultBitmap = bitmaps.get(i);
+            for (int i = 0; i < array.size(); i++) {
+                Bitmap resultBitmap = array.get(i).getBitmap();
                 Canvas canvas = new Canvas(resultBitmap);
                 Paint paint = new Paint();
 

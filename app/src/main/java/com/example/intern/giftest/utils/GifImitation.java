@@ -1,11 +1,8 @@
 package com.example.intern.giftest.utils;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.widget.ImageView;
-
-import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -17,12 +14,12 @@ public class GifImitation {
 
     private Context context;
     private ImageView imageView;
-    private ArrayList<Bitmap> bitmaps;
+    private ArrayList<GalleryItem> bitmaps;
     private int duration;
     private boolean play = false;
     private MyTask myTask = new MyTask();
 
-    public GifImitation(Context context, ImageView imageView, ArrayList<Bitmap> bitmaps, int duration) {
+    public GifImitation(Context context, ImageView imageView, ArrayList<GalleryItem> bitmaps, int duration) {
 
         this.imageView = imageView;
         this.bitmaps = bitmaps;
@@ -62,7 +59,15 @@ public class GifImitation {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                publishProgress(k % bitmaps.size());
+                int i = 0;
+                while (!bitmaps.get(k%bitmaps.size()).isSeleted()){
+                    if (i == bitmaps.size())
+                        break;
+                    i++;
+                    k++;
+                }
+                if (i != bitmaps.size())
+                    publishProgress(k % bitmaps.size());
                 k++;
             }
 
@@ -88,7 +93,7 @@ public class GifImitation {
         @Override
         protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
-            imageView.setImageBitmap(bitmaps.get(values[0]));
+            imageView.setImageBitmap(bitmaps.get(values[0]).getBitmap());
         }
     }
 }
