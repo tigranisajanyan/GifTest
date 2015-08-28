@@ -40,18 +40,18 @@
         android:orientation="horizontal">
 
         <Button
+            android:background="@mipmap/cliparts_tab"
             android:id="@+id/add_clipart"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Add Clipart" />
+            android:layout_height="wrap_content"/>
 
 
         <Button
+            android:background="@mipmap/settings_tab"
             android:id="@+id/add_effect"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:text="Add Effect" />
+            android:layout_marginLeft="20dp" />
 
     </LinearLayout>
 
