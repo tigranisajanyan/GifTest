@@ -3,19 +3,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="center"
+    android:paddingLeft="0dp"
+    android:paddingRight="0dp"
     tools:context=".MainActivity">
 
     <android.support.v7.widget.RecyclerView
-        android:background="@android:color/darker_gray"
         android:id="@+id/gallery_rec_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@android:color/darker_gray"
+        android:paddingLeft="0dp"
+        android:paddingRight="0dp"
         android:scrollbars="vertical" />
 
     <ProgressBar
         android:id="@+id/progress"
-        android:layout_gravity="center"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="center" />
 
 </FrameLayout>
