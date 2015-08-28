@@ -82,14 +82,14 @@ public class ShootingGifActivity extends ActionBarActivity {
             }
             camera = Camera.open(findBackFacingCamera());
             cameraPreview.refreshCamera(camera);
-            camera.setPreviewCallback(new Camera.PreviewCallback() {
+            /*camera.setPreviewCallback(new Camera.PreviewCallback() {
                 public void onPreviewFrame(byte[] data, Camera camera) {
 
                     Log.d("gagagagag", data.length + "");
                     //do some operations using data
 
                 }
-            });
+            });*/
         }
     }
 
