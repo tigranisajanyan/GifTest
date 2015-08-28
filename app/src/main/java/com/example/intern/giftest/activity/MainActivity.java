@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.decoder.VideoDecoder;
@@ -24,9 +25,9 @@ public class MainActivity extends ActionBarActivity {
 
     private static final String root = Environment.getExternalStorageDirectory().toString();
 
-    private Button makeGifButton;
-    private Button shootingGifButton;
-    private Button videoToGifButton;
+    private TextView makeGifButton;
+    private TextView shootingGifButton;
+    private TextView videoToGifButton;
 
     private static Context context;
 
@@ -46,9 +47,9 @@ public class MainActivity extends ActionBarActivity {
         context = this;
         Utils.craeteDir(GifsArtConst.MY_DIR);
 
-        makeGifButton = (Button) findViewById(R.id.make_gif_button);
-        shootingGifButton = (Button) findViewById(R.id.shooting_gif_button);
-        videoToGifButton = (Button) findViewById(R.id.video_to_gif_button);
+        makeGifButton = (TextView) findViewById(R.id.make_gif_button);
+        shootingGifButton = (TextView) findViewById(R.id.shooting_gif_button);
+        videoToGifButton = (TextView) findViewById(R.id.video_to_gif_button);
 
         makeGifButton.setOnClickListener(new View.OnClickListener() {
             @Override
