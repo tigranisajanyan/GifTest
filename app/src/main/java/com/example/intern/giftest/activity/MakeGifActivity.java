@@ -31,6 +31,7 @@ import com.example.intern.giftest.adapter.Adapter;
 import com.example.intern.giftest.clipart.Clipart;
 import com.example.intern.giftest.clipart.MainView;
 import com.example.intern.giftest.clipart.Util;
+import com.example.intern.giftest.utils.AddEffect;
 import com.example.intern.giftest.utils.GalleryItem;
 import com.example.intern.giftest.R;
 import com.example.intern.giftest.utils.GifImitation;
@@ -42,7 +43,6 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
@@ -52,7 +52,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 
-
 public class MakeGifActivity extends ActionBarActivity {
 
     private static final String root = Environment.getExternalStorageDirectory().toString();
@@ -60,6 +59,7 @@ public class MakeGifActivity extends ActionBarActivity {
     private SeekBar seekBar;
     private Button addClipArtButton;
     private Button applyButton;
+    private Button addEffectButton;
     private ImageView imageView;
     private LinearLayout container;
 
@@ -72,16 +72,12 @@ public class MakeGifActivity extends ActionBarActivity {
 
     private ArrayList<String> arrayList = new ArrayList<>();
     private ArrayList<GalleryItem> array = new ArrayList<>();
-    private ArrayList<Bitmap> selected = new ArrayList<>();
-
 
     private int index = 0;
     private int speed = 500;
     private int displayWidth;
     private String videoPath;
-    public static final float min = 0.1f;
     private boolean isHide = true;
-
 
     int corePoolSize = 60;
     int maximumPoolSize = 80;
@@ -114,10 +110,8 @@ public class MakeGifActivity extends ActionBarActivity {
             for (int i = 0; i < arrayList.size(); i++) {
                 Bitmap bitmap = ImageLoader.getInstance().loadImageSync(GifsArtConst.FILE_PREFIX + arrayList.get(i), DisplayImageOptions.createSimple());
                 bitmap = Utils.scaleCenterCrop(bitmap, GifsArtConst.FRAME_SIZE, GifsArtConst.FRAME_SIZE);
-                GalleryItem galleryItem = new GalleryItem();
-                galleryItem.setImagePath(arrayList.get(i));
-                galleryItem.setBitmap(bitmap);
-                galleryItem.setIsSeleted(true);
+
+                GalleryItem galleryItem = new GalleryItem(bitmap, arrayList.get(i), true, true, bitmap.getWidth(), bitmap.getHeight());
                 array.add(galleryItem);
             }
         } else if (intent.getIntExtra(GifsArtConst.INDEX, 0) == 2) {
@@ -129,15 +123,11 @@ public class MakeGifActivity extends ActionBarActivity {
             int x = files.length / 15 + 1;
             for (int i = 0; i < files.length; i++) {
                 if (i % x == 0) {
+
                     ByteBuffer buffer = PhotoUtils.readBufferFromFile(files[i].getAbsolutePath(), PhotoUtils.checkBufferSize(videoPath, VideoDecoder.FrameSize.NORMAL));
                     Bitmap bitmap = PhotoUtils.fromBufferToBitmap(PhotoUtils.checkFrameWidth(videoPath, VideoDecoder.FrameSize.NORMAL), PhotoUtils.checkFrameHeight(videoPath, VideoDecoder.FrameSize.NORMAL), buffer);
-                    Matrix m = new Matrix();
-                    m.preScale(-1, 1);
-                    Bitmap dst = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), m, false);
-                    dst.setDensity(DisplayMetrics.DENSITY_DEFAULT);
-                    GalleryItem galleryItem = new GalleryItem();
-                    galleryItem.setBitmap(dst);
-                    galleryItem.setIsSeleted(true);
+
+                    GalleryItem galleryItem = new GalleryItem(bitmap, files[i].getAbsolutePath(), true, false, bitmap.getWidth(), bitmap.getHeight());
                     array.add(galleryItem);
                 }
             }
@@ -152,13 +142,8 @@ public class MakeGifActivity extends ActionBarActivity {
                 if (i % x == 0) {
                     ByteBuffer buffer = PhotoUtils.readBufferFromFile(files[i].getAbsolutePath(), PhotoUtils.checkBufferSize(videoPath, VideoDecoder.FrameSize.NORMAL));
                     Bitmap bitmap = PhotoUtils.fromBufferToBitmap(PhotoUtils.checkFrameWidth(videoPath, VideoDecoder.FrameSize.NORMAL), PhotoUtils.checkFrameHeight(videoPath, VideoDecoder.FrameSize.NORMAL), buffer);
-                    Matrix m = new Matrix();
-                    m.preScale(-1, 1);
-                    Bitmap dst = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), m, false);
-                    dst.setDensity(DisplayMetrics.DENSITY_DEFAULT);
-                    GalleryItem galleryItem = new GalleryItem();
-                    galleryItem.setBitmap(dst);
-                    galleryItem.setIsSeleted(true);
+
+                    GalleryItem galleryItem = new GalleryItem(bitmap, files[i].getAbsolutePath(), true, false, bitmap.getWidth(), bitmap.getHeight());
                     array.add(galleryItem);
                 }
             }
@@ -171,6 +156,7 @@ public class MakeGifActivity extends ActionBarActivity {
         imageView = (ImageView) findViewById(R.id.image);
         addClipArtButton = (Button) findViewById(R.id.add_clipart);
         applyButton = (Button) findViewById(R.id.apply);
+        addEffectButton = (Button) findViewById(R.id.add_effect);
         recyclerView = (RecyclerView) findViewById(R.id.rec_view);
 
 
@@ -230,6 +216,16 @@ public class MakeGifActivity extends ActionBarActivity {
                 new MyTask().executeOnExecutor(threadPoolExecutor);
             }
         });
+
+        addEffectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>(maximumPoolSize);
+                Executor threadPoolExecutor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, TimeUnit.SECONDS, workQueue);
+                AddEffect addEffect = new AddEffect(array, 0, MakeGifActivity.this);
+                addEffect.executeOnExecutor(threadPoolExecutor);
+            }
+        });
     }
 
     @Override
@@ -247,7 +243,7 @@ public class MakeGifActivity extends ActionBarActivity {
             BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>(maximumPoolSize);
             Executor threadPoolExecutor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, TimeUnit.SECONDS, workQueue);
 
-            SaveGIFAsyncTask saveGIFAsyncTask = new SaveGIFAsyncTask(root + "/test_images/test.gif", array, speed, MakeGifActivity.this);
+            SaveGIFAsyncTask saveGIFAsyncTask = new SaveGIFAsyncTask(root + "/test_images/test.gif", array, speed, adapter, MakeGifActivity.this);
             saveGIFAsyncTask.executeOnExecutor(threadPoolExecutor);
 
             return true;

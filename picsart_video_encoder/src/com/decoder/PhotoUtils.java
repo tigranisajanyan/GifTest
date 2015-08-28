@@ -1,7 +1,9 @@
 package com.decoder;
 
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.media.MediaMetadataRetriever;
+import android.util.DisplayMetrics;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -82,14 +84,18 @@ public class PhotoUtils {
         return result;
     }
 
-    //gago xi ches push linum
     public static Bitmap fromBufferToBitmap(int w, int h, ByteBuffer buffer) {
 
         Bitmap result = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         buffer.rewind();
         result.copyPixelsFromBuffer(buffer);
 
-        return result;
+        Matrix m = new Matrix();
+        m.preScale(-1, 1);
+        Bitmap dst = Bitmap.createBitmap(result, 0, 0, result.getWidth(), result.getHeight(), m, false);
+        dst.setDensity(DisplayMetrics.DENSITY_DEFAULT);
+
+        return dst;
     }
 
     public static int checkBufferSize(String videoPath, VideoDecoder.FrameSize frameSize) {

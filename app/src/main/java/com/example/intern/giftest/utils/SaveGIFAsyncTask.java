@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
+import com.example.intern.giftest.adapter.Adapter;
 import com.example.intern.giftest.gifutils.AnimatedGifEncoder;
 
 import java.io.BufferedOutputStream;
@@ -25,12 +26,14 @@ public class SaveGIFAsyncTask extends AsyncTask<Void, Integer, Void> {
     private int speed;
     private ArrayList<GalleryItem> bitmaps = new ArrayList<>();
     private ProgressDialog progressDialog;
+    private Adapter adapter;
 
-    public SaveGIFAsyncTask(String outputDir, ArrayList<GalleryItem> bitmaps, int speed, Context context) {
+    public SaveGIFAsyncTask(String outputDir, ArrayList<GalleryItem> bitmaps, int speed, Adapter adapter, Context context) {
         this.outputDir = outputDir;
         this.bitmaps = bitmaps;
         this.context = context;
         this.speed = speed;
+        this.adapter = adapter;
     }
 
     @Override
@@ -38,7 +41,7 @@ public class SaveGIFAsyncTask extends AsyncTask<Void, Integer, Void> {
         super.onPreExecute();
         progressDialog = new ProgressDialog(context);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progressDialog.setMax(bitmaps.size());
+        progressDialog.setMax(adapter.getSelected().size());
         progressDialog.show();
     }
 
