@@ -12,10 +12,13 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,7 +43,8 @@ public class ShootingGifActivity extends ActionBarActivity {
     private Camera camera;
     private CameraPreview cameraPreview;
     private MediaRecorder mediaRecorder;
-    private Button capture, switchCamera;
+    private CheckBox capture;
+    private ImageButton switchCamera;
     private Context context;
     private LinearLayout cameraPreviewLayout;
     private TextView secondsText;
@@ -104,16 +108,16 @@ public class ShootingGifActivity extends ActionBarActivity {
         width = display.getWidth();
 
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(500, 800);  //5/8
-
+        layoutParams.gravity= Gravity.CENTER_HORIZONTAL;
         cameraPreviewLayout = (LinearLayout) findViewById(R.id.camera_preview);
         cameraPreviewLayout.setLayoutParams(layoutParams);
 
         cameraPreview = new CameraPreview(context, camera);
 
-        capture = (Button) findViewById(R.id.button_capture);
+        capture = (CheckBox) findViewById(R.id.button_capture);
         capture.setOnClickListener(captrureListener);
 
-        switchCamera = (Button) findViewById(R.id.button_ChangeCamera);
+        switchCamera = (ImageButton) findViewById(R.id.button_ChangeCamera);
         switchCamera.setOnClickListener(switchCameraListener);
 
         cameraPreviewLayout.addView(cameraPreview);
@@ -395,7 +399,7 @@ public class ShootingGifActivity extends ActionBarActivity {
                             }
                         });
                     }
-                    secondsText.setText("sec: " + currentCapturedTime / 10.0);
+                    secondsText.setText(" " + currentCapturedTime / 10.0);
 
                     currentCapturedTime++;
                     if (currentCapturedTime == capturedTime) {

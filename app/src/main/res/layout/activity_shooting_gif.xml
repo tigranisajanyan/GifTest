@@ -17,21 +17,41 @@
             android:layout_height="@dimen/abc_action_bar_default_height_material"
             android:background="@color/yellow">
 
-            <TextView
-                android:id="@+id/text_seconds"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <LinearLayout
                 android:layout_gravity="center"
-                android:gravity="center"
-                android:text="sec: "
-                android:textSize="16sp" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
-            <Button
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:drawableLeft="@mipmap/cameratimer"
+                    android:drawablePadding="4dp"
+                    android:gravity="center"
+                    android:text="Sec: "
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/text_seconds"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:drawablePadding="4dp"
+                    android:gravity="center"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <ImageButton
                 android:id="@+id/button_ChangeCamera"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:text="Switch Camera" />
+                android:layout_gravity="right|center_vertical"
+                android:layout_marginRight="16dp"
+                android:background="@android:color/transparent"
+                android:src="@drawable/switch_camera" />
 
         </FrameLayout>
 
@@ -40,24 +60,25 @@
     <LinearLayout
         android:id="@+id/camera_preview"
         android:layout_width="wrap_content"
-        android:layout_gravity="center"
         android:layout_height="0dp"
+        android:layout_gravity="center"
         android:layout_weight="1"
         android:background="@android:color/background_light"
         android:gravity="center"
         android:orientation="horizontal" />
 
     <View
-        android:layout_height="0dp"
         android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <Button
+    <CheckBox
+        android:background="@android:color/transparent"
         android:id="@+id/button_capture"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Capture/Stop" />
+        android:button="@drawable/capture_stop_camera" />
 
 
 </LinearLayout>
