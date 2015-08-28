@@ -5,8 +5,6 @@ package com.decoder;
  */
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
 import android.media.MediaCodec;
 import android.media.MediaExtractor;
@@ -26,10 +24,8 @@ import android.view.Surface;
 
 import com.socialin.android.photo.imgop.ImageOpCommon;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -68,14 +64,16 @@ public class ExtractMpegFrames extends AndroidTestCase {
     private int savedFrameWidth = 0;
     private int savedFrameHeight = 0;
     private int size;
+    private int frameCount;
 
     private Context context;
 
     /**
      * test entry point
      */
-    public void extractMpegFrames(Context context, String filePath, int size, String outputDir) throws Throwable {
+    public void extractMpegFrames(Context context, String filePath, int frameCount, int size, String outputDir) throws Throwable {
 
+        this.frameCount = frameCount;
         this.context = context;
         this.size = size;
         INPUT_FILE_PATH = filePath;
@@ -164,7 +162,11 @@ public class ExtractMpegFrames extends AndroidTestCase {
 
             String duration = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
 
-            MAX_FRAMES = (int) (25 * Integer.parseInt(duration) / 1000);
+            if (frameCount == Integer.MAX_VALUE) {
+                MAX_FRAMES = (int) (25 * Integer.parseInt(duration) / 1000);
+            } else {
+                MAX_FRAMES = frameCount;
+            }
 
             Log.d(TAG, "video duration: " + duration);
 
@@ -371,7 +373,7 @@ public class ExtractMpegFrames extends AndroidTestCase {
      */
     private static class CodecOutputSurface
             implements SurfaceTexture.OnFrameAvailableListener {
-        private STextureRender mTextureRender;
+        private ExtractMpegFrames.STextureRender mTextureRender;
         private SurfaceTexture mSurfaceTexture;
         private Surface mSurface;
 
@@ -407,7 +409,7 @@ public class ExtractMpegFrames extends AndroidTestCase {
          * Creates interconnected instances of TextureRender, SurfaceTexture, and Surface.
          */
         private void setup() {
-            mTextureRender = new STextureRender();
+            mTextureRender = new ExtractMpegFrames.STextureRender();
             mTextureRender.surfaceCreated();
 
             if (VERBOSE) Log.d(TAG, "textureID=" + mTextureRender.getTextureId());

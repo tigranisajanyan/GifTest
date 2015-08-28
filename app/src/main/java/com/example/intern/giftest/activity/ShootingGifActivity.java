@@ -10,6 +10,7 @@ import android.media.MediaRecorder;
 import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,6 +29,7 @@ import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegNotSupportedExceptio
 import com.decoder.VideoDecoder;
 import com.example.intern.giftest.utils.CameraPreview;
 import com.example.intern.giftest.R;
+import com.example.intern.giftest.utils.GifsArtConst;
 
 import java.io.File;
 import java.io.IOException;
@@ -80,6 +82,14 @@ public class ShootingGifActivity extends ActionBarActivity {
             }
             camera = Camera.open(findBackFacingCamera());
             cameraPreview.refreshCamera(camera);
+            camera.setPreviewCallback(new Camera.PreviewCallback() {
+                public void onPreviewFrame(byte[] data, Camera camera) {
+
+                    Log.d("gagagagag", data.length + "");
+                    //do some operations using data
+
+                }
+            });
         }
     }
 
@@ -94,7 +104,7 @@ public class ShootingGifActivity extends ActionBarActivity {
         Display display = getWindowManager().getDefaultDisplay();
         width = display.getWidth();
 
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(250, 400);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(500, 800);  //5/8
 
         cameraPreviewLayout = (LinearLayout) findViewById(R.id.camera_preview);
         cameraPreviewLayout.setLayoutParams(layoutParams);
@@ -112,7 +122,6 @@ public class ShootingGifActivity extends ActionBarActivity {
         secondsText = (TextView) findViewById(R.id.text_seconds);
         frameText = (TextView) findViewById(R.id.text_frames);
 
-
     }
 
     @Override
@@ -128,7 +137,7 @@ public class ShootingGifActivity extends ActionBarActivity {
 
         if (id == R.id.action_settings) {
 
-            progressDialog = new ProgressDialog(context);
+            /*progressDialog = new ProgressDialog(context);
             progressDialog.setTitle("Generating Frames");
             progressDialog.setMessage("Please Wait");
             progressDialog.setCancelable(false);
@@ -141,7 +150,7 @@ public class ShootingGifActivity extends ActionBarActivity {
                 public void onFinish(boolean isDone) {
 
                 }
-            });
+            });*/
 
             return true;
         }
@@ -183,7 +192,6 @@ public class ShootingGifActivity extends ActionBarActivity {
         }
         return cameraId;
     }
-
 
     private void releaseMediaRecorder() {
         if (mediaRecorder != null) {
@@ -307,15 +315,21 @@ public class ShootingGifActivity extends ActionBarActivity {
                 releaseMediaRecorder(); // release the MediaRecorder object
                 Toast.makeText(ShootingGifActivity.this, "Video captured!", Toast.LENGTH_LONG).show();
                 recording = false;
-                VideoDecoder videoDecoder = new VideoDecoder(ShootingGifActivity.this, root + "/myvideo1.mp4", VideoDecoder.FrameSize.NORMAL, root + "/test_images");
+                final ProgressDialog progressDialog = new ProgressDialog(ShootingGifActivity.this);
+                progressDialog.setTitle("Generating Frames");
+                progressDialog.setMessage("Please Wait");
+                progressDialog.setCancelable(false);
+                progressDialog.show();
+                VideoDecoder videoDecoder = new VideoDecoder(ShootingGifActivity.this, root + "/myvideo1.mp4", Integer.MAX_VALUE, VideoDecoder.FrameSize.NORMAL, root + "/test_images");
                 videoDecoder.extractVideoFrames();
                 videoDecoder.setOnDecodeFinishedListener(new VideoDecoder.OnDecodeFinishedListener() {
                     @Override
                     public void onFinish(boolean isDone) {
                         Intent intent = new Intent(ShootingGifActivity.this, MakeGifActivity.class);
-                        intent.putExtra("index", 2);
-                        intent.putExtra("path", root + "/myvideo1.mp4");
+                        intent.putExtra(GifsArtConst.INDEX, 2);
+                        intent.putExtra(GifsArtConst.VIDEO_PATH, root + "/myvideo1.mp4");
                         startActivity(intent);
+                        progressDialog.dismiss();
                         finish();
                     }
                 });
@@ -356,6 +370,33 @@ public class ShootingGifActivity extends ActionBarActivity {
             public void run() {
                 try {
 
+                    if (currentCapturedTime / 10.0 > 10) {
+                        // stop recording and release camera
+                        myThread.interrupt();
+
+                        mediaRecorder.stop(); // stop the recording
+                        releaseMediaRecorder(); // release the MediaRecorder object
+                        Toast.makeText(ShootingGifActivity.this, "Video captured!", Toast.LENGTH_LONG).show();
+                        recording = false;
+                        final ProgressDialog progressDialog = new ProgressDialog(ShootingGifActivity.this);
+                        progressDialog.setTitle("Generating Frames");
+                        progressDialog.setMessage("Please Wait");
+                        progressDialog.setCancelable(false);
+                        progressDialog.show();
+                        VideoDecoder videoDecoder = new VideoDecoder(ShootingGifActivity.this, root + "/myvideo1.mp4", Integer.MAX_VALUE, VideoDecoder.FrameSize.NORMAL, root + "/test_images");
+                        videoDecoder.extractVideoFrames();
+                        videoDecoder.setOnDecodeFinishedListener(new VideoDecoder.OnDecodeFinishedListener() {
+                            @Override
+                            public void onFinish(boolean isDone) {
+                                Intent intent = new Intent(ShootingGifActivity.this, MakeGifActivity.class);
+                                intent.putExtra(GifsArtConst.INDEX, 2);
+                                intent.putExtra(GifsArtConst.VIDEO_PATH, root + "/myvideo1.mp4");
+                                startActivity(intent);
+                                progressDialog.dismiss();
+                                finish();
+                            }
+                        });
+                    }
                     secondsText.setText("sec: " + currentCapturedTime / 10.0);
                     frameText.setText("frame: " + currentCapturedTime / 5);
 

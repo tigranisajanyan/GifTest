@@ -16,19 +16,18 @@ import android.widget.Toast;
 import com.example.intern.giftest.adapter.GalleryAdapter;
 import com.example.intern.giftest.utils.GalleryItem;
 import com.example.intern.giftest.R;
+import com.example.intern.giftest.utils.GifsArtConst;
 import com.example.intern.giftest.utils.SpacesItemDecoration;
 import com.example.intern.giftest.utils.Utils;
 
 import java.util.ArrayList;
 
-
 public class GalleryActivity extends AppCompatActivity {
-    private static Context context;
 
+    private static Context context;
     private RecyclerView recyclerView;
     private StaggeredGridLayoutManager staggeredGridLayoutManager;
     private RecyclerView.ItemAnimator itemAnimator;
-
     private GalleryAdapter galleryAdapter;
     private ArrayList<GalleryItem> customGalleryArrayList = new ArrayList<>();
 
@@ -78,8 +77,8 @@ public class GalleryActivity extends AppCompatActivity {
             if (galleryAdapter.getSelected().size() > 0) {
 
                 Intent intent = new Intent(GalleryActivity.this, MakeGifActivity.class);
-                intent.putExtra("index", 1);
-                intent.putStringArrayListExtra("image_paths", galleryAdapter.getSelected());
+                intent.putExtra(GifsArtConst.INDEX, 1);
+                intent.putStringArrayListExtra(GifsArtConst.IMAGE_PATHS, galleryAdapter.getSelected());
                 startActivity(intent);
                 finish();
 

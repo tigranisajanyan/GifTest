@@ -1,19 +1,22 @@
 package com.example.intern.giftest.activity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.media.MediaMetadataRetriever;
 import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.decoder.VideoDecoder;
 import com.example.intern.giftest.R;
+import com.example.intern.giftest.utils.GifsArtConst;
 import com.example.intern.giftest.utils.Utils;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -42,7 +45,7 @@ public class MainActivity extends ActionBarActivity {
         ImageLoader.getInstance().clearDiskCache();
 
         context = this;
-        Utils.craeteDir("test_images");
+        Utils.craeteDir(GifsArtConst.MY_DIR);
 
         makeGifButton = (Button) findViewById(R.id.make_gif_button);
         shootingGifButton = (Button) findViewById(R.id.shooting_gif_button);
@@ -61,17 +64,15 @@ public class MainActivity extends ActionBarActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), ShootingGifActivity.class);
                 startActivity(intent);
-                //EncodeByteRgbFrameExample.encodeByteRgbFrameExample(file.toString(), bitmapdata, LibVpxEnc.FOURCC_ABGR, bitmap.getWidth(), bitmap.getHeight(), 10, 1, 100, new StringBuilder());
-
-
             }
         });
 
         videoToGifButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Toast.makeText(MainActivity.this, "Please pick video no longer then 30 seconds", Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType("video/*");
+                intent.setType(GifsArtConst.VIDEO_TYPE);
                 startActivityForResult(intent, 100);
             }
         });
@@ -105,20 +106,35 @@ public class MainActivity extends ActionBarActivity {
     protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 100) {
-            VideoDecoder videoDecoder = new VideoDecoder(MainActivity.this, Utils.getRealPathFromURI(getApplicationContext(), data.getData()), VideoDecoder.FrameSize.NORMAL, root + "/test_images");
-            videoDecoder.extractVideoFrames();
-            videoDecoder.setOnDecodeFinishedListener(new VideoDecoder.OnDecodeFinishedListener() {
-                @Override
-                public void onFinish(boolean isDone) {
-                    Intent intent = new Intent(MainActivity.this, MakeGifActivity.class);
-                    intent.putExtra("index", 3);
-                    intent.putExtra("path", Utils.getRealPathFromURI(getApplicationContext(), data.getData()));
-                    startActivity(intent);
-                    finish();
-                }
-            });
+
+            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+            retriever.setDataSource(Utils.getRealPathFromURI(getApplicationContext(), data.getData()));
+            String time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+            long timeInmillisec = Long.parseLong(time);
+            long seconds = timeInmillisec / 1000;
+            if (seconds > 30) {
+                Toast.makeText(MainActivity.getContext(), "Video is too long", Toast.LENGTH_LONG).show();
+            } else {
+                final ProgressDialog progressDialog = new ProgressDialog(MainActivity.this);
+                progressDialog.setTitle("Generating Frames");
+                progressDialog.setMessage("Please Wait");
+                progressDialog.setCancelable(false);
+                progressDialog.show();
+                VideoDecoder videoDecoder = new VideoDecoder(MainActivity.this, Utils.getRealPathFromURI(getApplicationContext(), data.getData()), Integer.MAX_VALUE, VideoDecoder.FrameSize.NORMAL, root + "/" + GifsArtConst.MY_DIR);
+                videoDecoder.extractVideoFrames();
+                videoDecoder.setOnDecodeFinishedListener(new VideoDecoder.OnDecodeFinishedListener() {
+                    @Override
+                    public void onFinish(boolean isDone) {
+                        Intent intent = new Intent(MainActivity.this, MakeGifActivity.class);
+                        intent.putExtra(GifsArtConst.INDEX, 3);
+                        intent.putExtra(GifsArtConst.VIDEO_PATH, Utils.getRealPathFromURI(getApplicationContext(), data.getData()));
+                        startActivity(intent);
+                        finish();
+                        progressDialog.dismiss();
+                    }
+                });
+            }
         }
     }
-
 
 }
