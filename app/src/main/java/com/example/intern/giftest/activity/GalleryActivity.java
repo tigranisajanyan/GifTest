@@ -11,6 +11,7 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.example.intern.giftest.adapter.GalleryAdapter;
@@ -112,6 +113,7 @@ public class GalleryActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
+            findViewById(R.id.progress).setVisibility(View.GONE);
             galleryAdapter.notifyDataSetChanged();
         }
     }
