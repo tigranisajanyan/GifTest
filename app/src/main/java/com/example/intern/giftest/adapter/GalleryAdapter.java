@@ -40,7 +40,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
 
-        holder.icon.setOnClickListener(new View.OnClickListener() {
+        holder.image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -61,22 +61,22 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
             }
         });
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(array.get(position).getWidth(), array.get(position).getHeight());
-        holder.icon.setLayoutParams(layoutParams);
+        holder.image.setLayoutParams(layoutParams);
         try {
 
             ImageLoader.getInstance().displayImage(FILE_PREFIX + array.get(position).getImagePath()
-                    , holder.icon, new SimpleImageLoadingListener() {
+                    , holder.image, new SimpleImageLoadingListener() {
 
                 @Override
                 public void onLoadingStarted(String imageUri, View view) {
-                    holder.icon.setImageBitmap(null);
+                    holder.image.setImageBitmap(null);
                     super.onLoadingStarted(imageUri, view);
                 }
 
                 @Override
                 public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
 
-                    holder.icon.setImageBitmap(loadedImage);
+                    holder.image.setImageBitmap(loadedImage);
                     super.onLoadingComplete(imageUri, view, loadedImage);
                 }
             });
@@ -96,13 +96,13 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        private ImageView icon;
+        private ImageView image;
         private ImageView select;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
-            icon = (ImageView) itemView.findViewById(R.id.gallery_image_item);
+            image = (ImageView) itemView.findViewById(R.id.gallery_image_item);
             select = (ImageView) itemView.findViewById(R.id.gallery_item_selected);
             select.setVisibility(View.VISIBLE);
         }
@@ -115,7 +115,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
     public ArrayList<String> getSelected() {
         ArrayList<String> arrayList = new ArrayList<>();
         for (int i = 0; i < array.size(); i++) {
-            if (array.get(i).isSeleted() == true) {
+            if (array.get(i).isSeleted()) {
                 arrayList.add(array.get(i).getImagePath());
 
             }
