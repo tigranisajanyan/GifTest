@@ -39,6 +39,7 @@ public class AddEffect extends AsyncTask<Void, Integer, Void> {
         progressDialog = new ProgressDialog(context);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progressDialog.setMax(bitmaps.size());
+        progressDialog.setCancelable(false);
         progressDialog.show();
     }
 

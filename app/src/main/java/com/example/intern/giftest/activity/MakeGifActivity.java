@@ -78,10 +78,9 @@ public class MakeGifActivity extends ActionBarActivity {
     private int displayWidth;
     private String videoPath;
     private boolean isHide = true;
+    private GifImitation gifImitation;
 
-    int corePoolSize = 60;
-    int maximumPoolSize = 80;
-    int keepAliveTime = 10;
+    ViewGroup container1;
 
     private final int[] clipartList = new int[]{
             R.drawable.clipart_1,
@@ -171,7 +170,7 @@ public class MakeGifActivity extends ActionBarActivity {
         recyclerView.setAdapter(adapter);
         recyclerView.addItemDecoration(new SpacesItemDecoration(1));
 
-        final GifImitation gifImitation = new GifImitation(MakeGifActivity.this, imageView, array, 500);
+        gifImitation = new GifImitation(MakeGifActivity.this, imageView, array, 500);
         gifImitation.start();
 
         initView();
@@ -203,6 +202,7 @@ public class MakeGifActivity extends ActionBarActivity {
                     isHide = false;
                 } else {
                     container.animate().translationY(200);
+                    //container1.removeAllViews();
                     isHide = true;
                 }
             }
@@ -211,19 +211,15 @@ public class MakeGifActivity extends ActionBarActivity {
         applyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>(maximumPoolSize);
-                Executor threadPoolExecutor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, TimeUnit.SECONDS, workQueue);
-                new MyTask().executeOnExecutor(threadPoolExecutor);
+                new MyTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
         });
 
         addEffectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>(maximumPoolSize);
-                Executor threadPoolExecutor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, TimeUnit.SECONDS, workQueue);
                 AddEffect addEffect = new AddEffect(array, 0, MakeGifActivity.this);
-                addEffect.executeOnExecutor(threadPoolExecutor);
+                addEffect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
         });
     }
@@ -240,11 +236,8 @@ public class MakeGifActivity extends ActionBarActivity {
 
         if (id == R.id.action_settings) {
 
-            BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>(maximumPoolSize);
-            Executor threadPoolExecutor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, TimeUnit.SECONDS, workQueue);
-
             SaveGIFAsyncTask saveGIFAsyncTask = new SaveGIFAsyncTask(root + "/test_images/test.gif", array, speed, adapter, MakeGifActivity.this);
-            saveGIFAsyncTask.executeOnExecutor(threadPoolExecutor);
+            saveGIFAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
             return true;
         }
@@ -259,8 +252,8 @@ public class MakeGifActivity extends ActionBarActivity {
         Bitmap mutableBitmap = bm.copy(Bitmap.Config.ARGB_8888, true);
         mainView = new MainView(this, mutableBitmap);
         mainView.setId(R.id.mainViewId);
-        ViewGroup container = (ViewGroup) findViewById(R.id.main_view_container);
-        container.addView(mainView);
+        container1 = (ViewGroup) findViewById(R.id.main_view_container);
+        container1.addView(mainView);
     }
 
     private void intiCliparts() {
@@ -329,4 +322,10 @@ public class MakeGifActivity extends ActionBarActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        gifImitation.stop();
+        Utils.clearDir(new File(root + "/" + GifsArtConst.MY_DIR));
+    }
 }
