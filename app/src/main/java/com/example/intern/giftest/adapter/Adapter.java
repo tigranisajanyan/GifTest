@@ -55,27 +55,32 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
             }
         });
 
+
         try {
 
-            ImageLoader.getInstance().displayImage(FILE_PREFIX + array.get(position).getImagePath()
-                    , holder.icon, new SimpleImageLoadingListener() {
+            if (array.get(position).isFile()) {
+                ImageLoader.getInstance().displayImage(FILE_PREFIX + array.get(position).getImagePath()
+                        , holder.icon, new SimpleImageLoadingListener() {
 
-                @Override
-                public void onLoadingStarted(String imageUri, View view) {
-                    holder.icon.setImageBitmap(null);
-                    super.onLoadingStarted(imageUri, view);
-                }
+                    @Override
+                    public void onLoadingStarted(String imageUri, View view) {
+                        holder.icon.setImageBitmap(null);
+                        super.onLoadingStarted(imageUri, view);
+                    }
 
-                @Override
-                public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                    @Override
+                    public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
 
 
-                    holder.icon.setImageBitmap(Utils.scaleCenterCrop(loadedImage, 400, 400));
-                    super.onLoadingComplete(imageUri, view, loadedImage);
-                }
-            });
+                        holder.icon.setImageBitmap(Utils.scaleCenterCrop(loadedImage, 400, 400));
+                        super.onLoadingComplete(imageUri, view, loadedImage);
+                    }
+                });
+            }else {
+                holder.icon.setImageBitmap(array.get(position).getBitmap());
+            }
 
-            //holder.icon.setImageBitmap(array.get(position).getBitmap());
+            holder.icon.setImageBitmap(array.get(position).getBitmap());
 
             holder.selected
                     .setSelected(array.get(position).isSeleted());

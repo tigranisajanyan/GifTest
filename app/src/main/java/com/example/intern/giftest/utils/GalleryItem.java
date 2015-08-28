@@ -9,6 +9,8 @@ public class GalleryItem {
     private boolean isSeleted;
     private int width;
     private int height;
+    private boolean isFile;
+
 
     public GalleryItem() {
 
@@ -19,22 +21,31 @@ public class GalleryItem {
 
     }
 
-    public GalleryItem(Bitmap bitmap, String imagePath, boolean isSeleted, int width, int height) {
+    public GalleryItem(Bitmap bitmap, String imagePath, boolean isSeleted, boolean isFile, int width, int height) {
 
         this.bitmap = bitmap;
         this.imagePath = imagePath;
         this.isSeleted = isSeleted;
+        this.isFile = isFile;
         this.width = width;
         this.height = height;
 
     }
 
-    public Bitmap getBitmap(){
+    public boolean isFile() {
+        return isFile;
+    }
+
+    public void setIsFile(boolean isFile) {
+        this.isFile = isFile;
+    }
+
+    public Bitmap getBitmap() {
         return bitmap;
     }
 
-    public void setBitmap(Bitmap bitmap){
-        this.bitmap=bitmap;
+    public void setBitmap(Bitmap bitmap) {
+        this.bitmap = bitmap;
     }
 
     public String getImagePath() {

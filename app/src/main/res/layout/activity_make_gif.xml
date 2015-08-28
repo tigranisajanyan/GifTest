@@ -43,6 +43,14 @@
             android:layout_height="wrap_content"
             android:text="Add Clipart" />
 
+
+        <Button
+            android:id="@+id/add_effect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:text="Add Effect" />
+
         <Button
             android:id="@+id/apply"
             android:layout_width="wrap_content"

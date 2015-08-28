@@ -3,8 +3,8 @@ package com.example.intern.giftest.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -14,9 +14,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.intern.giftest.R;
 import com.example.intern.giftest.adapter.GalleryAdapter;
 import com.example.intern.giftest.utils.GalleryItem;
-import com.example.intern.giftest.R;
 import com.example.intern.giftest.utils.GifsArtConst;
 import com.example.intern.giftest.utils.SpacesItemDecoration;
 import com.example.intern.giftest.utils.Utils;
@@ -59,7 +59,7 @@ public class GalleryActivity extends AppCompatActivity {
         recyclerView.setAdapter(galleryAdapter);
         recyclerView.addItemDecoration(new SpacesItemDecoration(2));
 
-        new MyTask().execute();
+        new MyTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
     }
 
