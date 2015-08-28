@@ -14,6 +14,7 @@ import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 
 import com.example.intern.giftest.activity.GalleryActivity;
+import com.example.intern.giftest.gifutils.GifDecoder;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
 import com.nostra13.universalimageloader.cache.disc.naming.HashCodeFileNameGenerator;
 import com.nostra13.universalimageloader.cache.memory.impl.UsingFreqLimitedMemoryCache;
@@ -24,7 +25,11 @@ import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.download.BaseImageDownloader;
 import com.nostra13.universalimageloader.utils.StorageUtils;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -56,7 +61,7 @@ public class Utils {
         return BitmapFactory.decodeFile(file1.toString(), options);
     }
 
-    public static double getBitmapWidth()  {
+    public static double getBitmapWidth() {
 
         DisplayMetrics metrics = GalleryActivity.getContext().getResources().getDisplayMetrics();
         double halfWidth = metrics.widthPixels / 3;
@@ -268,6 +273,39 @@ public class Utils {
                 }
             }
         }
+    }
+
+    public static byte[] fileToByteArray(String path) {
+        File file = new File(path);
+        int size = (int) file.length();
+        byte[] bytes = new byte[size];
+        try {
+            BufferedInputStream buf = new BufferedInputStream(new FileInputStream(file));
+            buf.read(bytes, 0, bytes.length);
+            buf.close();
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return bytes;
+    }
+
+    public static ArrayList<Bitmap> getGifFrames(String path) {
+        ArrayList<Bitmap> bitmaps = new ArrayList<>();
+        byte[] bytes = Utils.fileToByteArray(path);
+        GifDecoder gifDecoder = new GifDecoder();
+        gifDecoder.read(bytes);
+        gifDecoder.advance();
+
+        for (int i = 0; i < gifDecoder.getFrameCount(); i++) {
+            Bitmap bitmap = gifDecoder.getNextFrame();
+            bitmaps.add(bitmap);
+            gifDecoder.advance();
+        }
+        return bitmaps;
     }
 
 }

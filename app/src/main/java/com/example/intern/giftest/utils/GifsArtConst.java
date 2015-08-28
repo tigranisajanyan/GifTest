@@ -12,4 +12,17 @@ public class GifsArtConst {
     public static String FILE_PREFIX = "file://";
     public static String VIDEO_PATH = "video_path";
     public static int FRAME_SIZE = 400;
+
+
+
+            /*GifEncoder gifEncoder = new GifEncoder();
+            gifEncoder.init(root + "/test_images/test.gif", 640, 640, 256, 100, 100);
+            int[] pixels = new int[640 * 640];
+            for (int i = 0; i < bitmaps.size(); i++) {
+                bitmaps.get(i).getPixels(pixels, 0, 640, 0, 0, 640, 640);
+                gifEncoder.addFrame(pixels);
+            }
+            gifEncoder.close();*/
+
+
 }
