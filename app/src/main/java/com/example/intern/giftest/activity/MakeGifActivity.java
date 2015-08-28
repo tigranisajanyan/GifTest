@@ -51,8 +51,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import pl.droidsonroids.gif.GifDrawable;
-import pl.droidsonroids.gif.GifImageView;
 
 
 public class MakeGifActivity extends ActionBarActivity {
@@ -62,9 +60,7 @@ public class MakeGifActivity extends ActionBarActivity {
     private SeekBar seekBar;
     private Button addClipArtButton;
     private Button applyButton;
-    private Button addGifButton;
     private ImageView imageView;
-    private GifImageView gifImageView;
     private LinearLayout container;
 
     private Intent intent;
@@ -173,10 +169,8 @@ public class MakeGifActivity extends ActionBarActivity {
 
         seekBar = (SeekBar) findViewById(R.id.seek_bar);
         imageView = (ImageView) findViewById(R.id.image);
-        gifImageView = (GifImageView) findViewById(R.id.gif_image);
         addClipArtButton = (Button) findViewById(R.id.add_clipart);
         applyButton = (Button) findViewById(R.id.apply);
-        addGifButton = (Button) findViewById(R.id.add_gif);
         recyclerView = (RecyclerView) findViewById(R.id.rec_view);
 
 
@@ -234,19 +228,6 @@ public class MakeGifActivity extends ActionBarActivity {
                 BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>(maximumPoolSize);
                 Executor threadPoolExecutor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, TimeUnit.SECONDS, workQueue);
                 new MyTask().executeOnExecutor(threadPoolExecutor);
-            }
-        });
-
-        addGifButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                GifDrawable gifFromPath = null;
-                try {
-                    gifFromPath = new GifDrawable(root + "/mygif.gif");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                gifImageView.setImageDrawable(gifFromPath);
             }
         });
     }
