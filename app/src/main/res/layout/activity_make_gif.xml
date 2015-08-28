@@ -3,12 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
+    android:background="@color/black"
     android:orientation="vertical"
     tools:context=".MainActivity">
 
     <FrameLayout
+        android:background="@color/yellow"
         android:id="@+id/main_view_container"
-        android:layout_width="300dp"
+        android:layout_width="match_parent"
         android:layout_height="300dp">
 
         <ImageView
@@ -38,25 +40,18 @@
         android:orientation="horizontal">
 
         <Button
+            android:background="@mipmap/cliparts_tab"
             android:id="@+id/add_clipart"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Add Clipart" />
+            android:layout_height="wrap_content"/>
 
 
         <Button
+            android:background="@mipmap/settings_tab"
             android:id="@+id/add_effect"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:text="Add Effect" />
-
-        <Button
-            android:id="@+id/apply"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:text="Apply" />
+            android:layout_marginLeft="20dp" />
 
     </LinearLayout>
 

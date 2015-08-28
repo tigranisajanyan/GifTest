@@ -94,6 +94,7 @@ public class GifImitation {
         protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
             imageView.setImageBitmap(bitmaps.get(values[0]).getBitmap());
+            imageView.setPadding(50,50,50,50);
         }
     }
 }

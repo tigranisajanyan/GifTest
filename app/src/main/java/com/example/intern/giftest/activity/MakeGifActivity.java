@@ -58,7 +58,6 @@ public class MakeGifActivity extends ActionBarActivity {
 
     private SeekBar seekBar;
     private Button addClipArtButton;
-    private Button applyButton;
     private Button addEffectButton;
     private ImageView imageView;
     private LinearLayout container;
@@ -154,7 +153,6 @@ public class MakeGifActivity extends ActionBarActivity {
         seekBar = (SeekBar) findViewById(R.id.seek_bar);
         imageView = (ImageView) findViewById(R.id.image);
         addClipArtButton = (Button) findViewById(R.id.add_clipart);
-        applyButton = (Button) findViewById(R.id.apply);
         addEffectButton = (Button) findViewById(R.id.add_effect);
         recyclerView = (RecyclerView) findViewById(R.id.rec_view);
 
@@ -208,12 +206,6 @@ public class MakeGifActivity extends ActionBarActivity {
             }
         });
 
-        applyButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new MyTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-            }
-        });
 
         addEffectButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -234,15 +226,13 @@ public class MakeGifActivity extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
-
+        if (id == R.id.action_save) {
             SaveGIFAsyncTask saveGIFAsyncTask = new SaveGIFAsyncTask(root + "/test_images/test.gif", array, speed, adapter, MakeGifActivity.this);
             saveGIFAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
-            return true;
+        } else if (id == R.id.action_export) {
+            new MyTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
-
-        return super.onOptionsItemSelected(item);
+        return true;
     }
 
     private void initView() {
