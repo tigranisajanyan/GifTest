@@ -26,6 +26,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:name=".activity.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
@@ -36,7 +37,8 @@
         </activity>
         <activity
             android:name=".activity.MakeGifActivity"
-            android:label="@string/title_activity_second" >
+            android:label="@string/title_activity_second"
+            android:theme="@style/Theme.AppCompat.Light">
         </activity>
         <activity
             android:name=".activity.ShootingGifActivity"
@@ -45,6 +47,7 @@
         </activity>
         <activity
             android:name=".activity.GalleryActivity"
+            android:theme="@style/Theme.AppCompat.Light"
             android:label="@string/app_name" >
         </activity>
         <activity

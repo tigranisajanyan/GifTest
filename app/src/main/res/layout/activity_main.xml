@@ -1,32 +1,63 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
+    android:background="@mipmap/bg_image"
     android:orientation="vertical"
     tools:context="com.example.intern.giftest.activity.MainActivity">
 
-    <Button
-        android:id="@+id/make_gif_button"
-        android:layout_width="120dp"
-        android:layout_height="wrap_content"
-        android:text="make gif"
-        android:textColor="#0192E6" />
+    <LinearLayout
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_height="224dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="60dp"
+        android:background="@color/yellow"
+        android:orientation="vertical"
+        android:paddingLeft="68dp">
 
-    <Button
-        android:id="@+id/shooting_gif_button"
-        android:layout_width="120dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:text="shooting gif"
-        android:textColor="#0192E6" />
+        <TextView
+            android:drawablePadding="4dp"
+            android:textStyle="bold"
+            android:layout_weight="1"
+            android:id="@+id/make_gif_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:drawableLeft="@drawable/make"
+            android:gravity="left|center_vertical"
+            android:text="make gif"
+            android:textAllCaps="true"
+            android:textColor="@drawable/text_selector" />
 
-    <Button
-        android:id="@+id/video_to_gif_button"
-        android:layout_width="120dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:text="video to gif"
-        android:textColor="#0192E6" />
+        <TextView
+            android:drawablePadding="4dp"
+            android:textStyle="bold"
+            android:layout_weight="1"
+            android:id="@+id/shooting_gif_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:drawableLeft="@drawable/make"
+            android:gravity="left|center_vertical"
+            android:text="shooting gif"
+            android:textAllCaps="true"
+            android:textColor="@drawable/text_selector" />
 
-</LinearLayout>
+        <TextView
+            android:drawablePadding="4dp"
+            android:textStyle="bold"
+            android:layout_weight="1"
+            android:id="@+id/video_to_gif_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:drawableLeft="@drawable/make"
+            android:gravity="left|center_vertical"
+            android:text="video to gif"
+            android:textAllCaps="true"
+            android:textColor="@drawable/text_selector" />
+    </LinearLayout>
+</RelativeLayout>

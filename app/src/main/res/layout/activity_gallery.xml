@@ -6,7 +6,7 @@
     tools:context=".MainActivity">
 
     <android.support.v7.widget.RecyclerView
-        android:background="@color/yellow"
+        android:background="@android:color/darker_gray"
         android:id="@+id/gallery_rec_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
