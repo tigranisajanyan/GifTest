@@ -19,44 +19,47 @@
         android:paddingLeft="68dp">
 
         <TextView
+            android:drawableRight="@mipmap/gif"
             android:drawablePadding="4dp"
             android:textStyle="bold"
             android:layout_weight="1"
             android:id="@+id/make_gif_button"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
             android:drawableLeft="@drawable/make"
             android:gravity="left|center_vertical"
-            android:text="make gif"
+            android:text="make"
             android:textAllCaps="true"
             android:textColor="@drawable/text_selector" />
 
         <TextView
+            android:drawableRight="@mipmap/gif"
             android:drawablePadding="4dp"
             android:textStyle="bold"
             android:layout_weight="1"
             android:id="@+id/shooting_gif_button"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
             android:drawableLeft="@drawable/make"
             android:gravity="left|center_vertical"
-            android:text="shooting gif"
+            android:text="shooting"
             android:textAllCaps="true"
             android:textColor="@drawable/text_selector" />
 
         <TextView
+            android:drawableRight="@mipmap/gif"
             android:drawablePadding="4dp"
             android:textStyle="bold"
             android:layout_weight="1"
             android:id="@+id/video_to_gif_button"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@null"
             android:drawableLeft="@drawable/make"
             android:gravity="left|center_vertical"
-            android:text="video to gif"
+            android:text="video to"
             android:textAllCaps="true"
             android:textColor="@drawable/text_selector" />
     </LinearLayout>
