@@ -44,7 +44,6 @@ public class ShootingGifActivity extends ActionBarActivity {
     private Context context;
     private LinearLayout cameraPreviewLayout;
     private TextView secondsText;
-    private TextView frameText;
     private boolean cameraFront = false;
 
     private static final String root = Environment.getExternalStorageDirectory().toString();
@@ -120,7 +119,6 @@ public class ShootingGifActivity extends ActionBarActivity {
         cameraPreviewLayout.addView(cameraPreview);
 
         secondsText = (TextView) findViewById(R.id.text_seconds);
-        frameText = (TextView) findViewById(R.id.text_frames);
 
     }
 
@@ -398,7 +396,6 @@ public class ShootingGifActivity extends ActionBarActivity {
                         });
                     }
                     secondsText.setText("sec: " + currentCapturedTime / 10.0);
-                    frameText.setText("frame: " + currentCapturedTime / 5);
 
                     currentCapturedTime++;
                     if (currentCapturedTime == capturedTime) {

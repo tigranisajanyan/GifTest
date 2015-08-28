@@ -107,32 +107,34 @@ public class MainActivity extends ActionBarActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 100) {
 
-            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-            retriever.setDataSource(Utils.getRealPathFromURI(getApplicationContext(), data.getData()));
-            String time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-            long timeInmillisec = Long.parseLong(time);
-            long seconds = timeInmillisec / 1000;
-            if (seconds > 30) {
-                Toast.makeText(MainActivity.getContext(), "Video is too long", Toast.LENGTH_LONG).show();
-            } else {
-                final ProgressDialog progressDialog = new ProgressDialog(MainActivity.this);
-                progressDialog.setTitle("Generating Frames");
-                progressDialog.setMessage("Please Wait");
-                progressDialog.setCancelable(false);
-                progressDialog.show();
-                VideoDecoder videoDecoder = new VideoDecoder(MainActivity.this, Utils.getRealPathFromURI(getApplicationContext(), data.getData()), Integer.MAX_VALUE, VideoDecoder.FrameSize.NORMAL, root + "/" + GifsArtConst.MY_DIR);
-                videoDecoder.extractVideoFrames();
-                videoDecoder.setOnDecodeFinishedListener(new VideoDecoder.OnDecodeFinishedListener() {
-                    @Override
-                    public void onFinish(boolean isDone) {
-                        Intent intent = new Intent(MainActivity.this, MakeGifActivity.class);
-                        intent.putExtra(GifsArtConst.INDEX, 3);
-                        intent.putExtra(GifsArtConst.VIDEO_PATH, Utils.getRealPathFromURI(getApplicationContext(), data.getData()));
-                        startActivity(intent);
-                        finish();
-                        progressDialog.dismiss();
-                    }
-                });
+            if (data != null) {
+                MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+                retriever.setDataSource(Utils.getRealPathFromURI(getApplicationContext(), data.getData()));
+                String time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+                long timeInmillisec = Long.parseLong(time);
+                long seconds = timeInmillisec / 1000;
+                if (seconds > 30) {
+                    Toast.makeText(MainActivity.getContext(), "Video is too long", Toast.LENGTH_LONG).show();
+                } else {
+                    final ProgressDialog progressDialog = new ProgressDialog(MainActivity.this);
+                    progressDialog.setTitle("Generating Frames");
+                    progressDialog.setMessage("Please Wait");
+                    progressDialog.setCancelable(false);
+                    progressDialog.show();
+                    VideoDecoder videoDecoder = new VideoDecoder(MainActivity.this, Utils.getRealPathFromURI(getApplicationContext(), data.getData()), Integer.MAX_VALUE, VideoDecoder.FrameSize.NORMAL, root + "/" + GifsArtConst.MY_DIR);
+                    videoDecoder.extractVideoFrames();
+                    videoDecoder.setOnDecodeFinishedListener(new VideoDecoder.OnDecodeFinishedListener() {
+                        @Override
+                        public void onFinish(boolean isDone) {
+                            Intent intent = new Intent(MainActivity.this, MakeGifActivity.class);
+                            intent.putExtra(GifsArtConst.INDEX, 3);
+                            intent.putExtra(GifsArtConst.VIDEO_PATH, Utils.getRealPathFromURI(getApplicationContext(), data.getData()));
+                            startActivity(intent);
+                            finish();
+                            progressDialog.dismiss();
+                        }
+                    });
+                }
             }
         }
     }
