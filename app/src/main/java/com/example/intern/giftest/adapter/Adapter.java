@@ -57,7 +57,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
         try {
 
-            /*ImageLoader.getInstance().displayImage(FILE_PREFIX + array.get(position).getImagePath()
+            ImageLoader.getInstance().displayImage(FILE_PREFIX + array.get(position).getImagePath()
                     , holder.icon, new SimpleImageLoadingListener() {
 
                 @Override
@@ -73,9 +73,9 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
                     holder.icon.setImageBitmap(Utils.scaleCenterCrop(loadedImage, 400, 400));
                     super.onLoadingComplete(imageUri, view, loadedImage);
                 }
-            });*/
+            });
 
-            holder.icon.setImageBitmap(array.get(position).getBitmap());
+            //holder.icon.setImageBitmap(array.get(position).getBitmap());
 
             holder.selected
                     .setSelected(array.get(position).isSeleted());

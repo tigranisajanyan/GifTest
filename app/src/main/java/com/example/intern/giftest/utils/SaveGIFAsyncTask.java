@@ -2,14 +2,10 @@ package com.example.intern.giftest.utils;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
 import com.example.intern.giftest.gifutils.AnimatedGifEncoder;
-import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -27,10 +23,10 @@ public class SaveGIFAsyncTask extends AsyncTask<Void, Integer, Void> {
     private Context context;
     private String outputDir;
     private int speed;
-    private ArrayList<Bitmap> bitmaps = new ArrayList<>();
+    private ArrayList<GalleryItem> bitmaps = new ArrayList<>();
     private ProgressDialog progressDialog;
 
-    public SaveGIFAsyncTask(String outputDir, ArrayList<Bitmap> bitmaps, int speed, Context context) {
+    public SaveGIFAsyncTask(String outputDir, ArrayList<GalleryItem> bitmaps, int speed, Context context) {
         this.outputDir = outputDir;
         this.bitmaps = bitmaps;
         this.context = context;
@@ -61,8 +57,11 @@ public class SaveGIFAsyncTask extends AsyncTask<Void, Integer, Void> {
             animatedGifEncoder.start(bos);
 
             for (int i = 0; i < bitmaps.size(); i++) {
-                animatedGifEncoder.addFrame(bitmaps.get(i));
-                publishProgress(i);
+                if (bitmaps.get(i).isSeleted()) {
+                    animatedGifEncoder.addFrame(bitmaps.get(i).getBitmap());
+                    publishProgress(i);
+                }
+
             }
 
             animatedGifEncoder.finish();
