@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
@@ -14,6 +15,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,6 +31,8 @@ import com.example.intern.giftest.adapter.Adapter;
 import com.example.intern.giftest.clipart.Clipart;
 import com.example.intern.giftest.clipart.MainView;
 import com.example.intern.giftest.clipart.Util;
+import com.example.intern.giftest.gifutils.GetGifFrames;
+import com.example.intern.giftest.gifutils.GifDecoder;
 import com.example.intern.giftest.utils.GalleryItem;
 import com.example.intern.giftest.R;
 import com.example.intern.giftest.utils.GifImitation;
@@ -40,6 +44,8 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
@@ -47,6 +53,9 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
+import pl.droidsonroids.gif.GifDrawable;
+import pl.droidsonroids.gif.GifImageView;
 
 
 public class MakeGifActivity extends ActionBarActivity {
@@ -56,7 +65,9 @@ public class MakeGifActivity extends ActionBarActivity {
     private SeekBar seekBar;
     private Button addClipArtButton;
     private Button applyButton;
+    private Button addGifButton;
     private ImageView imageView;
+    private GifImageView gifImageView;
     private LinearLayout container;
 
     private Intent intent;
@@ -78,6 +89,11 @@ public class MakeGifActivity extends ActionBarActivity {
     private String videoPath;
     public static final float min = 0.1f;
     private boolean isHide = true;
+
+
+    int corePoolSize = 60;
+    int maximumPoolSize = 80;
+    int keepAliveTime = 10;
 
     private final int[] clipartList = new int[]{
             R.drawable.clipart_1,
@@ -164,8 +180,10 @@ public class MakeGifActivity extends ActionBarActivity {
 
         seekBar = (SeekBar) findViewById(R.id.seek_bar);
         imageView = (ImageView) findViewById(R.id.image);
+        gifImageView = (GifImageView) findViewById(R.id.gif_image);
         addClipArtButton = (Button) findViewById(R.id.add_clipart);
         applyButton = (Button) findViewById(R.id.apply);
+        addGifButton = (Button) findViewById(R.id.add_gif);
         recyclerView = (RecyclerView) findViewById(R.id.rec_view);
 
 
@@ -220,12 +238,22 @@ public class MakeGifActivity extends ActionBarActivity {
         applyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int corePoolSize = 60;
-                int maximumPoolSize = 80;
-                int keepAliveTime = 10;
                 BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>(maximumPoolSize);
                 Executor threadPoolExecutor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, TimeUnit.SECONDS, workQueue);
                 new MyTask().executeOnExecutor(threadPoolExecutor);
+            }
+        });
+
+        addGifButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GifDrawable gifFromPath = null;
+                try {
+                    gifFromPath = new GifDrawable(root + "/mygif.gif");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                gifImageView.setImageDrawable(gifFromPath);
             }
         });
     }
@@ -242,23 +270,11 @@ public class MakeGifActivity extends ActionBarActivity {
 
         if (id == R.id.action_settings) {
 
-            int corePoolSize = 60;
-            int maximumPoolSize = 80;
-            int keepAliveTime = 10;
             BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>(maximumPoolSize);
             Executor threadPoolExecutor = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, TimeUnit.SECONDS, workQueue);
 
             SaveGIFAsyncTask saveGIFAsyncTask = new SaveGIFAsyncTask(root + "/test_images/test.gif", bitmaps, speed, MakeGifActivity.this);
             saveGIFAsyncTask.executeOnExecutor(threadPoolExecutor);
-
-            /*GifEncoder gifEncoder = new GifEncoder();
-            gifEncoder.init(root + "/test_images/test.gif", 640, 640, 256, 100, 100);
-            int[] pixels = new int[640 * 640];
-            for (int i = 0; i < bitmaps.size(); i++) {
-                bitmaps.get(i).getPixels(pixels, 0, 640, 0, 0, 640, 640);
-                gifEncoder.addFrame(pixels);
-            }
-            gifEncoder.close();*/
 
             return true;
         }
@@ -268,7 +284,7 @@ public class MakeGifActivity extends ActionBarActivity {
 
     private void initView() {
 
-        Bitmap bm = Bitmap.createBitmap(400, 400, Bitmap.Config.ARGB_8888);
+        Bitmap bm = Bitmap.createBitmap(GifsArtConst.FRAME_SIZE, GifsArtConst.FRAME_SIZE, Bitmap.Config.ARGB_8888);
         bm.eraseColor(Color.TRANSPARENT);
         Bitmap mutableBitmap = bm.copy(Bitmap.Config.ARGB_8888, true);
         mainView = new MainView(this, mutableBitmap);
@@ -314,10 +330,12 @@ public class MakeGifActivity extends ActionBarActivity {
     class MyTask extends AsyncTask<Void, Void, Void> {
 
         Clipart clipart = mainView.getClipartItem();
+        ArrayList<Bitmap> list = new ArrayList<>();
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            list = Utils.getGifFrames(root + "/mygif.gif");
         }
 
         @Override
