@@ -31,8 +31,6 @@ import com.example.intern.giftest.adapter.Adapter;
 import com.example.intern.giftest.clipart.Clipart;
 import com.example.intern.giftest.clipart.MainView;
 import com.example.intern.giftest.clipart.Util;
-import com.example.intern.giftest.gifutils.GetGifFrames;
-import com.example.intern.giftest.gifutils.GifDecoder;
 import com.example.intern.giftest.utils.GalleryItem;
 import com.example.intern.giftest.R;
 import com.example.intern.giftest.utils.GifImitation;
@@ -44,7 +42,6 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -133,7 +130,7 @@ public class MakeGifActivity extends ActionBarActivity {
             videoPath = intent.getStringExtra(GifsArtConst.VIDEO_PATH);
             File file = new File(root, GifsArtConst.MY_DIR);
             File[] files = file.listFiles();
-            int x = files.length / 10 + 1;
+            int x = files.length / 15 + 1;
             for (int i = 0; i < files.length; i++) {
                 if (i % x == 0) {
                     ByteBuffer buffer = PhotoUtils.readBufferFromFile(files[i].getAbsolutePath(), PhotoUtils.checkBufferSize(videoPath, VideoDecoder.FrameSize.NORMAL));
@@ -154,7 +151,7 @@ public class MakeGifActivity extends ActionBarActivity {
             videoPath = intent.getStringExtra(GifsArtConst.VIDEO_PATH);
             File file = new File(root, GifsArtConst.MY_DIR);
             File[] files = file.listFiles();
-            int x = files.length / 10 + 1;
+            int x = files.length / 15 + 1;
             for (int i = 0; i < files.length; i++) {
                 if (i % x == 0) {
                     ByteBuffer buffer = PhotoUtils.readBufferFromFile(files[i].getAbsolutePath(), PhotoUtils.checkBufferSize(videoPath, VideoDecoder.FrameSize.NORMAL));

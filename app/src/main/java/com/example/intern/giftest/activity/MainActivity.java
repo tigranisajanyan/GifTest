@@ -20,7 +20,6 @@ import com.example.intern.giftest.utils.GifsArtConst;
 import com.example.intern.giftest.utils.Utils;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
-
 public class MainActivity extends ActionBarActivity {
 
     private static final String root = Environment.getExternalStorageDirectory().toString();
