@@ -2,51 +2,62 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
+    android:background="@color/black"
     android:orientation="vertical"
     tools:context="com.example.intern.giftest.activity.ShootingGifActivity">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/text_seconds"
-            android:text="sec: "/>
 
-    </LinearLayout>
+    <android.support.v7.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/abc_action_bar_default_height_material"
+        android:background="@color/yellow">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/abc_action_bar_default_height_material"
+            android:background="@color/yellow">
+
+            <TextView
+                android:id="@+id/text_seconds"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="sec: "
+                android:textSize="16sp" />
+
+            <Button
+                android:id="@+id/button_ChangeCamera"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:text="Switch Camera" />
+
+        </FrameLayout>
+
+    </android.support.v7.widget.Toolbar>
+
     <LinearLayout
-        android:layout_marginTop="5dp"
         android:id="@+id/camera_preview"
-        android:layout_width="260dp"
-        android:layout_height="400dp"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:background="@android:color/background_light"
+        android:gravity="center"
         android:orientation="horizontal" />
 
-    <LinearLayout
-        android:id="@+id/buttonsLayout"
+    <View
+        android:layout_height="0dp"
         android:layout_width="match_parent"
+        android:layout_weight="1" />
+
+    <Button
+        android:id="@+id/button_capture"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:gravity="center_horizontal"
-        android:orientation="horizontal">
+        android:layout_gravity="center"
+        android:text="Capture/Stop" />
 
-        <Button
-            android:id="@+id/button_ChangeCamera"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Switch Camera" />
-
-        <Button
-            android:id="@+id/button_capture"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:text="Capture/Stop" />
-
-    </LinearLayout>
 
 </LinearLayout>
