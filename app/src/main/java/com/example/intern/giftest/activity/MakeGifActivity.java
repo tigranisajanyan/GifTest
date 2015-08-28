@@ -309,8 +309,13 @@ public class MakeGifActivity extends ActionBarActivity {
                 Canvas canvas = new Canvas(resultBitmap);
                 Paint paint = new Paint();
 
-                canvas.drawBitmap(resultBitmap, 0, 0, paint);
-                canvas.drawBitmap(clipart.getBitmap(), clipart.getX(), clipart.getY(), paint);
+				Matrix transformMatrix = new Matrix();
+				transformMatrix.postRotate(clipart.getRotation(), clipart.getBitmap().getWidth() / 2, clipart.getBitmap().getHeight() / 2);
+				transformMatrix.postTranslate(clipart.getX(), clipart.getY());
+				transformMatrix.postScale(clipart.getScaleX(), clipart.getScaleY());
+				canvas.drawBitmap(resultBitmap, 0, 0, paint);
+                canvas.scale(400f/ mainView.getWidth(), 400f / mainView.getWidth() , 0, 0);
+				canvas.drawBitmap(clipart.getBitmap(), transformMatrix, paint);
             }
             return null;
         }

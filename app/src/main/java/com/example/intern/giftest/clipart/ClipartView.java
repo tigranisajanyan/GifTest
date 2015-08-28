@@ -844,6 +844,15 @@ public class ClipartView extends AbstractItem implements GestureDetector.Gesture
         startRotateDegree = rotateDegree;
     }
 
+
+	public float getClipartUnscaledX() {
+		return centerX - origWidth * 0.5f * scaleX;
+	}
+
+	public float getClipartUnscaledY() {
+		return centerY - origHeight * 0.5f * scaleY;
+	}
+
     @Override
     public void onTap(PointF p) {
 

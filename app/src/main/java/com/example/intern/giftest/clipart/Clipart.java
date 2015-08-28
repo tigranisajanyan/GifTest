@@ -10,6 +10,9 @@ public class Clipart {
     private Bitmap bitmap;
     private int x = 0;
     private int y = 0;
+    private float scaleX = 1f;
+    private float scaleY = 1f;
+	private float rotation = 0f;
 
     public Clipart() {
 
@@ -46,4 +49,30 @@ public class Clipart {
         this.y = y;
     }
 
+    public void setScaleX(float scaleX) {
+        this.scaleX = scaleX;
+    }
+
+    public void setScaleY(float scaleY) {
+        this.scaleY = scaleY;
+    }
+
+    public float getScaleX() {
+        return scaleX;
+    }
+
+    public float getScaleY() {
+        return scaleY;
+    }
+
+	public void setRotation(float rotation) {
+		this.rotation = rotation;
+	}
+
+	public float getRotation() {
+		return rotation;
+	}
+
+
 }
+
