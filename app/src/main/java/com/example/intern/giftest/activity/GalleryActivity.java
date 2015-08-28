@@ -114,6 +114,7 @@ public class GalleryActivity extends AppCompatActivity {
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
             findViewById(R.id.progress).setVisibility(View.GONE);
+            recyclerView.setBackgroundColor(getResources().getColor(R.color.yellow));
             galleryAdapter.notifyDataSetChanged();
         }
     }
