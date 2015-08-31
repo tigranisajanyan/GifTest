@@ -54,12 +54,6 @@
             android:name=".clipart.ClipartActivity"
             android:label="@string/app_name" >
         </activity>
-        <receiver android:name=".IncommingCallReceiver" android:enabled="true">
-            <intent-filter>
-                <action android:name="android.intent.action.PHONE_STATE" />
-            </intent-filter>
-        </receiver>
-        <service android:enabled="true" android:name=".SimpleIntentService" />
     </application>
 
 </manifest>

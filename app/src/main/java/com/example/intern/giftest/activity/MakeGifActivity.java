@@ -6,7 +6,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
@@ -31,11 +30,11 @@ import com.example.intern.giftest.adapter.Adapter;
 import com.example.intern.giftest.clipart.Clipart;
 import com.example.intern.giftest.clipart.MainView;
 import com.example.intern.giftest.clipart.Util;
-import com.example.intern.giftest.utils.AddEffect;
 import com.example.intern.giftest.utils.GalleryItem;
 import com.example.intern.giftest.R;
 import com.example.intern.giftest.utils.GifImitation;
 import com.example.intern.giftest.utils.GifsArtConst;
+import com.example.intern.giftest.utils.MergeTwoGifs;
 import com.example.intern.giftest.utils.SaveGIFAsyncTask;
 import com.example.intern.giftest.utils.SpacesItemDecoration;
 import com.example.intern.giftest.utils.Utils;
@@ -43,13 +42,12 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Executor;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+
+import pl.droidsonroids.gif.GifDrawable;
+import pl.droidsonroids.gif.GifImageView;
 
 
 public class MakeGifActivity extends ActionBarActivity {
@@ -60,6 +58,7 @@ public class MakeGifActivity extends ActionBarActivity {
     private Button addClipArtButton;
     private Button addEffectButton;
     private ImageView imageView;
+    private GifImageView gifImageView;
     private LinearLayout container;
 
     private Intent intent;
@@ -78,6 +77,7 @@ public class MakeGifActivity extends ActionBarActivity {
     private String videoPath;
     private boolean isHide = true;
     private GifImitation gifImitation;
+    private GifDrawable gifDrawable;
 
     ViewGroup container1;
 
@@ -121,7 +121,6 @@ public class MakeGifActivity extends ActionBarActivity {
             int x = files.length / 15 + 1;
             for (int i = 0; i < files.length; i++) {
                 if (i % x == 0) {
-
                     ByteBuffer buffer = PhotoUtils.readBufferFromFile(files[i].getAbsolutePath(), PhotoUtils.checkBufferSize(videoPath, VideoDecoder.FrameSize.NORMAL));
                     Bitmap bitmap = PhotoUtils.fromBufferToBitmap(PhotoUtils.checkFrameWidth(videoPath, VideoDecoder.FrameSize.NORMAL), PhotoUtils.checkFrameHeight(videoPath, VideoDecoder.FrameSize.NORMAL), buffer);
 
@@ -129,6 +128,9 @@ public class MakeGifActivity extends ActionBarActivity {
                     array.add(galleryItem);
                 }
             }
+            ByteBuffer buffer = PhotoUtils.readBufferFromFile(files[files.length - 1].getAbsolutePath(), PhotoUtils.checkBufferSize(videoPath, VideoDecoder.FrameSize.NORMAL));
+            Bitmap bitmap = PhotoUtils.fromBufferToBitmap(PhotoUtils.checkFrameWidth(videoPath, VideoDecoder.FrameSize.NORMAL), PhotoUtils.checkFrameHeight(videoPath, VideoDecoder.FrameSize.NORMAL), buffer);
+            array.add(new GalleryItem(bitmap, files[files.length - 1].getAbsolutePath(), true, false, bitmap.getWidth(), bitmap.getHeight()));
         } else {
 
             index = 3;
@@ -152,6 +154,7 @@ public class MakeGifActivity extends ActionBarActivity {
 
         seekBar = (SeekBar) findViewById(R.id.seek_bar);
         imageView = (ImageView) findViewById(R.id.image);
+        gifImageView = (GifImageView) findViewById(R.id.gif_art);
         addClipArtButton = (Button) findViewById(R.id.add_clipart);
         addEffectButton = (Button) findViewById(R.id.add_effect);
         recyclerView = (RecyclerView) findViewById(R.id.rec_view);
@@ -170,6 +173,12 @@ public class MakeGifActivity extends ActionBarActivity {
 
         gifImitation = new GifImitation(MakeGifActivity.this, imageView, array, 500);
         gifImitation.start();
+
+        try {
+            gifDrawable = new GifDrawable(getResources(), R.drawable.giff);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         initView();
         intiCliparts();
@@ -210,10 +219,21 @@ public class MakeGifActivity extends ActionBarActivity {
         addEffectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AddEffect addEffect = new AddEffect(array, 0, MakeGifActivity.this);
-                addEffect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                /*AddEffect addEffect = new AddEffect(array, 0, adapter, MakeGifActivity.this);
+                addEffect.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);*/
+
+                ArrayList<Bitmap> bitmaps = Utils.getGifFramesFromResources(MakeGifActivity.this, R.drawable.giff);
+                for (int i = 0; i < bitmaps.size(); i++) {
+                    Bitmap bitmap = bitmaps.get(i);
+                    Log.d("gagagaga", "" + bitmap.getHeight());
+                }
+
+                MergeTwoGifs mergeTwoGifs = new MergeTwoGifs(array, bitmaps, MakeGifActivity.this);
+                mergeTwoGifs.mergeFrames();
+
             }
         });
+
     }
 
     @Override
@@ -226,10 +246,10 @@ public class MakeGifActivity extends ActionBarActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_save) {
+        if (id == R.id.action_export) {
             SaveGIFAsyncTask saveGIFAsyncTask = new SaveGIFAsyncTask(root + "/test_images/test.gif", array, speed, adapter, MakeGifActivity.this);
             saveGIFAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        } else if (id == R.id.action_export) {
+        } else if (id == R.id.action_save) {
             new MyTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
         return true;
@@ -283,12 +303,12 @@ public class MakeGifActivity extends ActionBarActivity {
     class MyTask extends AsyncTask<Void, Void, Void> {
 
         Clipart clipart = mainView.getClipartItem();
-        ArrayList<Bitmap> list = new ArrayList<>();
+        //ArrayList<Bitmap> list = new ArrayList<>();
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            list = Utils.getGifFrames(root + "/mygif.gif");
+            //list = Utils.getGifFramesPath(root + "/mygif.gif");
         }
 
         @Override
@@ -299,13 +319,17 @@ public class MakeGifActivity extends ActionBarActivity {
                 Canvas canvas = new Canvas(resultBitmap);
                 Paint paint = new Paint();
 
-				Matrix transformMatrix = new Matrix();
-				transformMatrix.postRotate(clipart.getRotation(), clipart.getBitmap().getWidth() / 2, clipart.getBitmap().getHeight() / 2);
-				transformMatrix.postTranslate(clipart.getX(), clipart.getY());
-				transformMatrix.postScale(clipart.getScaleX(), clipart.getScaleY());
-				canvas.drawBitmap(resultBitmap, 0, 0, paint);
-                canvas.scale(400f/ mainView.getWidth(), 400f / mainView.getWidth() , 0, 0);
-				canvas.drawBitmap(clipart.getBitmap(), transformMatrix, paint);
+                if (clipart != null) {
+                    Matrix transformMatrix = new Matrix();
+                    transformMatrix.postRotate(clipart.getRotation(), clipart.getBitmap().getWidth() / 2, clipart.getBitmap().getHeight() / 2);
+                    transformMatrix.postTranslate(clipart.getX(), clipart.getY());
+                    transformMatrix.postScale(clipart.getScaleX(), clipart.getScaleY());
+                    canvas.drawBitmap(resultBitmap, 0, 0, paint);
+                    canvas.scale(360f / mainView.getWidth(), 640f / mainView.getWidth(), 0, 0);
+                    canvas.drawBitmap(clipart.getBitmap(), transformMatrix, paint);
+                } else {
+                    canvas.drawBitmap(resultBitmap, 0, 0, paint);
+                }
             }
             return null;
         }
@@ -321,6 +345,7 @@ public class MakeGifActivity extends ActionBarActivity {
     protected void onDestroy() {
         super.onDestroy();
         gifImitation.stop();
-        Utils.clearDir(new File(root + "/" + GifsArtConst.MY_DIR));
+        //Utils.clearDir(new File(root + "/" + GifsArtConst.MY_DIR));
     }
+
 }

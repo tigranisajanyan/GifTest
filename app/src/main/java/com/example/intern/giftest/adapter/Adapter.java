@@ -43,7 +43,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         holder.icon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (array.get(position).isSeleted()) {
+                if (array.get(position).isSeleted() && getSelected().size() > 1) {
                     array.get(position).setIsSeleted(false);
 
                 } else {
@@ -76,7 +76,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
                         super.onLoadingComplete(imageUri, view, loadedImage);
                     }
                 });
-            }else {
+            } else {
                 holder.icon.setImageBitmap(array.get(position).getBitmap());
             }
 

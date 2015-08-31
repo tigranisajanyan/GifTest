@@ -4,6 +4,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
@@ -85,11 +87,16 @@ public class ShootingGifActivity extends ActionBarActivity {
             }
             camera = Camera.open(findBackFacingCamera());
             cameraPreview.refreshCamera(camera);
+
             /*camera.setPreviewCallback(new Camera.PreviewCallback() {
                 public void onPreviewFrame(byte[] data, Camera camera) {
 
                     Log.d("gagagagag", data.length + "");
-                    //do some operations using data
+                    BitmapFactory.Options opts = new BitmapFactory.Options();
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);//,opts);
+
+                    Log.d("gagagagag", bitmap.getHeight() + "");
+
 
                 }
             });*/
@@ -107,7 +114,7 @@ public class ShootingGifActivity extends ActionBarActivity {
         Display display = getWindowManager().getDefaultDisplay();
         width = display.getWidth();
 
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(500, 800);  //5/8
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(500, 800);
         layoutParams.gravity= Gravity.CENTER_HORIZONTAL;
         cameraPreviewLayout = (LinearLayout) findViewById(R.id.camera_preview);
         cameraPreviewLayout.setLayoutParams(layoutParams);

@@ -24,16 +24,16 @@ public class SaveGIFAsyncTask extends AsyncTask<Void, Integer, Void> {
     private Context context;
     private String outputDir;
     private int speed;
+    private Adapter adapter;
     private ArrayList<GalleryItem> bitmaps = new ArrayList<>();
     private ProgressDialog progressDialog;
-    private Adapter adapter;
 
     public SaveGIFAsyncTask(String outputDir, ArrayList<GalleryItem> bitmaps, int speed, Adapter adapter, Context context) {
         this.outputDir = outputDir;
+        this.adapter = adapter;
         this.bitmaps = bitmaps;
         this.context = context;
         this.speed = speed;
-        this.adapter = adapter;
     }
 
     @Override
@@ -64,7 +64,6 @@ public class SaveGIFAsyncTask extends AsyncTask<Void, Integer, Void> {
                     animatedGifEncoder.addFrame(bitmaps.get(i).getBitmap());
                     publishProgress(i);
                 }
-
             }
 
             animatedGifEncoder.finish();
@@ -94,10 +93,6 @@ public class SaveGIFAsyncTask extends AsyncTask<Void, Integer, Void> {
     protected void onPostExecute(Void result) {
         super.onPostExecute(result);
         progressDialog.dismiss();
-        /*Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_VIEW);
-        intent.setDataAndType(Uri.parse(outputDir), "image/gif");
-        context.startActivity(intent);*/
         Toast.makeText(context, "Done", Toast.LENGTH_LONG).show();
     }
 

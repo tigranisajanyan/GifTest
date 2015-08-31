@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
+import com.example.intern.giftest.adapter.Adapter;
 import com.example.intern.giftest.gifutils.AnimatedGifEncoder;
 
 import java.io.BufferedOutputStream;
@@ -26,10 +27,12 @@ public class AddEffect extends AsyncTask<Void, Integer, Void> {
     private int effectNumber;
     private ArrayList<GalleryItem> bitmaps = new ArrayList<>();
     private ProgressDialog progressDialog;
+    private Adapter adapter;
 
-    public AddEffect(ArrayList<GalleryItem> bitmaps, int effectNumber, Context context) {
+    public AddEffect(ArrayList<GalleryItem> bitmaps, int effectNumber, Adapter adapter, Context context) {
         this.bitmaps = bitmaps;
         this.context = context;
+        this.adapter = adapter;
         this.effectNumber = effectNumber;
     }
 
@@ -38,14 +41,13 @@ public class AddEffect extends AsyncTask<Void, Integer, Void> {
         super.onPreExecute();
         progressDialog = new ProgressDialog(context);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progressDialog.setMax(bitmaps.size());
+        progressDialog.setMax(adapter.getSelected().size());
         progressDialog.setCancelable(false);
         progressDialog.show();
     }
 
     @Override
     protected Void doInBackground(Void... params) {
-
 
         for (int i = 0; i < bitmaps.size(); i++) {
             if (bitmaps.get(i).isSeleted()) {

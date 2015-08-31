@@ -2,17 +2,21 @@ package com.example.intern.giftest.utils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 
+import com.example.intern.giftest.R;
 import com.example.intern.giftest.activity.GalleryActivity;
 import com.example.intern.giftest.gifutils.GifDecoder;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
@@ -26,6 +30,7 @@ import com.nostra13.universalimageloader.core.download.BaseImageDownloader;
 import com.nostra13.universalimageloader.utils.StorageUtils;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -33,6 +38,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+
+import pl.droidsonroids.gif.GifDrawable;
 
 
 public class Utils {
@@ -293,7 +300,7 @@ public class Utils {
         return bytes;
     }
 
-    public static ArrayList<Bitmap> getGifFrames(String path) {
+    public static ArrayList<Bitmap> getGifFramesPath(String path) {
         ArrayList<Bitmap> bitmaps = new ArrayList<>();
         byte[] bytes = Utils.fileToByteArray(path);
         GifDecoder gifDecoder = new GifDecoder();
@@ -304,6 +311,26 @@ public class Utils {
             Bitmap bitmap = gifDecoder.getNextFrame();
             bitmaps.add(bitmap);
             gifDecoder.advance();
+        }
+        return bitmaps;
+    }
+
+    public static ArrayList<Bitmap> getGifFramesFromResources(Context context, int resId) {
+
+        GifDrawable gifDrawable = null;
+        try {
+            gifDrawable = new GifDrawable(context.getResources(), resId);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        ArrayList<Bitmap> bitmaps = new ArrayList<>();
+
+
+        for (int i = 0; i < gifDrawable.getNumberOfFrames(); i++) {
+            Bitmap bitmap = gifDrawable.seekToFrameAndGet(i);
+            bitmaps.add(bitmap);
+
         }
         return bitmaps;
     }

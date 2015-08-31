@@ -17,6 +17,7 @@ public class GifImitation {
     private ArrayList<GalleryItem> bitmaps;
     private int duration;
     private boolean play = false;
+    private int k = 0;
     private MyTask myTask = new MyTask();
 
     public GifImitation(Context context, ImageView imageView, ArrayList<GalleryItem> bitmaps, int duration) {
@@ -43,8 +44,6 @@ public class GifImitation {
 
     class MyTask extends AsyncTask<Void, Integer, Void> {
 
-        int k = 0;
-
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -57,7 +56,7 @@ public class GifImitation {
                 try {
                     TimeUnit.MILLISECONDS.sleep(duration);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    //e.printStackTrace();
                 }
                 int i = 0;
                 while (!bitmaps.get(k%bitmaps.size()).isSeleted()){
@@ -70,16 +69,6 @@ public class GifImitation {
                     publishProgress(k % bitmaps.size());
                 k++;
             }
-
-            /*for (int i = 0; i < bitmaps.size(); i++) {
-                try {
-                    TimeUnit.MILLISECONDS.sleep(duration);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                publishProgress(i);
-
-            }*/
 
             return null;
         }
@@ -97,4 +86,5 @@ public class GifImitation {
             imageView.setPadding(50,50,50,50);
         }
     }
+
 }

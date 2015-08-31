@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.intern.giftest.utils.GalleryItem;
 import com.example.intern.giftest.R;
@@ -23,6 +24,8 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
     private ArrayList<GalleryItem> array;
     private Context context;
     private ActionBar actionBar;
+
+    private ArrayList<GalleryItem> selected = new ArrayList<>();
 
     public GalleryAdapter(ArrayList<GalleryItem> arr, Context c, ActionBar actionBar) {
 
@@ -46,6 +49,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
 
                 if (array.get(position).isSeleted()) {
                     array.get(position).setIsSeleted(false);
+                    selected.remove(array.get(position));
                     actionBar.setTitle(getSelected().size() + " Selected");
                     if (getSelected().size() < 1) {
                         actionBar.setTitle("GifTest");
@@ -53,11 +57,16 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
 
                 } else {
                     array.get(position).setIsSeleted(true);
+                    selected.add(array.get(position));
                     actionBar.setTitle(getSelected().size() + " Selected");
                 }
 
                 holder.select.setSelected(array
                         .get(position).isSeleted());
+                for (int i = 0; i < selected.size(); i++) {
+
+                }
+
             }
         });
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(array.get(position).getWidth(), array.get(position).getHeight());
@@ -98,25 +107,27 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
 
         private ImageView image;
         private ImageView select;
+        private TextView textView;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
             image = (ImageView) itemView.findViewById(R.id.gallery_image_item);
             select = (ImageView) itemView.findViewById(R.id.gallery_item_selected);
+            textView = (TextView) itemView.findViewById(R.id.txt);
             select.setVisibility(View.VISIBLE);
         }
     }
 
-    public String getItem(int i) {
-        return array.get(i).getImagePath();
+    public GalleryItem getItem(int i) {
+        return array.get(i);
     }
 
     public ArrayList<String> getSelected() {
         ArrayList<String> arrayList = new ArrayList<>();
-        for (int i = 0; i < array.size(); i++) {
-            if (array.get(i).isSeleted()) {
-                arrayList.add(array.get(i).getImagePath());
+        for (int i = 0; i < selected.size(); i++) {
+            if (selected.get(i).isSeleted()) {
+                arrayList.add(selected.get(i).getImagePath());
 
             }
         }

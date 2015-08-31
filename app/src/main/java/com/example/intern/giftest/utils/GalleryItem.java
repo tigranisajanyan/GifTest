@@ -11,6 +11,7 @@ public class GalleryItem {
     private int height;
     private boolean isFile;
 
+    private int position;
 
     public GalleryItem() {
 
@@ -30,6 +31,14 @@ public class GalleryItem {
         this.width = width;
         this.height = height;
 
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
     }
 
     public boolean isFile() {
