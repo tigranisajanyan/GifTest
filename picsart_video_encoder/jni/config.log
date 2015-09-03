@@ -1,4 +1,4 @@
-# ./libvpx/configure --target=armv7-android-gcc --disable-examples --sdk-path=/Users/vahagnnikoghosyan/Downloads/android-ndk-r9d
+# ./libvpx/configure --target=armv7-android-gcc --disable-examples --sdk-bitmap=/Users/vahagnnikoghosyan/Downloads/android-ndk-r9d
 Configuring selected codecs
   enabling vp8_encoder
   enabling vp8_decoder

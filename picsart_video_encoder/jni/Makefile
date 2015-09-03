@@ -241,7 +241,7 @@ endef
 #   $(1): $$(call find_file, $(patsubst -l%,lib%.a,$(filter -l%,$(2))),\
 #                           $$(patsubst -L%,%,$$(filter -L%,$$(LDFLAGS) $(2))))
 # This may be useful to revisit in the future (it tries to locate libraries
-# in a search path and add them as prerequisites
+# in a search bitmap and add them as prerequisites
 
 define install_map_template
 $(DIST_DIR)/$(1): $(2)

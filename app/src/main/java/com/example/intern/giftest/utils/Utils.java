@@ -2,11 +2,13 @@ package com.example.intern.giftest.utils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.PointF;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -14,8 +16,10 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 
+import com.decoder.PhotoUtils;
 import com.example.intern.giftest.R;
 import com.example.intern.giftest.activity.GalleryActivity;
 import com.example.intern.giftest.gifutils.GifDecoder;
@@ -36,6 +40,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -161,6 +166,7 @@ public class Utils {
                     .considerExifParams(true)
                     .cacheOnDisk(true)
                     .cacheInMemory(true)
+                    .considerExifParams(true)
                     .decodingOptions(new BitmapFactory.Options())
                     .bitmapConfig(Bitmap.Config.RGB_565).build();
 
@@ -333,6 +339,46 @@ public class Utils {
 
         }
         return bitmaps;
+    }
+
+    public static float dpToPixel(float dp, Context context) {
+        Resources resources = context.getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        return dp * (metrics.densityDpi / 160f);
+    }
+
+    public static float convertDpToPixel(float dp, Context context) {
+        Resources resources = context.getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        return dp * (metrics.densityDpi / 160f);
+    }
+
+    public static void getMidPoint(PointF lineStart, PointF lineEnd, PointF outPoint) {
+        outPoint.set((lineStart.x + lineEnd.x) / 2, (lineStart.y + lineEnd.y) / 2);
+    }
+
+    public static float getAngleBetweenLines(PointF lineStart1, PointF lineEnd1, PointF lineStart2, PointF lineEnd2) {
+        float dx1 = lineStart1.x - lineEnd1.x;
+        float dy1 = lineStart1.y - lineEnd1.y;
+
+        float dx2 = lineStart2.x - lineEnd2.x;
+        float dy2 = lineStart2.y - lineEnd2.y;
+
+        double radians = Math.atan2(dy2, dx2) - Math.atan2(dy1, dx1);
+
+        return (float) Math.toDegrees(radians);
+    }
+
+    public static Bitmap readBitmapFromBufferFile(Context context, String bytesFilePath) {
+        if (!TextUtils.isEmpty(bytesFilePath)) {
+            SharedPreferences sharedPreferences = context.getSharedPreferences("pics_art_video_editor", Context.MODE_PRIVATE);
+            int bufferSize = sharedPreferences.getInt("buffer_size", 0);
+            int width = sharedPreferences.getInt("frame_width", 0);
+            int height = sharedPreferences.getInt("frame_height", 0);
+            ByteBuffer buffer = PhotoUtils.readBufferFromFile(bytesFilePath, bufferSize);
+            return PhotoUtils.fromBufferToBitmap(width, height, buffer);
+        }
+        return null;
     }
 
 }

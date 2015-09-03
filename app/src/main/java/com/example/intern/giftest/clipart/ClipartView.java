@@ -24,6 +24,7 @@ import com.example.intern.giftest.clipart.util.Geom;
 import com.example.intern.giftest.clipart.util.GestureDetector;
 import com.example.intern.giftest.clipart.util.Graphics;
 import com.example.intern.giftest.clipart.view.AbstractItem;
+import com.example.intern.giftest.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -570,7 +571,7 @@ public class ClipartView extends AbstractItem implements GestureDetector.Gesture
 
         if (minSize) {
             final float MIN_SIZE = 20F;
-            float minSizePx = Util.convertDpToPixel(MIN_SIZE, context);
+            float minSizePx = Utils.convertDpToPixel(MIN_SIZE, context);
             if (Math.abs(curWidth) < minSizePx && Math.abs(curHeight) < minSizePx) {
                 curWidth = oldWidth;
                 curHeight = oldHeight;
@@ -583,7 +584,7 @@ public class ClipartView extends AbstractItem implements GestureDetector.Gesture
     private boolean isSmallerThanThreshold(float dx, float dy) {
         // check for thresholds
         final float MOVE_MIN_THRESHOLD = 2F;
-        float thresholdMinPx = Util.convertDpToPixel(MOVE_MIN_THRESHOLD, context);
+        float thresholdMinPx = Utils.convertDpToPixel(MOVE_MIN_THRESHOLD, context);
         return Math.abs(dx) < thresholdMinPx && Math.abs(dy) < thresholdMinPx;
     }
 
@@ -689,7 +690,7 @@ public class ClipartView extends AbstractItem implements GestureDetector.Gesture
 
 
     public void initSizeParams(int viewWidth, int viewHeight) {
-        final float minInitSize = Util.convertDpToPixel(32, context);
+        final float minInitSize = Utils.convertDpToPixel(32, context);
         final float maxPhotoSize = Math.max(origWidth, origHeight);
         float scale = 1f;
         if (maxPhotoSize < minInitSize) {
@@ -772,7 +773,7 @@ public class ClipartView extends AbstractItem implements GestureDetector.Gesture
 
         // move
         PointF p = new PointF();
-        Util.getMidPoint(p1, p2, p);
+        Utils.getMidPoint(p1, p2, p);
         moveStartMidPoint = p;
 
         touchDownHandled = false;
@@ -791,7 +792,7 @@ public class ClipartView extends AbstractItem implements GestureDetector.Gesture
         }
 
         // rotate
-        rotateDegree = startRotateDegree1 + Util.getAngleBetweenLines(pinchStartPoint1, pinchStartPoint2, p1, p2);
+        rotateDegree = startRotateDegree1 + Utils.getAngleBetweenLines(pinchStartPoint1, pinchStartPoint2, p1, p2);
 
         // scale
         float dist = Geom.dist(p1, p2);
@@ -808,7 +809,7 @@ public class ClipartView extends AbstractItem implements GestureDetector.Gesture
             curHeight = origHeight * scaleY;
 
             final float MIN_SIZE = 20F;
-            float minSizePx = Util.convertDpToPixel(MIN_SIZE, context);
+            float minSizePx = Utils.convertDpToPixel(MIN_SIZE, context);
             if (Math.abs(curWidth) < minSizePx && Math.abs(curHeight) < minSizePx) {
                 curWidth = oldWidth;
                 curHeight = oldHeight;
@@ -820,7 +821,7 @@ public class ClipartView extends AbstractItem implements GestureDetector.Gesture
 
         // move
         PointF midPoint = new PointF();
-        Util.getMidPoint(p1, p2, midPoint);
+        Utils.getMidPoint(p1, p2, midPoint);
         if (moveStartMidPoint != null) {
             float dx = midPoint.x - moveStartMidPoint.x;
             float dy = midPoint.y - moveStartMidPoint.y;

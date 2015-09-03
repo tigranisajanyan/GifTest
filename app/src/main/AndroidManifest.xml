@@ -46,6 +46,10 @@
             android:label="@string/title_activity_shooting_gif" >
         </activity>
         <activity
+            android:name=".activity.VideoEffectsActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
             android:name=".activity.GalleryActivity"
             android:theme="@style/Theme.AppCompat.Light"
             android:label="@string/app_name" >

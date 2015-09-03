@@ -1,7 +1,5 @@
-package com.example.intern.giftest.utils;
+package com.example.intern.giftest.effects;
 
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -13,132 +11,18 @@ import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Shader;
-import android.os.AsyncTask;
-import android.widget.Toast;
 
-import com.example.intern.giftest.adapter.Adapter;
-import com.example.intern.giftest.effects.BoostEffect;
-import com.example.intern.giftest.effects.Effects;
-import com.example.intern.giftest.effects.EmbossEffect;
-import com.example.intern.giftest.effects.EngraveEffect;
-import com.example.intern.giftest.effects.GrayScaleEffect;
-import com.example.intern.giftest.effects.ReflectionEffect;
-import com.example.intern.giftest.effects.SnowEffect;
 import com.example.intern.giftest.effects.Utils.ConvolutionMatrix;
-import com.example.intern.giftest.effects.Utils.EffectsItem;
-import com.example.intern.giftest.gifutils.AnimatedGifEncoder;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Random;
 
 /**
- * Created by Tigran on 8/28/15.
+ * Created by Tigran on 9/2/15.
  */
-public class AddEffect extends AsyncTask<Void, Integer, Void> {
+public class Effects {
 
-    private Context context;
-    private int effectNumber;
-    private ArrayList<GalleryItem> bitmaps = new ArrayList<>();
-    private ProgressDialog progressDialog;
-    private Adapter adapter;
-
-    public AddEffect(ArrayList<GalleryItem> bitmaps, int effectNumber, Adapter adapter, Context context) {
-        this.bitmaps = bitmaps;
-        this.context = context;
-        this.adapter = adapter;
-        this.effectNumber = effectNumber;
-    }
-
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        progressDialog = new ProgressDialog(context);
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progressDialog.setMax(adapter.getSelected().size());
-        progressDialog.setCancelable(false);
-        progressDialog.show();
-    }
-
-    @Override
-    protected Void doInBackground(Void... params) {
-
-        if (effectNumber==1) {
-            for (int i = 0; i < bitmaps.size(); i++) {
-                if (bitmaps.get(i).isSeleted()) {
-                    bitmaps.set(i, new GalleryItem(grayscale(bitmaps.get(i).getBitmap()), bitmaps.get(i).getImagePath(), bitmaps.get(i).isSeleted(), bitmaps.get(i).isFile(), bitmaps.get(i).getWidth(), bitmaps.get(i).getHeight()));
-                    publishProgress(i);
-                }
-            }
-        }
-        if (effectNumber==2) {
-            for (int i = 0; i < bitmaps.size(); i++) {
-                if (bitmaps.get(i).isSeleted()) {
-                    bitmaps.set(i, new GalleryItem(reflection(bitmaps.get(i).getBitmap()), bitmaps.get(i).getImagePath(), bitmaps.get(i).isSeleted(), bitmaps.get(i).isFile(), bitmaps.get(i).getWidth(), bitmaps.get(i).getHeight()));
-                    publishProgress(i);
-                }
-            }
-        }
-        if (effectNumber==3) {
-            for (int i = 0; i < bitmaps.size(); i++) {
-                if (bitmaps.get(i).isSeleted()) {
-                    bitmaps.set(i, new GalleryItem(snowEffect(bitmaps.get(i).getBitmap()), bitmaps.get(i).getImagePath(), bitmaps.get(i).isSeleted(), bitmaps.get(i).isFile(), bitmaps.get(i).getWidth(), bitmaps.get(i).getHeight()));
-                    publishProgress(i);
-                }
-            }
-        }
-        if (effectNumber==4) {
-            for (int i = 0; i < bitmaps.size(); i++) {
-                if (bitmaps.get(i).isSeleted()) {
-                    bitmaps.set(i, new GalleryItem(boost(bitmaps.get(i).getBitmap(),2,20), bitmaps.get(i).getImagePath(), bitmaps.get(i).isSeleted(), bitmaps.get(i).isFile(), bitmaps.get(i).getWidth(), bitmaps.get(i).getHeight()));
-                    publishProgress(i);
-                }
-            }
-        }
-        if (effectNumber==5) {
-            for (int i = 0; i < bitmaps.size(); i++) {
-                if (bitmaps.get(i).isSeleted()) {
-                    bitmaps.set(i, new GalleryItem(engrave(bitmaps.get(i).getBitmap()), bitmaps.get(i).getImagePath(), bitmaps.get(i).isSeleted(), bitmaps.get(i).isFile(), bitmaps.get(i).getWidth(), bitmaps.get(i).getHeight()));
-                    publishProgress(i);
-                }
-            }
-        }
-        if (effectNumber==6) {
-            for (int i = 0; i < bitmaps.size(); i++) {
-                if (bitmaps.get(i).isSeleted()) {
-                    bitmaps.set(i, new GalleryItem(emboss(bitmaps.get(i).getBitmap()), bitmaps.get(i).getImagePath(), bitmaps.get(i).isSeleted(), bitmaps.get(i).isFile(), bitmaps.get(i).getWidth(), bitmaps.get(i).getHeight()));
-                    publishProgress(i);
-                }
-            }
-        }
-
-        return null;
-    }
-
-    @Override
-    protected void onProgressUpdate(Integer... values) {
-        super.onProgressUpdate(values);
-        if (progressDialog != null) {
-            progressDialog.setProgress(values[0] + 1);
-        }
-    }
-
-    @Override
-    protected void onPostExecute(Void result) {
-        super.onPostExecute(result);
-        progressDialog.dismiss();
-        /*Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_VIEW);
-        intent.setDataAndType(Uri.parse(outputDir), "image/gif");
-        context.startActivity(intent);*/
-        Toast.makeText(context, "Done", Toast.LENGTH_LONG).show();
-    }
-
+    public static final int COLOR_MAX = 2000;
+    //boost(bmp, 2, 20);
 
     public static Bitmap boost(Bitmap src, int type, float percent) {
         int width = src.getWidth();
@@ -275,7 +159,7 @@ public class AddEffect extends AsyncTask<Void, Integer, Void> {
                 G = Color.green(pixels[index]);
                 B = Color.blue(pixels[index]);
                 // generate threshold
-                thresHold = random.nextInt(2000);
+                thresHold = random.nextInt(COLOR_MAX);
                 if (R > thresHold && G > thresHold && B > thresHold) {
                     pixels[index] = Color.rgb(255, 255, 255);
                 }
@@ -286,5 +170,4 @@ public class AddEffect extends AsyncTask<Void, Integer, Void> {
         bmOut.setPixels(pixels, 0, width, 0, 0, width, height);
         return bmOut;
     }
-
 }

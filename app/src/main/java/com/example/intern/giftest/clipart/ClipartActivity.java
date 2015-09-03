@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.example.intern.giftest.R;
+import com.example.intern.giftest.utils.Utils;
 
 public class ClipartActivity extends ActionBarActivity implements OnVideoActionFinishListener {
 
@@ -81,8 +82,8 @@ public class ClipartActivity extends ActionBarActivity implements OnVideoActionF
         for (int i = 0; i < clipartList.length; i++) {
             //TODO replace to LinearHorizontalRecyclerView
             ImageView imgView = new ImageView(this);
-            int size = (int) Util.dpToPixel(35, this);
-            int margin = (int) Util.dpToPixel(7, this);
+            int size = (int) Utils.dpToPixel(35, this);
+            int margin = (int) Utils.dpToPixel(7, this);
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(size, size);
             layoutParams.setMargins(margin, margin, margin, margin);
             imgView.setLayoutParams(layoutParams);

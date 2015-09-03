@@ -49,6 +49,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
 
                 if (array.get(position).isSeleted()) {
                     array.get(position).setIsSeleted(false);
+                    array.get(position).setPosition(getSelected().size());
                     selected.remove(array.get(position));
                     actionBar.setTitle(getSelected().size() + " Selected");
                     if (getSelected().size() < 1) {
@@ -57,15 +58,13 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
 
                 } else {
                     array.get(position).setIsSeleted(true);
+                    array.get(position).setPosition(getSelected().size());
                     selected.add(array.get(position));
                     actionBar.setTitle(getSelected().size() + " Selected");
                 }
 
                 holder.select.setSelected(array
                         .get(position).isSeleted());
-                for (int i = 0; i < selected.size(); i++) {
-
-                }
 
             }
         });
@@ -93,6 +92,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
             holder.select
                     .setSelected(array.get(position).isSeleted());
 
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -107,14 +107,12 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
 
         private ImageView image;
         private ImageView select;
-        private TextView textView;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
             image = (ImageView) itemView.findViewById(R.id.gallery_image_item);
             select = (ImageView) itemView.findViewById(R.id.gallery_item_selected);
-            textView = (TextView) itemView.findViewById(R.id.txt);
             select.setVisibility(View.VISIBLE);
         }
     }
@@ -128,7 +126,6 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
         for (int i = 0; i < selected.size(); i++) {
             if (selected.get(i).isSeleted()) {
                 arrayList.add(selected.get(i).getImagePath());
-
             }
         }
         return arrayList;

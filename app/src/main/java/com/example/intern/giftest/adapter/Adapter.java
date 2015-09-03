@@ -114,22 +114,11 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         return array.get(i).getImagePath();
     }
 
-    public ArrayList<String> getSelected() {
-        ArrayList<String> arrayList = new ArrayList<>();
+    public ArrayList<Bitmap> getSelected() {
+        ArrayList<Bitmap> arrayList = new ArrayList<>();
         for (int i = 0; i < array.size(); i++) {
             if (array.get(i).isSeleted() == true) {
-                arrayList.add(array.get(i).getImagePath());
-
-            }
-        }
-        return arrayList;
-    }
-
-    public ArrayList<Integer> getSel() {
-        ArrayList<Integer> arrayList = new ArrayList<>();
-        for (int i = 0; i < array.size(); i++) {
-            if (array.get(i).isSeleted() == true) {
-                arrayList.add(i);
+                arrayList.add(array.get(i).getBitmap());
 
             }
         }

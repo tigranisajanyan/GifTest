@@ -2,7 +2,7 @@
 <project name="encoder_dex" default="mergelibs">
 
     <!-- The local.properties file is created and updated by the 'android' tool.
-         It contains the path to the SDK. It should *NOT* be checked into
+         It contains the bitmap to the SDK. It should *NOT* be checked into
          Version Control Systems. -->
     <property file="local.properties" />
 
@@ -103,9 +103,9 @@
                     <isreference refid="out.dex.jar.input.ref" />
                 </condition>
                 <else>
-                    <path id="out.dex.jar.input.ref">
-                        <path refid="project.all.jars.path" />
-                    </path>
+                    <bitmap id="out.dex.jar.input.ref">
+                        <bitmap refid="project.all.jars.bitmap" />
+                    </bitmap>
                 </else>
             </if>
 
@@ -114,8 +114,8 @@
                 output="@{output-dex-file}"
                 nolocals="@{nolocals}"
                 verbose="${verbose}">
-                <path path="@{input-dir}"/>
-                <path refid="out.dex.jar.input.ref" />
+                <bitmap bitmap="@{input-dir}"/>
+                <bitmap refid="out.dex.jar.input.ref" />
                 <external-libs />
             </dex>
         </sequential>

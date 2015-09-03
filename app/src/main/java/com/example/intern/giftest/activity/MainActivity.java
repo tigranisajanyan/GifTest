@@ -21,6 +21,8 @@ import com.example.intern.giftest.utils.GifsArtConst;
 import com.example.intern.giftest.utils.Utils;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import java.io.File;
+
 public class MainActivity extends ActionBarActivity {
 
     private static final String root = Environment.getExternalStorageDirectory().toString();
@@ -77,6 +79,12 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Utils.clearDir(new File(root, GifsArtConst.MY_DIR));
     }
 
     @Override

@@ -846,7 +846,7 @@ public class BitmapManager {
         if (currImageURI.getScheme() != null && currImageURI.getScheme().startsWith("content")) {
             realPath = getRealPathFromURI(currImageURI, activity);
         } else if (currImageURI.getScheme() != null && currImageURI.getScheme().startsWith("file") && currImageURI.getPath() != null) {
-            realPath = currImageURI.getPath();// .substring(6,currImageURI.getPath().length());
+            realPath = currImageURI.getPath();// .substring(6,currImageURI.getBitmap().length());
             Log.d(TAG, "realPath:" + realPath);
         }
 

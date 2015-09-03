@@ -24,5 +24,5 @@ VERSION_MAJOR=1
 VERSION_MINOR=3
 VERSION_PATCH=0
 
-CONFIGURE_ARGS=--target=armv7-android-gcc --disable-examples --sdk-path=/Users/vahagnnikoghosyan/Downloads/android-ndk-r9d
-CONFIGURE_ARGS?=--target=armv7-android-gcc --disable-examples --sdk-path=/Users/vahagnnikoghosyan/Downloads/android-ndk-r9d
+CONFIGURE_ARGS=--target=armv7-android-gcc --disable-examples --sdk-bitmap=/Users/vahagnnikoghosyan/Downloads/android-ndk-r9d
+CONFIGURE_ARGS?=--target=armv7-android-gcc --disable-examples --sdk-bitmap=/Users/vahagnnikoghosyan/Downloads/android-ndk-r9d
