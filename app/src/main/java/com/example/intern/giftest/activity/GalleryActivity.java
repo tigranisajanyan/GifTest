@@ -78,7 +78,7 @@ public class GalleryActivity extends AppCompatActivity {
             if (galleryAdapter.getSelected().size() > 0) {
 
                 Intent intent = new Intent(GalleryActivity.this, MakeGifActivity.class);
-                intent.putExtra(GifItConst.INDEX, 1);
+                intent.putExtra(GifItConst.INDEX, GifItConst.IMAGES_TO_GIF_INDEX);
                 intent.putStringArrayListExtra(GifItConst.IMAGE_PATHS, galleryAdapter.getSelected());
                 startActivity(intent);
                 finish();
