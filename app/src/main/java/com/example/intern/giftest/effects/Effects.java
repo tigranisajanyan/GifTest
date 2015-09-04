@@ -78,7 +78,7 @@ public class Effects {
         return ConvolutionMatrix.computeConvolution3x3(src, convMatrix);
     }
 
-    public Bitmap grayscale(Bitmap bmpOriginal) {
+    public static Bitmap grayscale(Bitmap bmpOriginal) {
         int width, height;
         height = bmpOriginal.getHeight();
         width = bmpOriginal.getWidth();
