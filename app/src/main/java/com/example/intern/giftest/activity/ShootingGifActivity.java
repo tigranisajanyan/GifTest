@@ -4,21 +4,17 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -34,7 +30,7 @@ import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegNotSupportedExceptio
 import com.decoder.VideoDecoder;
 import com.example.intern.giftest.utils.CameraPreview;
 import com.example.intern.giftest.R;
-import com.example.intern.giftest.utils.GifsArtConst;
+import com.example.intern.giftest.utils.GifItConst;
 
 import java.io.File;
 import java.io.IOException;
@@ -335,8 +331,8 @@ public class ShootingGifActivity extends ActionBarActivity {
                     @Override
                     public void onFinish(boolean isDone) {
                         Intent intent = new Intent(ShootingGifActivity.this, MakeGifActivity.class);
-                        intent.putExtra(GifsArtConst.INDEX, 2);
-                        intent.putExtra(GifsArtConst.VIDEO_PATH, root + "/myvideo1.mp4");
+                        intent.putExtra(GifItConst.INDEX, 2);
+                        intent.putExtra(GifItConst.VIDEO_PATH, root + "/myvideo1.mp4");
                         startActivity(intent);
                         progressDialog.dismiss();
                         finish();
@@ -398,8 +394,8 @@ public class ShootingGifActivity extends ActionBarActivity {
                             @Override
                             public void onFinish(boolean isDone) {
                                 Intent intent = new Intent(ShootingGifActivity.this, MakeGifActivity.class);
-                                intent.putExtra(GifsArtConst.INDEX, 2);
-                                intent.putExtra(GifsArtConst.VIDEO_PATH, root + "/myvideo1.mp4");
+                                intent.putExtra(GifItConst.INDEX, 2);
+                                intent.putExtra(GifItConst.VIDEO_PATH, root + "/myvideo1.mp4");
                                 startActivity(intent);
                                 progressDialog.dismiss();
                                 finish();

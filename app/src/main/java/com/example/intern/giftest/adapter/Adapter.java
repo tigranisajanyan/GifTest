@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.example.intern.giftest.utils.GalleryItem;
+import com.example.intern.giftest.items.GalleryItem;
 import com.example.intern.giftest.R;
 import com.example.intern.giftest.utils.Utils;
 import com.nostra13.universalimageloader.core.ImageLoader;

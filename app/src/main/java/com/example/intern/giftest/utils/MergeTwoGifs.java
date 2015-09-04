@@ -8,6 +8,8 @@ import android.graphics.Paint;
 import android.os.AsyncTask;
 
 
+import com.example.intern.giftest.items.GalleryItem;
+
 import java.util.ArrayList;
 
 /**

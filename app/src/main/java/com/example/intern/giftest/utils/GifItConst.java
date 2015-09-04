@@ -3,7 +3,7 @@ package com.example.intern.giftest.utils;
 /**
  * Created by Tigran on 8/25/15.
  */
-public class GifsArtConst {
+public class GifItConst {
 
     public static String MY_DIR = "test_images";
     public static String VIDEO_TYPE = "video/*";
@@ -12,6 +12,10 @@ public class GifsArtConst {
     public static String FILE_PREFIX = "file://";
     public static String VIDEO_PATH = "video_path";
     public static int FRAME_SIZE = 400;
+    public static int IMAGES_TO_GIF_INDEX = 1;
+    public static int SHOOT_GIF_INDEX = 2;
+    public static int VIDEO_TO_GIF_INDEX = 3;
+    public static int GENERATED_FRAMES_MAX_COUNT = 15;
 
 
 

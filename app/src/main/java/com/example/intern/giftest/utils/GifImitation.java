@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.ImageView;
 
+import com.example.intern.giftest.items.GalleryItem;
+
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 

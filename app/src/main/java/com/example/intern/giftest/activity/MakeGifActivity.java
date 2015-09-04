@@ -15,7 +15,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.DragEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,23 +24,22 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
-import android.widget.TextView;
 
 import com.decoder.PhotoUtils;
 import com.decoder.VideoDecoder;
 import com.example.intern.giftest.adapter.Adapter;
 import com.example.intern.giftest.clipart.Clipart;
 import com.example.intern.giftest.clipart.MainView;
+import com.example.intern.giftest.effects.Effects;
 import com.example.intern.giftest.utils.AddEffect;
-import com.example.intern.giftest.utils.GalleryItem;
+import com.example.intern.giftest.items.GalleryItem;
 import com.example.intern.giftest.R;
 import com.example.intern.giftest.utils.GifImitation;
-import com.example.intern.giftest.utils.GifsArtConst;
+import com.example.intern.giftest.utils.GifItConst;
 import com.example.intern.giftest.utils.MergeTwoGifs;
 import com.example.intern.giftest.utils.SaveGIFAsyncTask;
 import com.example.intern.giftest.utils.SpacesItemDecoration;
 import com.example.intern.giftest.utils.Utils;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.io.ByteArrayOutputStream;
@@ -66,17 +64,14 @@ public class MakeGifActivity extends ActionBarActivity {
     private GifImageView gifImageView;
     private LinearLayout clipartLayout;
 
-    private Intent intent;
     private RecyclerView recyclerView;
     private StaggeredGridLayoutManager staggeredGridLayoutManager;
     private RecyclerView.ItemAnimator itemAnimator;
     private Adapter adapter;
     private MainView mainView;
 
-    private ArrayList<String> arrayList = new ArrayList<>();
     private ArrayList<GalleryItem> array = new ArrayList<>();
 
-    private int index = 0;
     private int speed = 500;
     private int displayWidth;
     private String videoPath;
@@ -102,26 +97,23 @@ public class MakeGifActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_make_gif);
 
-        intent = getIntent();
+        if (getIntent().getIntExtra(GifItConst.INDEX, 0) == GifItConst.IMAGES_TO_GIF_INDEX) {
 
-        if (intent.getIntExtra(GifsArtConst.INDEX, 0) == 1) {
-
-            index = 1;
-            arrayList = intent.getStringArrayListExtra(GifsArtConst.IMAGE_PATHS);
+            ArrayList<String> arrayList = getIntent().getStringArrayListExtra(GifItConst.IMAGE_PATHS);
             for (int i = 0; i < arrayList.size(); i++) {
-                Bitmap bitmap = ImageLoader.getInstance().loadImageSync(GifsArtConst.FILE_PREFIX + arrayList.get(i));
-                bitmap = Utils.scaleCenterCrop(bitmap, GifsArtConst.FRAME_SIZE, GifsArtConst.FRAME_SIZE);
+                Bitmap bitmap = ImageLoader.getInstance().loadImageSync(GifItConst.FILE_PREFIX + arrayList.get(i));
+                bitmap = Utils.scaleCenterCrop(bitmap, GifItConst.FRAME_SIZE, GifItConst.FRAME_SIZE);
 
                 GalleryItem galleryItem = new GalleryItem(bitmap, arrayList.get(i), true, true, bitmap.getWidth(), bitmap.getHeight());
                 array.add(galleryItem);
             }
-        } else if (intent.getIntExtra(GifsArtConst.INDEX, 0) == 2) {
 
-            index = 2;
-            videoPath = intent.getStringExtra(GifsArtConst.VIDEO_PATH);
-            File file = new File(root, GifsArtConst.MY_DIR);
+        } else if (getIntent().getIntExtra(GifItConst.INDEX, 0) == GifItConst.SHOOT_GIF_INDEX) {
+
+            videoPath = getIntent().getStringExtra(GifItConst.VIDEO_PATH);
+            File file = new File(root, GifItConst.MY_DIR);
             File[] files = file.listFiles();
-            int x = files.length / 15 + 1;
+            int x = files.length / GifItConst.GENERATED_FRAMES_MAX_COUNT + 1;
             for (int i = 0; i < files.length; i++) {
                 if (i % x == 0) {
                     ByteBuffer buffer = PhotoUtils.readBufferFromFile(files[i].getAbsolutePath(), PhotoUtils.checkBufferSize(videoPath, VideoDecoder.FrameSize.NORMAL));
@@ -136,9 +128,8 @@ public class MakeGifActivity extends ActionBarActivity {
             array.add(new GalleryItem(bitmap, files[files.length - 1].getAbsolutePath(), true, false, bitmap.getWidth(), bitmap.getHeight()));
         } else {
 
-            index = 3;
-            videoPath = intent.getStringExtra(GifsArtConst.VIDEO_PATH);
-            File file = new File(root, GifsArtConst.MY_DIR);
+            videoPath = getIntent().getStringExtra(GifItConst.VIDEO_PATH);
+            File file = new File(root, GifItConst.MY_DIR);
             File[] files = file.listFiles();
             int x = files.length / 15 + 1;
             for (int i = 0; i < files.length; i++) {
@@ -153,7 +144,8 @@ public class MakeGifActivity extends ActionBarActivity {
         }
 
         init();
-        intiCliparts();
+        //intiCliparts();
+        intiEffects();
 
 
     }
@@ -178,7 +170,7 @@ public class MakeGifActivity extends ActionBarActivity {
                 mergeTwoGifs.mergeFrames();
                 gifImageView.setVisibility(View.GONE);
             }
-            new MyTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            new DrawClipArtOnMainFrame().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
         return true;
     }
@@ -213,12 +205,16 @@ public class MakeGifActivity extends ActionBarActivity {
         gifImitation = new GifImitation(MakeGifActivity.this, imageView, array, 500);
         gifImitation.start();
 
-        Bitmap bm = Bitmap.createBitmap(GifsArtConst.FRAME_SIZE, GifsArtConst.FRAME_SIZE, Bitmap.Config.ARGB_8888);
+        Bitmap bm = Bitmap.createBitmap(GifItConst.FRAME_SIZE, GifItConst.FRAME_SIZE, Bitmap.Config.ARGB_8888);
         bm.eraseColor(Color.TRANSPARENT);
         Bitmap mutableBitmap = bm.copy(Bitmap.Config.ARGB_8888, true);
         mainView = new MainView(this, mutableBitmap);
         mainView.setId(R.id.mainViewId);
         container = (ViewGroup) findViewById(R.id.main_view_container);
+
+        clipartLayout = (LinearLayout) findViewById(R.id.clipart_horizontal_list_container);
+        clipartLayout.setVisibility(View.VISIBLE);
+        clipartLayout.animate().translationY(200);
 
 
         try {
@@ -269,7 +265,6 @@ public class MakeGifActivity extends ActionBarActivity {
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                 byte[] byteArray = stream.toByteArray();
                 Intent intent = new Intent(MakeGifActivity.this, VideoEffectsActivity.class);
-                intent.putStringArrayListExtra("paths", arrayList);
                 intent.putExtra("bytearray", byteArray);
                 startActivityForResult(intent, 333);
             }
@@ -367,13 +362,33 @@ public class MakeGifActivity extends ActionBarActivity {
         clipartLayout.setVisibility(View.VISIBLE);
     }
 
+    private void intiEffects() {
+
+        clipartLayout.removeAllViews();
+        ImageView imgView = new ImageView(this);
+        int size = (int) Utils.dpToPixel(35, this);
+        int margin = (int) Utils.dpToPixel(7, this);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(size, size);
+        layoutParams.setMargins(margin, margin, margin, margin);
+        imgView.setLayoutParams(layoutParams);
+        imgView.setImageBitmap(Effects.snowEffect(array.get(0).getBitmap()));
+        imgView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //addClipart(position);
+            }
+        });
+        clipartLayout.addView(imgView);
+
+    }
+
     private void addClipart(int position) {
         if (mainView != null) {
             mainView.addClipart(clipartList[position]);
         }
     }
 
-    class MyTask extends AsyncTask<Void, Void, Void> {
+    class DrawClipArtOnMainFrame extends AsyncTask<Void, Void, Void> {
 
         Clipart clipart = mainView.getClipartItem();
 

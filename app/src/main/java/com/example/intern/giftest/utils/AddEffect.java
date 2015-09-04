@@ -17,23 +17,9 @@ import android.os.AsyncTask;
 import android.widget.Toast;
 
 import com.example.intern.giftest.adapter.Adapter;
-import com.example.intern.giftest.effects.BoostEffect;
-import com.example.intern.giftest.effects.Effects;
-import com.example.intern.giftest.effects.EmbossEffect;
-import com.example.intern.giftest.effects.EngraveEffect;
-import com.example.intern.giftest.effects.GrayScaleEffect;
-import com.example.intern.giftest.effects.ReflectionEffect;
-import com.example.intern.giftest.effects.SnowEffect;
 import com.example.intern.giftest.effects.Utils.ConvolutionMatrix;
-import com.example.intern.giftest.effects.Utils.EffectsItem;
-import com.example.intern.giftest.gifutils.AnimatedGifEncoder;
+import com.example.intern.giftest.items.GalleryItem;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 

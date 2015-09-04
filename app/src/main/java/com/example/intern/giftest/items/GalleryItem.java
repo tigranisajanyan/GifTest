@@ -1,4 +1,4 @@
-package com.example.intern.giftest.utils;
+package com.example.intern.giftest.items;
 
 import android.graphics.Bitmap;
 

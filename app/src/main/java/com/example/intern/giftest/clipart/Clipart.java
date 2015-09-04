@@ -1,6 +1,7 @@
 package com.example.intern.giftest.clipart;
 
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 
 /**
  * Created by ani on 7/24/15.
@@ -72,6 +73,11 @@ public class Clipart {
 	public float getRotation() {
 		return rotation;
 	}
+
+
+    public void draw(Canvas canvas, int index){
+
+    }
 
 
 }

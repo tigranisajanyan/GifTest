@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import com.example.intern.giftest.adapter.Adapter;
 import com.example.intern.giftest.gifutils.AnimatedGifEncoder;
+import com.example.intern.giftest.items.GalleryItem;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;

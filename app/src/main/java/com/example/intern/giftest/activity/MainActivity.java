@@ -11,13 +11,12 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.decoder.VideoDecoder;
 import com.example.intern.giftest.R;
-import com.example.intern.giftest.utils.GifsArtConst;
+import com.example.intern.giftest.utils.GifItConst;
 import com.example.intern.giftest.utils.Utils;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -47,7 +46,7 @@ public class MainActivity extends ActionBarActivity {
         ImageLoader.getInstance().clearDiskCache();
 
         context = this;
-        Utils.craeteDir(GifsArtConst.MY_DIR);
+        Utils.craeteDir(GifItConst.MY_DIR);
 
         makeGifButton = (TextView) findViewById(R.id.make_gif_button);
         shootingGifButton = (TextView) findViewById(R.id.shooting_gif_button);
@@ -74,7 +73,7 @@ public class MainActivity extends ActionBarActivity {
             public void onClick(View v) {
                 Toast.makeText(MainActivity.this, "Please pick video no longer then 30 seconds", Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType(GifsArtConst.VIDEO_TYPE);
+                intent.setType(GifItConst.VIDEO_TYPE);
                 startActivityForResult(intent, 100);
             }
         });
@@ -84,7 +83,7 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Utils.clearDir(new File(root, GifsArtConst.MY_DIR));
+        Utils.clearDir(new File(root, GifItConst.MY_DIR));
     }
 
     @Override
@@ -129,14 +128,14 @@ public class MainActivity extends ActionBarActivity {
                     progressDialog.setMessage("Please Wait");
                     progressDialog.setCancelable(false);
                     progressDialog.show();
-                    VideoDecoder videoDecoder = new VideoDecoder(MainActivity.this, Utils.getRealPathFromURI(getApplicationContext(), data.getData()), Integer.MAX_VALUE, VideoDecoder.FrameSize.NORMAL, root + "/" + GifsArtConst.MY_DIR);
+                    VideoDecoder videoDecoder = new VideoDecoder(MainActivity.this, Utils.getRealPathFromURI(getApplicationContext(), data.getData()), Integer.MAX_VALUE, VideoDecoder.FrameSize.NORMAL, root + "/" + GifItConst.MY_DIR);
                     videoDecoder.extractVideoFrames();
                     videoDecoder.setOnDecodeFinishedListener(new VideoDecoder.OnDecodeFinishedListener() {
                         @Override
                         public void onFinish(boolean isDone) {
                             Intent intent = new Intent(MainActivity.this, MakeGifActivity.class);
-                            intent.putExtra(GifsArtConst.INDEX, 3);
-                            intent.putExtra(GifsArtConst.VIDEO_PATH, Utils.getRealPathFromURI(getApplicationContext(), data.getData()));
+                            intent.putExtra(GifItConst.INDEX, 3);
+                            intent.putExtra(GifItConst.VIDEO_PATH, Utils.getRealPathFromURI(getApplicationContext(), data.getData()));
                             startActivity(intent);
                             finish();
                             progressDialog.dismiss();
