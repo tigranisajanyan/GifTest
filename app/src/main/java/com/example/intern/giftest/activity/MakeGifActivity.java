@@ -74,6 +74,7 @@ public class MakeGifActivity extends ActionBarActivity {
 
     private int speed = 500;
     private int displayWidth;
+    private int displayHeight;
     private String videoPath;
     private boolean isHide = true;
     private GifImitation gifImitation;
@@ -131,7 +132,7 @@ public class MakeGifActivity extends ActionBarActivity {
             videoPath = getIntent().getStringExtra(GifItConst.VIDEO_PATH);
             File file = new File(root, GifItConst.MY_DIR);
             File[] files = file.listFiles();
-            int x = files.length / 15 + 1;
+            int x = files.length / GifItConst.GENERATED_FRAMES_MAX_COUNT + 1;
             for (int i = 0; i < files.length; i++) {
                 if (i % x == 0) {
                     ByteBuffer buffer = PhotoUtils.readBufferFromFile(files[i].getAbsolutePath(), PhotoUtils.checkBufferSize(videoPath, VideoDecoder.FrameSize.NORMAL));
@@ -179,9 +180,11 @@ public class MakeGifActivity extends ActionBarActivity {
 
         DisplayMetrics metrics = getResources().getDisplayMetrics();
         displayWidth = metrics.widthPixels;
+        displayHeight = metrics.heightPixels;
 
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(displayWidth, displayWidth);
-        findViewById(R.id.main_view_container).setLayoutParams(layoutParams);
+        container = (ViewGroup) findViewById(R.id.main_view_container);
+        container.setLayoutParams(layoutParams);
 
         seekBar = (SeekBar) findViewById(R.id.seek_bar);
         imageView = (ImageView) findViewById(R.id.image);
@@ -210,12 +213,10 @@ public class MakeGifActivity extends ActionBarActivity {
         Bitmap mutableBitmap = bm.copy(Bitmap.Config.ARGB_8888, true);
         mainView = new MainView(this, mutableBitmap);
         mainView.setId(R.id.mainViewId);
-        container = (ViewGroup) findViewById(R.id.main_view_container);
 
         clipartLayout = (LinearLayout) findViewById(R.id.clipart_horizontal_list_container);
         clipartLayout.setVisibility(View.VISIBLE);
         clipartLayout.animate().translationY(200);
-
 
         try {
             gifDrawable = new GifDrawable(getResources(), R.drawable.giff);
