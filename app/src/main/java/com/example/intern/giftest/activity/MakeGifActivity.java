@@ -173,7 +173,6 @@ public class MakeGifActivity extends ActionBarActivity {
         //intiCliparts();
         initEffects();
 
-
     }
 
     @Override
@@ -187,7 +186,7 @@ public class MakeGifActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_export) {
-            SaveGIFAsyncTask saveGIFAsyncTask = new SaveGIFAsyncTask(root + "/test_images/test.gif", array, speed, adapter, MakeGifActivity.this);
+            SaveGIFAsyncTask saveGIFAsyncTask = new SaveGIFAsyncTask(root + GifItConst.SLASH + GifItConst.MY_DIR + GifItConst.SLASH + GifItConst.GIF_NAME, array, speed, adapter, MakeGifActivity.this);
             saveGIFAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         } else if (id == R.id.action_save) {
             if (gifImageView.getVisibility() == View.VISIBLE) {

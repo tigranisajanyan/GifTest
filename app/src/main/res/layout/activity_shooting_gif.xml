@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -6,16 +6,24 @@
     android:orientation="vertical"
     tools:context="com.example.intern.giftest.activity.ShootingGifActivity">
 
+    <LinearLayout
+        android:id="@+id/camera_preview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:background="@android:color/background_light"
+        android:gravity="center"
+        android:orientation="horizontal" />
 
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="@dimen/abc_action_bar_default_height_material"
-        android:background="@color/yellow">
+        android:background="@color/yellow_transparent">
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/abc_action_bar_default_height_material"
-            android:background="@color/yellow">
+            android:layout_height="@dimen/abc_action_bar_default_height_material">
 
             <LinearLayout
                 android:layout_gravity="center"
@@ -57,20 +65,6 @@
 
     </android.support.v7.widget.Toolbar>
 
-    <LinearLayout
-        android:id="@+id/camera_preview"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_gravity="center"
-        android:layout_weight="1"
-        android:background="@android:color/background_light"
-        android:gravity="center"
-        android:orientation="horizontal" />
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
 
     <CheckBox
         android:layout_marginBottom="20dp"
@@ -78,8 +72,8 @@
         android:id="@+id/button_capture"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_gravity="bottom|center_horizontal"
         android:button="@drawable/capture_stop_camera" />
 
 
-</LinearLayout>
+</FrameLayout>

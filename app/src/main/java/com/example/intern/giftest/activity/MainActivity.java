@@ -120,7 +120,7 @@ public class MainActivity extends ActionBarActivity {
                 String time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
                 long timeInmillisec = Long.parseLong(time);
                 long seconds = timeInmillisec / 1000;
-                if (seconds > 30) {
+                if (seconds > GifItConst.VIDEO_MAX_SECONDS) {
                     Toast.makeText(MainActivity.getContext(), "Video is too long", Toast.LENGTH_LONG).show();
                 } else {
                     final ProgressDialog progressDialog = new ProgressDialog(MainActivity.this);
@@ -134,7 +134,7 @@ public class MainActivity extends ActionBarActivity {
                         @Override
                         public void onFinish(boolean isDone) {
                             Intent intent = new Intent(MainActivity.this, MakeGifActivity.class);
-                            intent.putExtra(GifItConst.INDEX, 3);
+                            intent.putExtra(GifItConst.INDEX, GifItConst.VIDEO_TO_GIF_INDEX);
                             intent.putExtra(GifItConst.VIDEO_PATH, Utils.getRealPathFromURI(getApplicationContext(), data.getData()));
                             startActivity(intent);
                             finish();

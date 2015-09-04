@@ -49,7 +49,6 @@ public class ShootingGifActivity extends ActionBarActivity {
     private boolean cameraFront = false;
 
     private static final String root = Environment.getExternalStorageDirectory().toString();
-    private File myDir = new File(root + "/test_images");
 
     private int currentCapturedTime;
     private int capturedTime;
@@ -84,18 +83,6 @@ public class ShootingGifActivity extends ActionBarActivity {
             camera = Camera.open(findBackFacingCamera());
             cameraPreview.refreshCamera(camera);
 
-            /*camera.setPreviewCallback(new Camera.PreviewCallback() {
-                public void onPreviewFrame(byte[] data, Camera camera) {
-
-                    Log.d("gagagagag", data.length + "");
-                    BitmapFactory.Options opts = new BitmapFactory.Options();
-                    Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);//,opts);
-
-                    Log.d("gagagagag", bitmap.getHeight() + "");
-
-
-                }
-            });*/
         }
     }
 
@@ -110,10 +97,10 @@ public class ShootingGifActivity extends ActionBarActivity {
         Display display = getWindowManager().getDefaultDisplay();
         width = display.getWidth();
 
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(800, 1280);
-        layoutParams.gravity= Gravity.CENTER_HORIZONTAL;
+        //LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(800, 1280);
+        //layoutParams.gravity= Gravity.CENTER_HORIZONTAL;
         cameraPreviewLayout = (LinearLayout) findViewById(R.id.camera_preview);
-        cameraPreviewLayout.setLayoutParams(layoutParams);
+        //cameraPreviewLayout.setLayoutParams(layoutParams);
 
         cameraPreview = new CameraPreview(context, camera);
 
@@ -141,22 +128,6 @@ public class ShootingGifActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
-
-            /*progressDialog = new ProgressDialog(context);
-            progressDialog.setTitle("Generating Frames");
-            progressDialog.setMessage("Please Wait");
-            progressDialog.setCancelable(false);
-            progressDialog.show();
-
-            final VideoDecoder videoDecoder = new VideoDecoder(ShootingGifActivity.this, root + "/myvideo1.mp4", VideoDecoder.FrameSize.NORMAL, myDir.toString());
-            videoDecoder.extractVideoFrames();
-            videoDecoder.setOnDecodeFinishedListener(new VideoDecoder.OnDecodeFinishedListener() {
-                @Override
-                public void onFinish(boolean isDone) {
-
-                }
-            });*/
-
             return true;
         }
 
@@ -222,7 +193,7 @@ public class ShootingGifActivity extends ActionBarActivity {
 
         mediaRecorder.setOrientationHint(90);
 
-        File file = new File(root, "myvideo1.mp4");
+        File file = new File(root, GifItConst.VIDEO_NAME);
         mediaRecorder.setOutputFile(file.getAbsolutePath());
         mediaRecorder.setMaxDuration(900000); // Set max duration 90 sec.
         mediaRecorder.setMaxFileSize(50000000); // Set max file size 50M
@@ -325,14 +296,14 @@ public class ShootingGifActivity extends ActionBarActivity {
                 progressDialog.setMessage("Please Wait");
                 progressDialog.setCancelable(false);
                 progressDialog.show();
-                VideoDecoder videoDecoder = new VideoDecoder(ShootingGifActivity.this, root + "/myvideo1.mp4", Integer.MAX_VALUE, VideoDecoder.FrameSize.NORMAL, root + "/test_images");
+                VideoDecoder videoDecoder = new VideoDecoder(ShootingGifActivity.this, root + GifItConst.SLASH + GifItConst.VIDEO_NAME, Integer.MAX_VALUE, VideoDecoder.FrameSize.NORMAL, root + GifItConst.SLASH + GifItConst.MY_DIR);
                 videoDecoder.extractVideoFrames();
                 videoDecoder.setOnDecodeFinishedListener(new VideoDecoder.OnDecodeFinishedListener() {
                     @Override
                     public void onFinish(boolean isDone) {
                         Intent intent = new Intent(ShootingGifActivity.this, MakeGifActivity.class);
-                        intent.putExtra(GifItConst.INDEX, 2);
-                        intent.putExtra(GifItConst.VIDEO_PATH, root + "/myvideo1.mp4");
+                        intent.putExtra(GifItConst.INDEX, GifItConst.SHOOT_GIF_INDEX);
+                        intent.putExtra(GifItConst.VIDEO_PATH, root + GifItConst.SLASH + GifItConst.VIDEO_NAME);
                         startActivity(intent);
                         progressDialog.dismiss();
                         finish();
@@ -388,14 +359,14 @@ public class ShootingGifActivity extends ActionBarActivity {
                         progressDialog.setMessage("Please Wait");
                         progressDialog.setCancelable(false);
                         progressDialog.show();
-                        VideoDecoder videoDecoder = new VideoDecoder(ShootingGifActivity.this, root + "/myvideo1.mp4", Integer.MAX_VALUE, VideoDecoder.FrameSize.NORMAL, root + "/test_images");
+                        VideoDecoder videoDecoder = new VideoDecoder(ShootingGifActivity.this, root + GifItConst.SLASH + GifItConst.VIDEO_NAME, Integer.MAX_VALUE, VideoDecoder.FrameSize.NORMAL, root + GifItConst.SLASH + GifItConst.MY_DIR);
                         videoDecoder.extractVideoFrames();
                         videoDecoder.setOnDecodeFinishedListener(new VideoDecoder.OnDecodeFinishedListener() {
                             @Override
                             public void onFinish(boolean isDone) {
                                 Intent intent = new Intent(ShootingGifActivity.this, MakeGifActivity.class);
-                                intent.putExtra(GifItConst.INDEX, 2);
-                                intent.putExtra(GifItConst.VIDEO_PATH, root + "/myvideo1.mp4");
+                                intent.putExtra(GifItConst.INDEX, GifItConst.SHOOT_GIF_INDEX);
+                                intent.putExtra(GifItConst.VIDEO_PATH, root + GifItConst.SLASH + GifItConst.MY_DIR);
                                 startActivity(intent);
                                 progressDialog.dismiss();
                                 finish();
