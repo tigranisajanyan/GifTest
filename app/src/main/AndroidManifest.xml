@@ -41,6 +41,11 @@
             android:theme="@style/Theme.AppCompat.Light">
         </activity>
         <activity
+            android:name=".activity.GifViewActivity"
+            android:label="@string/title_activity_second"
+            android:theme="@style/Theme.AppCompat.Light">
+        </activity>
+        <activity
             android:name=".activity.ShootingGifActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:label="@string/title_activity_shooting_gif" >
