@@ -1,10 +1,14 @@
 package com.example.intern.giftest.utils;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
+import com.example.intern.giftest.activity.GifViewActivity;
 import com.example.intern.giftest.adapter.Adapter;
 import com.example.intern.giftest.gifutils.AnimatedGifEncoder;
 import com.example.intern.giftest.items.GalleryItem;
@@ -94,7 +98,26 @@ public class SaveGIFAsyncTask extends AsyncTask<Void, Integer, Void> {
     protected void onPostExecute(Void result) {
         super.onPostExecute(result);
         progressDialog.dismiss();
-        Toast.makeText(context, "Done", Toast.LENGTH_LONG).show();
+        //Toast.makeText(context, "Done", Toast.LENGTH_LONG).show();
+        AlertDialog.Builder gifSavedDialogBuilder = new AlertDialog.Builder(context);
+        gifSavedDialogBuilder.setTitle("GiFFit");
+        gifSavedDialogBuilder.setMessage("Gif saved successfully");
+        gifSavedDialogBuilder.setPositiveButton("Preview", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(context, GifViewActivity.class);
+                intent.putExtra(GifViewActivity.EXTRA_GIF_PATH, outputDir);
+                context.startActivity(intent);
+            }
+        });
+        gifSavedDialogBuilder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        AlertDialog alertDialog = gifSavedDialogBuilder.create();
+        alertDialog.show();
     }
 
 }
