@@ -3,17 +3,20 @@ package com.example.intern.giftest.activity;
 import android.content.ClipData;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.DisplayMetrics;
 import android.view.DragEvent;
 import android.view.Menu;
@@ -27,10 +30,21 @@ import android.widget.SeekBar;
 
 import com.decoder.PhotoUtils;
 import com.decoder.VideoDecoder;
+import com.example.intern.giftest.R;
 import com.example.intern.giftest.adapter.Adapter;
+import com.example.intern.giftest.adapter.BitmapRecyclerViewAdapter;
 import com.example.intern.giftest.clipart.Clipart;
 import com.example.intern.giftest.clipart.MainView;
+import com.example.intern.giftest.effects.BoostEffect;
+import com.example.intern.giftest.effects.EffectSelectorAdapter;
 import com.example.intern.giftest.effects.Effects;
+import com.example.intern.giftest.effects.EmbossEffect;
+import com.example.intern.giftest.effects.EngraveEffect;
+import com.example.intern.giftest.effects.GrayScaleEffect;
+import com.example.intern.giftest.effects.ReflectionEffect;
+import com.example.intern.giftest.effects.SnowEffect;
+import com.example.intern.giftest.effects.Utils.EffectsItem;
+import com.example.intern.giftest.helper.SimpleItemTouchHelperCallback;
 import com.example.intern.giftest.utils.AddEffect;
 import com.example.intern.giftest.items.GalleryItem;
 import com.example.intern.giftest.R;
@@ -79,6 +93,8 @@ public class MakeGifActivity extends ActionBarActivity {
     private boolean isHide = true;
     private GifImitation gifImitation;
     private GifDrawable gifDrawable;
+	private RecyclerView actionsRecyclerView = null;
+	private BitmapRecyclerViewAdapter effectsAdapter = null;
 
     private ViewGroup container;
 
@@ -98,6 +114,15 @@ public class MakeGifActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_make_gif);
 
+
+		LinearLayoutManager horizontalLayoutManager = new LinearLayoutManager(getApplicationContext());
+		horizontalLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+
+		actionsRecyclerView = (RecyclerView) findViewById(R.id.actions_recycler_view);
+		actionsRecyclerView.setLayoutManager(horizontalLayoutManager);
+
+		effectsAdapter = new BitmapRecyclerViewAdapter();
+		actionsRecyclerView.setAdapter(effectsAdapter);
         if (getIntent().getIntExtra(GifItConst.INDEX, 0) == GifItConst.IMAGES_TO_GIF_INDEX) {
 
             ArrayList<String> arrayList = getIntent().getStringArrayListExtra(GifItConst.IMAGE_PATHS);
@@ -146,8 +171,7 @@ public class MakeGifActivity extends ActionBarActivity {
 
         init();
         //intiCliparts();
-        intiEffects();
-
+        initEffects();
 
     }
 
@@ -162,7 +186,7 @@ public class MakeGifActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_export) {
-            SaveGIFAsyncTask saveGIFAsyncTask = new SaveGIFAsyncTask(root + "/test_images/test.gif", array, speed, adapter, MakeGifActivity.this);
+            SaveGIFAsyncTask saveGIFAsyncTask = new SaveGIFAsyncTask(root + GifItConst.SLASH + GifItConst.MY_DIR + GifItConst.SLASH + GifItConst.GIF_NAME, array, speed, adapter, MakeGifActivity.this);
             saveGIFAsyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         } else if (id == R.id.action_save) {
             if (gifImageView.getVisibility() == View.VISIBLE) {
@@ -204,7 +228,11 @@ public class MakeGifActivity extends ActionBarActivity {
         recyclerView.setItemAnimator(itemAnimator);
         recyclerView.setAdapter(adapter);
         recyclerView.addItemDecoration(new SpacesItemDecoration(1));
-
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        ItemTouchHelper.Callback callback =
+                new SimpleItemTouchHelperCallback(adapter);
+        ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+        touchHelper.attachToRecyclerView(recyclerView);
         gifImitation = new GifImitation(MakeGifActivity.this, imageView, array, 500);
         gifImitation.start();
 
@@ -261,13 +289,22 @@ public class MakeGifActivity extends ActionBarActivity {
         addEffectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                Bitmap bitmap = array.get(0).getBitmap();
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                byte[] byteArray = stream.toByteArray();
-                Intent intent = new Intent(MakeGifActivity.this, VideoEffectsActivity.class);
-                intent.putExtra("bytearray", byteArray);
-                startActivityForResult(intent, 333);
+//                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//                Bitmap bitmap = array.get(0).getBitmap();
+//                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+//                byte[] byteArray = stream.toByteArray();
+//                Intent intent = new Intent(MakeGifActivity.this, VideoEffectsActivity.class);
+//                intent.putExtra("bytearray", byteArray);
+//                startActivityForResult(intent, 333);
+				if (isHide) {
+					clipartLayout.animate().translationY(0);
+					container.addView(mainView);
+					isHide = false;
+				} else {
+					clipartLayout.animate().translationY(200);
+					container.removeView(mainView);
+					isHide = true;
+				}
             }
         });
 
@@ -363,23 +400,64 @@ public class MakeGifActivity extends ActionBarActivity {
         clipartLayout.setVisibility(View.VISIBLE);
     }
 
-    private void intiEffects() {
+    private void initEffects() {
+//		EffectsItem item1 = new EffectsItem(bitmap, new GrayScaleEffect(VideoEffectsActivity.this));
+//		EffectsItem item2 = new EffectsItem(bitmap, new ReflectionEffect(VideoEffectsActivity.this));
+//		EffectsItem item3 = new EffectsItem(bitmap, new SnowEffect(VideoEffectsActivity.this));
+//		EffectsItem item4 = new EffectsItem(bitmap, new BoostEffect(VideoEffectsActivity.this));
+//		EffectsItem item5 = new EffectsItem(bitmap, new EngraveEffect(VideoEffectsActivity.this));
+//		EffectsItem item6 = new EffectsItem(bitmap, new EmbossEffect(VideoEffectsActivity.this));
+//		adapter.addItem(item1);
+//		adapter.addItem(item2);
+//		adapter.addItem(item3);
+//		adapter.addItem(item4);
+//		adapter.addItem(item5);
+//		adapter.addItem(item6);
 
-        clipartLayout.removeAllViews();
-        ImageView imgView = new ImageView(this);
-        int size = (int) Utils.dpToPixel(35, this);
-        int margin = (int) Utils.dpToPixel(7, this);
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(size, size);
-        layoutParams.setMargins(margin, margin, margin, margin);
-        imgView.setLayoutParams(layoutParams);
-        imgView.setImageBitmap(Effects.snowEffect(array.get(0).getBitmap()));
-        imgView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //addClipart(position);
-            }
-        });
-        clipartLayout.addView(imgView);
+
+		AsyncTask<Void, Void, ArrayList<Bitmap>> loadEffects = new AsyncTask<Void, Void, ArrayList<Bitmap>>() {
+			@Override
+			protected ArrayList<Bitmap> doInBackground(Void... params) {
+				System.out.println("start effect loading");
+				Bitmap scaledBitmap = Bitmap.createScaledBitmap(array.get(0).getBitmap(), 100, 100, false);
+				ArrayList<Bitmap> bitmapsArray = new ArrayList<>();
+				bitmapsArray.add(Effects.snowEffect(scaledBitmap));
+				bitmapsArray.add(Effects.boost(scaledBitmap, 1, 50));
+				bitmapsArray.add(Effects.emboss(scaledBitmap));
+				bitmapsArray.add(Effects.engrave(scaledBitmap));
+				bitmapsArray.add(Effects.reflection(scaledBitmap));
+				bitmapsArray.add(Effects.grayscale(scaledBitmap));
+				return bitmapsArray;
+			}
+
+			@Override
+			protected void onPostExecute(ArrayList<Bitmap> bitmaps) {
+				super.onPostExecute(bitmaps);
+				System.out.println("count = "+bitmaps.size());
+				for (Bitmap bmp : bitmaps ) {
+					effectsAdapter.addItem(bmp);
+				}
+				effectsAdapter.notifyDataSetChanged();
+			}
+		};
+
+		loadEffects.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+//
+//        clipartLayout.removeAllViews();
+//        ImageView imgView = new ImageView(this);
+//        int size = (int) Utils.dpToPixel(35, this);
+//        int margin = (int) Utils.dpToPixel(7, this);
+//        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(size, size);
+//        layoutParams.setMargins(margin, margin, margin, margin);
+//        imgView.setLayoutParams(layoutParams);
+//        imgView.setImageBitmap(Effects.snowEffect(array.get(0).getBitmap()));
+//        imgView.setOnClickListener(new View.OnClickListener() {
+//			@Override
+//			public void onClick(View v) {
+//				//addClipart(position);
+//			}
+//		});
+//        clipartLayout.addView(imgView);
 
     }
 

@@ -1,11 +1,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/black"
-    android:gravity="center_horizontal"
-    android:orientation="vertical"
-    tools:context=".MainActivity">
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/black"
+              android:gravity="center_horizontal"
+              android:orientation="vertical"
+              tools:context=".MainActivity">
 
     <FrameLayout
         android:id="@+id/main_view_container"
@@ -16,7 +16,7 @@
         <ImageView
             android:id="@+id/image"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"/>
 
         <pl.droidsonroids.gif.GifImageView
             android:id="@+id/gif_art"
@@ -24,7 +24,7 @@
             android:layout_height="70dp"
             android:layout_gravity="center"
             android:src="@drawable/giff"
-            android:visibility="gone" />
+            android:visibility="gone"/>
 
     </FrameLayout>
 
@@ -33,14 +33,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:max="18"
-        android:progress="8" />
+        android:progress="8"/>
 
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rec_view"
         android:layout_width="match_parent"
         android:layout_height="70dp"
-        android:layout_marginTop="5dp" />
+        android:layout_marginTop="5dp"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -51,14 +51,14 @@
             android:id="@+id/add_gif"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="add gif" />
+            android:text="add gif"/>
 
         <Button
             android:id="@+id/add_clipart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
-            android:background="@mipmap/cliparts_tab" />
+            android:background="@mipmap/cliparts_tab"/>
 
 
         <Button
@@ -66,7 +66,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
-            android:background="@mipmap/settings_tab" />
+            android:background="@mipmap/settings_tab"/>
 
     </LinearLayout>
 
@@ -76,7 +76,13 @@
         android:layout_height="55dp"
         android:layout_alignParentBottom="true"
         android:background="#333333"
-        android:orientation="horizontal" />
+        android:orientation="horizontal">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/actions_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
 
 
 </LinearLayout>

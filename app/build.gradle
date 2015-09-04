@@ -25,7 +25,6 @@ android {
     }
 
 }
-
 dependencies {
     compile 'com.android.support:recyclerview-v7:22.2.0'
     compile files('libs/universal-image-loader-1.9.3.jar')
