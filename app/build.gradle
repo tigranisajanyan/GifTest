@@ -25,14 +25,10 @@ android {
     }
 
 }
-
 dependencies {
     compile 'com.android.support:recyclerview-v7:22.2.0'
     compile files('libs/universal-image-loader-1.9.3.jar')
     compile 'com.android.support:appcompat-v7:22.2.0'
     compile project(':picsart_video_encoder')
     compile project(':android-gif-drawable-master')
-    compile('com.android.support:recyclerview-v7:22.0.0') {
-        exclude module: 'support-v4'
-    }
 }

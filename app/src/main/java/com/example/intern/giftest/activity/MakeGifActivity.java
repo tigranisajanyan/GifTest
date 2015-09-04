@@ -9,13 +9,14 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.DisplayMetrics;
 import android.view.DragEvent;
 import android.view.Menu;
@@ -29,6 +30,7 @@ import android.widget.SeekBar;
 
 import com.decoder.PhotoUtils;
 import com.decoder.VideoDecoder;
+import com.example.intern.giftest.R;
 import com.example.intern.giftest.adapter.Adapter;
 import com.example.intern.giftest.adapter.BitmapRecyclerViewAdapter;
 import com.example.intern.giftest.clipart.Clipart;
@@ -42,6 +44,7 @@ import com.example.intern.giftest.effects.GrayScaleEffect;
 import com.example.intern.giftest.effects.ReflectionEffect;
 import com.example.intern.giftest.effects.SnowEffect;
 import com.example.intern.giftest.effects.Utils.EffectsItem;
+import com.example.intern.giftest.helper.SimpleItemTouchHelperCallback;
 import com.example.intern.giftest.utils.AddEffect;
 import com.example.intern.giftest.items.GalleryItem;
 import com.example.intern.giftest.R;
@@ -226,7 +229,11 @@ public class MakeGifActivity extends ActionBarActivity {
         recyclerView.setItemAnimator(itemAnimator);
         recyclerView.setAdapter(adapter);
         recyclerView.addItemDecoration(new SpacesItemDecoration(1));
-
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        ItemTouchHelper.Callback callback =
+                new SimpleItemTouchHelperCallback(adapter);
+        ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+        touchHelper.attachToRecyclerView(recyclerView);
         gifImitation = new GifImitation(MakeGifActivity.this, imageView, array, 500);
         gifImitation.start();
 
