@@ -8,9 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.example.intern.giftest.R;
-import com.example.intern.giftest.effects.BaseVideoAction;
-import com.example.intern.giftest.effects.Utils.EffectsItem;
-import com.example.intern.giftest.effects.Utils.OnEffectApplyFinishedListener;
+import com.example.intern.giftest.effects.EffectItem;
 
 import java.util.ArrayList;
 
@@ -18,9 +16,9 @@ import java.util.ArrayList;
 /**
  * Created by AramNazaryan on 7/24/15.
  */
-public class BitmapRecyclerViewAdapter extends RecyclerView.Adapter<BitmapRecyclerViewAdapter.ViewHolder> {
+public class ClipartsPreviewAdapter extends RecyclerView.Adapter<ClipartsPreviewAdapter.ViewHolder> {
 
-    private ArrayList<Bitmap> items = new ArrayList<>();
+    private ArrayList<EffectItem> items = new ArrayList<>();
     private LayoutInflater inflater = null;
 
     @Override
@@ -33,7 +31,7 @@ public class BitmapRecyclerViewAdapter extends RecyclerView.Adapter<BitmapRecycl
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        Bitmap item = items.get(position);
+        Bitmap item = items.get(position).getBitmap();
         holder.imageView.setImageBitmap(item);
     }
 
@@ -43,7 +41,7 @@ public class BitmapRecyclerViewAdapter extends RecyclerView.Adapter<BitmapRecycl
         return items.size();
     }
 
-    public void addItem(Bitmap item) {
+    public void addItem(EffectItem item) {
         items.add(item);
     }
 
@@ -51,7 +49,7 @@ public class BitmapRecyclerViewAdapter extends RecyclerView.Adapter<BitmapRecycl
         items.clear();
     }
 
-    public Bitmap getItem(int position) {
+    public EffectItem getItem(int position) {
         return items.get(position);
     }
 

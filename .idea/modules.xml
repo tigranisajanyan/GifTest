@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/GifTest.iml" filepath="$PROJECT_DIR$/GifTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/android-gif-drawable-master/android-gif-drawable-master.iml" filepath="$PROJECT_DIR$/android-gif-drawable-master/android-gif-drawable-master.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android-gif-drawable-master/android-gif-drawable-master.iml" filepath="$PROJECT_DIR$/android-gif-drawable-master/android-gif-drawable-master.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/picsart_video_encoder/picsart_video_encoder.iml" filepath="$PROJECT_DIR$/picsart_video_encoder/picsart_video_encoder.iml" />
     </modules>
