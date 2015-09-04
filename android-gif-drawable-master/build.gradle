@@ -38,6 +38,11 @@ android {
     }
     buildTypes.debug.jniDebuggable isDebugBuild()
 
+    sourceSets.main {
+        jniLibs.srcDir 'src/activity_gallery/libs' //set .so files directory to libs
+        jni.srcDirs = [] //disable automatic ndk-build call
+    }
+
     if (shouldApplyFlavors()) {
         productFlavors {
             flavors.each() {
