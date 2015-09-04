@@ -114,7 +114,7 @@ public class ShootingGifActivity extends ActionBarActivity {
         Display display = getWindowManager().getDefaultDisplay();
         width = display.getWidth();
 
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(500, 800);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(800, 1280);
         layoutParams.gravity= Gravity.CENTER_HORIZONTAL;
         cameraPreviewLayout = (LinearLayout) findViewById(R.id.camera_preview);
         cameraPreviewLayout.setLayoutParams(layoutParams);

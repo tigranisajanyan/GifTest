@@ -48,7 +48,7 @@ public class MergeTwoGifs {
             Bitmap resultBitmap = mainFrames.get(i).getBitmap();
             Canvas canvas = new Canvas(resultBitmap);
             Paint paint = new Paint();
-            canvas.scale(640f / 1080, 640f / 1080, 0, 0);
+            canvas.scale((float)mainFrames.get(0).getWidth() / 1080, (float)mainFrames.get(0).getHeight() / 1080, 0, 0);
             canvas.drawBitmap(gifArts.get(i), x, y, paint);
 
             bitmaps.add(resultBitmap);
