@@ -16,7 +16,7 @@ public class BoostEffect extends BaseVideoAction<Void> {
     }
 
     @Override
-    protected Bitmap doActionOnBitmap(Bitmap bmp, Void... params) {
+    protected Bitmap doActionOnBitmap(Bitmap bmp) {
         return boost(bmp, 2, 20);
     }
 

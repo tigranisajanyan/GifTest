@@ -17,7 +17,7 @@ public class EmbossEffect extends BaseVideoAction<BoostEffectParams> {
     }
 
     @Override
-    protected Bitmap doActionOnBitmap(Bitmap bmp, BoostEffectParams... params) {
+    protected Bitmap doActionOnBitmap(Bitmap bmp) {
         return emboss(bmp);
     }
 

@@ -18,7 +18,7 @@ public class SnowEffect extends BaseVideoAction<Void> {
     }
 
     @Override
-    protected Bitmap doActionOnBitmap(Bitmap bmp, Void... params) {
+    protected Bitmap doActionOnBitmap(Bitmap bmp) {
         bmp = applySnowEffect(bmp);
         return bmp;
     }

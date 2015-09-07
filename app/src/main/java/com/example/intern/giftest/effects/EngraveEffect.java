@@ -16,7 +16,7 @@ public class EngraveEffect extends BaseVideoAction<Void> {
     }
 
     @Override
-    protected Bitmap doActionOnBitmap(Bitmap bmp, Void... params) {
+    protected Bitmap doActionOnBitmap(Bitmap bmp) {
         return engrave(bmp);
     }
 

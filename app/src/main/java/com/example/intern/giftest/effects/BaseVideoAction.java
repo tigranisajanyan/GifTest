@@ -11,6 +11,7 @@ import android.util.Log;
 import com.decoder.PhotoUtils;
 import com.example.intern.giftest.clipart.OnVideoActionFinishListener;
 import com.example.intern.giftest.effects.Utils.OnEffectApplyFinishedListener;
+import com.example.intern.giftest.items.GalleryItem;
 import com.example.intern.giftest.utils.Utils;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -18,6 +19,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 
 
 /**
@@ -26,60 +28,50 @@ import java.nio.ByteBuffer;
 public abstract class BaseVideoAction<T> {
 
     private Activity activity = null;
-    private ProgressDialog progressDialog = null;
+//    private ProgressDialog progressDialog = null;
     private OnVideoActionFinishListener listener = null;
 
-    protected abstract Bitmap doActionOnBitmap(Bitmap videoFrameBitmap, T... params);
+    protected abstract Bitmap doActionOnBitmap(Bitmap videoFrameBitmap);
 
     public BaseVideoAction(Activity activity, T... params) {
         this.activity = activity;
-        if (activity != null) {
-            progressDialog = new ProgressDialog(activity);
-            progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        }
+//        if (activity != null) {
+//            progressDialog = new ProgressDialog(activity);
+//            progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+//        }
     }
 
-    public void startAction(final String folderPath, final T... parameters) {
+    public void startAction(final ArrayList<GalleryItem> galleryItems, final T... parameters) {
 
         AsyncTask<Void, Integer, Void> doActionTask = new AsyncTask<Void, Integer, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
-                File parentDirectory = new File(folderPath);
-                File[] bitmapPaths = parentDirectory.listFiles();
 
-                for (int i = 0; i < bitmapPaths.length; i++) {
-                    /*Bitmap bitmap = BitmapFactory.decodeFile(parentDirectory.getBitmap() + "/" + bitmapPaths[i]);
-                    Bitmap mutableBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
-                    bitmap.recycle();
-                    Bitmap bitmapAfterAction = doActionOnBitmap(mutableBitmap, parameters);
-                    saveBitmapToFile(parentDirectory.getBitmap() + "/" + bitmapPaths[i], bitmapAfterAction);
-                    mutableBitmap.recycle();
-                    bitmapAfterAction.recycle();*/
-
-                    Bitmap bitmap = Utils.readBitmapFromBufferFile(activity, bitmapPaths[i].getAbsolutePath());
-                    Bitmap bitmapAfterAction = doActionOnBitmap(bitmap, parameters);
-                    PhotoUtils.saveBufferToSDCard(bitmapPaths[i].getAbsolutePath(), PhotoUtils.fromBitmapToBuffer(bitmapAfterAction));
-
-
-                    onProgressUpdate(i, bitmapPaths.length);
-                }
+                int count = galleryItems.size();
+                for (int i = 0; i < count; i++) {
+					GalleryItem item  = galleryItems.get(i);
+                    Bitmap bitmapAfterAction = doActionOnBitmap(item.getBitmap());
+					item.setBitmap(bitmapAfterAction);
+//                    onProgressUpdate(i, count);
+					System.out.println("progress  = "+i+" / "+count);
+				}
                 return null;
             }
 
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                if (progressDialog != null) {
-                    progressDialog.show();
-                }
+//                if (progressDialog != null) {
+//                    progressDialog.show();
+//                }
             }
 
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-                if (progressDialog != null) {
-                    progressDialog.dismiss();
-                }
+//                if (progressDialog != null) {
+//                    progressDialog.dismiss();
+//                }
                 ImageLoader.getInstance().clearDiskCache();
                 ImageLoader.getInstance().clearMemoryCache();
                 //adapter.notifyDataSetChanged();
@@ -87,20 +79,20 @@ public abstract class BaseVideoAction<T> {
                 if (listener != null) {
                     listener.onSuccess();
                 }
-                Log.d("gagagagag", "hasar iji");
-            }
+				System.out.println("finished");
+			}
 
             @Override
             protected void onProgressUpdate(Integer... values) {
                 super.onProgressUpdate(values);
-                if (progressDialog != null) {
-                    progressDialog.setProgress(values[0]);
-                    progressDialog.setMax(values[1]);
-                }
+//                if (progressDialog != null) {
+//                    progressDialog.setProgress(values[0]);
+//                    progressDialog.setMax(values[1]);
+//                }
             }
         };
 
-        doActionTask.execute();
+        doActionTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     private void saveBitmapToFile(String path, Bitmap bmp) {
@@ -146,7 +138,7 @@ public abstract class BaseVideoAction<T> {
 //                System.out.println("bitmap = " + bitmap);
                 Bitmap mutableBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
 ////                bitmap.recycle();
-                Bitmap bitmapAfterAction = doActionOnBitmap(mutableBitmap, parameters);
+                Bitmap bitmapAfterAction = doActionOnBitmap(mutableBitmap);
 ////                mutableBitmap.recycle();
                 return bitmapAfterAction;
             }

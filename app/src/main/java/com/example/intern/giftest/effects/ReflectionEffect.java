@@ -21,7 +21,7 @@ public class ReflectionEffect extends BaseVideoAction<Void> {
     }
 
     @Override
-    protected Bitmap doActionOnBitmap(Bitmap bmp, Void... params) {
+    protected Bitmap doActionOnBitmap(Bitmap bmp) {
         bmp = applyReflection(bmp);
         return bmp;
     }

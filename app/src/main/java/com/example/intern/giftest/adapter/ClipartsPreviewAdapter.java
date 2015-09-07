@@ -9,6 +9,7 @@ import android.widget.ImageView;
 
 import com.example.intern.giftest.R;
 import com.example.intern.giftest.effects.EffectItem;
+import com.example.intern.giftest.items.ClipArtItem;
 
 import java.util.ArrayList;
 
@@ -18,7 +19,7 @@ import java.util.ArrayList;
  */
 public class ClipartsPreviewAdapter extends RecyclerView.Adapter<ClipartsPreviewAdapter.ViewHolder> {
 
-    private ArrayList<EffectItem> items = new ArrayList<>();
+    private ArrayList<ClipArtItem> items = new ArrayList<>();
     private LayoutInflater inflater = null;
 
     @Override
@@ -31,7 +32,7 @@ public class ClipartsPreviewAdapter extends RecyclerView.Adapter<ClipartsPreview
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        Bitmap item = items.get(position).getBitmap();
+        Bitmap item = items.get(position).getClipartBitmap();
         holder.imageView.setImageBitmap(item);
     }
 
@@ -41,7 +42,7 @@ public class ClipartsPreviewAdapter extends RecyclerView.Adapter<ClipartsPreview
         return items.size();
     }
 
-    public void addItem(EffectItem item) {
+    public void addItem(ClipArtItem item) {
         items.add(item);
     }
 
@@ -49,7 +50,7 @@ public class ClipartsPreviewAdapter extends RecyclerView.Adapter<ClipartsPreview
         items.clear();
     }
 
-    public EffectItem getItem(int position) {
+    public ClipArtItem getItem(int position) {
         return items.get(position);
     }
 
