@@ -24,4 +24,8 @@
         <item name="android:textSize">30dp</item>
     </style>
 
+    <style name="custom" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <item name="android:previewImage">@color/yellow</item>
+    </style>
+
 </resources>

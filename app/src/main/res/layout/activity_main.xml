@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     android:background="@mipmap/bg_image"
     android:orientation="vertical"
+    android:id="@+id/ttt"
     tools:context="com.example.intern.giftest.activity.MainActivity">
 
     <LinearLayout

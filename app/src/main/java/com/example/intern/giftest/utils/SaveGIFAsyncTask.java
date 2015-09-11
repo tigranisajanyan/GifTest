@@ -1,5 +1,6 @@
 package com.example.intern.giftest.utils;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -26,25 +27,25 @@ import java.util.ArrayList;
  */
 public class SaveGIFAsyncTask extends AsyncTask<Void, Integer, Void> {
 
-    private Context context;
+    private Activity activity;
     private String outputDir;
     private int speed;
     private Adapter adapter;
     private ArrayList<GalleryItem> bitmaps = new ArrayList<>();
     private ProgressDialog progressDialog;
 
-    public SaveGIFAsyncTask(String outputDir, ArrayList<GalleryItem> bitmaps, int speed, Adapter adapter, Context context) {
+    public SaveGIFAsyncTask(String outputDir, ArrayList<GalleryItem> bitmaps, int speed, Adapter adapter, Activity activity) {
         this.outputDir = outputDir;
         this.adapter = adapter;
         this.bitmaps = bitmaps;
-        this.context = context;
+        this.activity = activity;
         this.speed = speed;
     }
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        progressDialog = new ProgressDialog(context);
+        progressDialog = new ProgressDialog(activity);
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         progressDialog.setMax(adapter.getSelected().size());
         progressDialog.show();
@@ -98,16 +99,16 @@ public class SaveGIFAsyncTask extends AsyncTask<Void, Integer, Void> {
     protected void onPostExecute(Void result) {
         super.onPostExecute(result);
         progressDialog.dismiss();
-        //Toast.makeText(context, "Done", Toast.LENGTH_LONG).show();
-        AlertDialog.Builder gifSavedDialogBuilder = new AlertDialog.Builder(context);
-        gifSavedDialogBuilder.setTitle("GiFFit");
+        AlertDialog.Builder gifSavedDialogBuilder = new AlertDialog.Builder(activity);
+        gifSavedDialogBuilder.setTitle("GiFit");
         gifSavedDialogBuilder.setMessage("Gif saved successfully");
         gifSavedDialogBuilder.setPositiveButton("Preview", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent(context, GifViewActivity.class);
+                Intent intent = new Intent(activity, GifViewActivity.class);
                 intent.putExtra(GifViewActivity.EXTRA_GIF_PATH, outputDir);
-                context.startActivity(intent);
+                activity.startActivity(intent);
+                activity.finish();
             }
         });
         gifSavedDialogBuilder.setNeutralButton("OK", new DialogInterface.OnClickListener() {

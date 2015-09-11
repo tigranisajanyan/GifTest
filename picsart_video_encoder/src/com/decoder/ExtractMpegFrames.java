@@ -160,8 +160,10 @@ public class ExtractMpegFrames extends AndroidTestCase {
             String orientation = mediaMetadataRetriever.extractMetadata(
                     MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION);
 
+            // Checking duration by
             String duration = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
 
+            // We must set MAX_FRAMES for deocde
             if (frameCount == Integer.MAX_VALUE) {
                 MAX_FRAMES = (int) (25 * Integer.parseInt(duration) / 1000);
             } else {

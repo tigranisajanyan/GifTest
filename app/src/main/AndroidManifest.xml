@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.intern.giftest" >
+    package="com.example.intern.giftest">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -8,7 +8,8 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.FLASHLIGHT"/>
+    <uses-permission android:name="android.permission.FLASHLIGHT" />
+
     <uses-feature android:name="android.hardware.camera.flash" />
 
     <uses-feature android:name="android.hardware.camera" />
@@ -24,11 +25,11 @@
         android:allowBackup="true"
         android:icon="@mipmap/app_icon"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <activity
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:name=".activity.MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:theme="@style/custom">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -38,31 +39,25 @@
         <activity
             android:name=".activity.MakeGifActivity"
             android:label="@string/title_activity_second"
-            android:theme="@style/Theme.AppCompat.Light">
-        </activity>
+            android:theme="@style/Theme.AppCompat.Light"></activity>
         <activity
             android:name=".activity.GifViewActivity"
             android:label="@string/title_activity_second"
-            android:theme="@style/Theme.AppCompat.Light">
-        </activity>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
         <activity
             android:name=".activity.ShootingGifActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-            android:label="@string/title_activity_shooting_gif" >
-        </activity>
+            android:label="@string/title_activity_shooting_gif"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
         <activity
             android:name=".activity.VideoEffectsActivity"
-            android:label="@string/app_name" >
-        </activity>
+            android:label="@string/app_name"></activity>
         <activity
             android:name=".activity.GalleryActivity"
-            android:theme="@style/Theme.AppCompat.Light"
-            android:label="@string/app_name" >
-        </activity>
+            android:label="@string/app_name"
+            android:theme="@style/Theme.AppCompat.Light"></activity>
         <activity
             android:name=".clipart.ClipartActivity"
-            android:label="@string/app_name" >
-        </activity>
+            android:label="@string/app_name"></activity>
     </application>
 
 </manifest>

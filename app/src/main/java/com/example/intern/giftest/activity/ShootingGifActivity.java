@@ -187,9 +187,9 @@ public class ShootingGifActivity extends ActionBarActivity {
 
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
         mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
-
         mediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_720P));
 
+        //mediaRecorder.setVideoFrameRate(2);
 
         mediaRecorder.setOrientationHint(90);
 

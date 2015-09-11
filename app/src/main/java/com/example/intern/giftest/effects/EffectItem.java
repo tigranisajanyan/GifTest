@@ -6,28 +6,30 @@ import android.graphics.Bitmap;
  * Created by AramNazaryan on 9/4/15.
  */
 public class EffectItem {
-	private Bitmap bitmap = null;
-	private BaseVideoAction action = null;
 
-	public EffectItem(BaseVideoAction action, Bitmap bitmap) {
-		this.action = action;
-		this.bitmap = bitmap;
-	}
+    private Bitmap bitmap = null;
+    private BaseVideoAction action = null;
 
-	public Bitmap getBitmap() {
+    public EffectItem(BaseVideoAction action, Bitmap bitmap) {
+        this.action = action;
+        this.bitmap = bitmap;
+    }
 
-		return bitmap;
-	}
+    public Bitmap getBitmap() {
 
-	public void setBitmap(Bitmap bitmap) {
-		this.bitmap = bitmap;
-	}
+        return bitmap;
+    }
 
-	public BaseVideoAction getAction() {
-		return action;
-	}
+    public void setBitmap(Bitmap bitmap) {
+        this.bitmap = bitmap;
+    }
 
-	public void setAction(BaseVideoAction action) {
-		this.action = action;
-	}
+    public BaseVideoAction getAction() {
+        return action;
+    }
+
+    public void setAction(BaseVideoAction action) {
+        this.action = action;
+    }
+
 }

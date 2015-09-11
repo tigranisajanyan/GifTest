@@ -35,7 +35,11 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -375,6 +379,52 @@ public class Utils {
             return PhotoUtils.fromBufferToBitmap(width, height, buffer);
         }
         return null;
+    }
+
+
+    /**
+     * Loading file from url and saving it to given directory
+     *
+     * @param outputFile
+     * @param fileUrl
+     * @return
+     */
+    public static boolean downloadFile(String outputFile, String fileUrl) {
+        try {
+            URL url = new URL(fileUrl);
+
+            URLConnection ucon = url.openConnection();
+            ucon.setReadTimeout(5000);
+            ucon.setConnectTimeout(10000);
+
+            InputStream is = ucon.getInputStream();
+            BufferedInputStream inStream = new BufferedInputStream(is, 1024 * 5);
+
+            File file = new File(outputFile);
+
+            if (file.exists()) {
+                file.delete();
+            }
+            file.createNewFile();
+
+            FileOutputStream outStream = new FileOutputStream(file);
+            byte[] buff = new byte[5 * 1024];
+
+            int len;
+            while ((len = inStream.read(buff)) != -1) {
+                outStream.write(buff, 0, len);
+            }
+
+            outStream.flush();
+            outStream.close();
+            inStream.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
     }
 
 }
