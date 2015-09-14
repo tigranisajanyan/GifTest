@@ -59,7 +59,6 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> implements
 
 
         try {
-
             if (array.get(position).isFile()) {
                 ImageLoader.getInstance().displayImage(FILE_PREFIX + array.get(position).getImagePath()
                         , holder.icon, new SimpleImageLoadingListener() {

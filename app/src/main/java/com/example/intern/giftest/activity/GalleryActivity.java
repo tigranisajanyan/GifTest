@@ -93,7 +93,13 @@ public class GalleryActivity extends AppCompatActivity {
             return true;
         }
         if (id == R.id.action_save) {
-            recyclerView.setAdapter(videoPickerAdapter);
+            if (recyclerView.getAdapter() == galleryAdapter) {
+                recyclerView.setAdapter(videoPickerAdapter);
+                videoPickerAdapter.notifyDataSetChanged();
+            } else {
+                recyclerView.setAdapter(galleryAdapter);
+                galleryAdapter.notifyDataSetChanged();
+            }
         }
 
         return super.onOptionsItemSelected(item);

@@ -1,6 +1,7 @@
 package com.example.intern.giftest.utils;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -218,11 +219,16 @@ public class Utils {
                     int dataColumnIndex = imagecursor
                             .getColumnIndex(MediaStore.Images.Media.DATA);
 
-                    item.setImagePath(imagecursor.getString(dataColumnIndex));
-                    item.setHeight((int) Utils.getBitmapHeight(item.getImagePath()));
-                    item.setWidth((int) Utils.getBitmapWidth());
+                    File file = new File(imagecursor.getString(dataColumnIndex));
+                    if (file.exists()) {
+                        item.setImagePath(imagecursor.getString(dataColumnIndex));
+                        item.setHeight((int) Utils.getBitmapHeight(item.getImagePath()));
+                        item.setWidth((int) Utils.getBitmapWidth());
+                        item.setType(GalleryItem.Type.IMAGE);
 
-                    galleryList.add(item);
+                        galleryList.add(item);
+                    }
+
                 }
             }
         } catch (Exception e) {
@@ -256,47 +262,51 @@ public class Utils {
 
                     String path = imagecursor.getString(dataColumnIndex);
 
-                    MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-                    retriever.setDataSource(path);
+                    File file = new File(path);
+                    if (file.exists()) {
 
-                    int orientation = Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION));
-                    int w = Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH));
-                    int h = Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT));
+                        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+                        retriever.setDataSource(path);
 
-                    int width;
-                    int height;
+                        int orientation = Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION));
+                        int w = Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH));
+                        int h = Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT));
 
-                    if (orientation == 0 || orientation == 180) {
-                        width = w > h ? w : h;
-                        height = w < h ? w : h;
-                    } else {
-                        width = w > h ? h : w;
-                        height = w < h ? h : w;
+                        int width;
+                        int height;
+
+                        if (orientation == 0 || orientation == 180) {
+                            width = w > h ? w : h;
+                            height = w < h ? w : h;
+                        } else {
+                            width = w > h ? h : w;
+                            height = w < h ? h : w;
+                        }
+
+                        double halfWidth = metrics.widthPixels / 3;
+                        double a = width / halfWidth;
+                        double halfHeight = height / a;
+
+                        item.setImagePath(imagecursor.getString(dataColumnIndex));
+                        item.setHeight((int) halfHeight);
+                        item.setWidth((int) halfWidth);
+                        item.setType(GalleryItem.Type.VIDEO);
+
+                        Bitmap thumb = ThumbnailUtils.createVideoThumbnail(imagecursor.getString(dataColumnIndex),
+                                MediaStore.Images.Thumbnails.MINI_KIND);
+
+                        Bitmap mutableBitmap = thumb.copy(Bitmap.Config.ARGB_8888, true);
+                        Canvas canvas = new Canvas(mutableBitmap);
+
+                        item.setBitmap(mutableBitmap);
+                        galleryList.add(item);
+                        retriever.release();
                     }
-
-                    double halfWidth = metrics.widthPixels / 3;
-                    double a = width / halfWidth;
-                    double halfHeight = height / a;
-
-                    item.setImagePath(imagecursor.getString(dataColumnIndex));
-                    item.setHeight((int) halfHeight);
-                    item.setWidth((int) halfWidth);
-
-                    Bitmap thumb = ThumbnailUtils.createVideoThumbnail(imagecursor.getString(dataColumnIndex),
-                            MediaStore.Images.Thumbnails.MINI_KIND);
-
-                    Bitmap mutableBitmap = thumb.copy(Bitmap.Config.ARGB_8888, true);
-                    Canvas canvas = new Canvas(mutableBitmap);
-
-                    item.setBitmap(mutableBitmap);
-                    galleryList.add(item);
-                    retriever.release();
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         // show newest photo at beginning of the list
         Collections.reverse(galleryList);
         return galleryList;

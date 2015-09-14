@@ -95,6 +95,9 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
         } catch (Exception e) {
             e.printStackTrace();
         }
+        if (array.get(position).getType() == GalleryItem.Type.VIDEO) {
+            holder.isVideo.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -105,14 +108,17 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
     class ViewHolder extends RecyclerView.ViewHolder {
 
         private ImageView image;
+        private ImageView isVideo;
         private ImageView select;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
             image = (ImageView) itemView.findViewById(R.id.gallery_image_item);
+            isVideo = (ImageView) itemView.findViewById(R.id.is_video);
             select = (ImageView) itemView.findViewById(R.id.gallery_item_selected);
             select.setVisibility(View.VISIBLE);
+            isVideo.setVisibility(View.GONE);
         }
     }
 
