@@ -2,6 +2,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainActivity">
+
+    <item
+        android:icon="@mipmap/apply"
+        android:id="@+id/action_save"
+        android:title="Apply"
+        app:showAsAction="always" />
+
     <item
         android:icon="@mipmap/next"
         android:id="@+id/action_settings"

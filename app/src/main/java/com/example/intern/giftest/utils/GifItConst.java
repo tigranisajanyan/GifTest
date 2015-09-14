@@ -15,7 +15,7 @@ public class GifItConst {
     public static String FILE_PREFIX = "file://";
     public static String VIDEO_PATH = "video_path";
 
-    public static String GIPHY_URL = "http://api.giphy.com/v1/gifs/search?q=funny+cat&api_key=dc6zaTOxFJmzC";
+    public static String GIPHY_URL = "http://api.giphy.com/v1/gifs/search?q=funny&limit=15&api_key=dc6zaTOxFJmzC";
     public static String GIPHY_SIZE_ORIGINAL = "original";
     public static String GIPHY_SIZE_PREVIEW = "fixed_width_downsampled";
 

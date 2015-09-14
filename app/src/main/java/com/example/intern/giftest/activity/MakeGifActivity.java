@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Looper;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -479,6 +480,7 @@ public class MakeGifActivity extends ActionBarActivity {
     }
 
     private void initEffects() {
+
         AsyncTask<Void, Void, ArrayList<EffectItem>> loadEffects = new AsyncTask<Void, Void, ArrayList<EffectItem>>() {
             @Override
             protected ArrayList<EffectItem> doInBackground(Void... params) {

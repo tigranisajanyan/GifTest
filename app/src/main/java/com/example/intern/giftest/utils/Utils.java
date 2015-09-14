@@ -2,6 +2,7 @@ package com.example.intern.giftest.utils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.database.Cursor;
@@ -11,11 +12,14 @@ import android.graphics.Canvas;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.media.ExifInterface;
+import android.media.MediaMetadataRetriever;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.Log;
 
 import com.decoder.PhotoUtils;
 import com.example.intern.giftest.activity.GalleryActivity;
@@ -230,6 +234,74 @@ public class Utils {
         return galleryList;
     }
 
+    public static ArrayList<GalleryItem> getGalleryVideos(Activity activity) {
+        ArrayList<GalleryItem> galleryList = new ArrayList();
+        DisplayMetrics metrics = activity.getResources().getDisplayMetrics();
+        try {
+            final String[] columns = {MediaStore.Video.Media.DATA,
+                    MediaStore.Video.Media._ID};
+            final String orderBy = MediaStore.Video.Media._ID;
+
+            Cursor imagecursor = activity.managedQuery(
+                    MediaStore.Video.Media.EXTERNAL_CONTENT_URI, columns,
+                    null, null, orderBy);
+
+            if (imagecursor != null && imagecursor.getCount() > 0) {
+
+                while (imagecursor.moveToNext()) {
+                    GalleryItem item = new GalleryItem();
+
+                    int dataColumnIndex = imagecursor
+                            .getColumnIndex(MediaStore.Video.Media.DATA);
+
+                    String path = imagecursor.getString(dataColumnIndex);
+
+                    MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+                    retriever.setDataSource(path);
+
+                    int orientation = Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION));
+                    int w = Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH));
+                    int h = Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT));
+
+                    int width;
+                    int height;
+
+                    if (orientation == 0 || orientation == 180) {
+                        width = w > h ? w : h;
+                        height = w < h ? w : h;
+                    } else {
+                        width = w > h ? h : w;
+                        height = w < h ? h : w;
+                    }
+
+                    double halfWidth = metrics.widthPixels / 3;
+                    double a = width / halfWidth;
+                    double halfHeight = height / a;
+
+                    item.setImagePath(imagecursor.getString(dataColumnIndex));
+                    item.setHeight((int) halfHeight);
+                    item.setWidth((int) halfWidth);
+
+                    Bitmap thumb = ThumbnailUtils.createVideoThumbnail(imagecursor.getString(dataColumnIndex),
+                            MediaStore.Images.Thumbnails.MINI_KIND);
+
+                    Bitmap mutableBitmap = thumb.copy(Bitmap.Config.ARGB_8888, true);
+                    Canvas canvas = new Canvas(mutableBitmap);
+
+                    item.setBitmap(mutableBitmap);
+                    galleryList.add(item);
+                    retriever.release();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // show newest photo at beginning of the list
+        Collections.reverse(galleryList);
+        return galleryList;
+    }
+
 
     public static void clearDir(File dir) {
         try {
@@ -381,14 +453,6 @@ public class Utils {
         return null;
     }
 
-
-    /**
-     * Loading file from url and saving it to given directory
-     *
-     * @param outputFile
-     * @param fileUrl
-     * @return
-     */
     public static boolean downloadFile(String outputFile, String fileUrl) {
         try {
             URL url = new URL(fileUrl);

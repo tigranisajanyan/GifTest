@@ -7,37 +7,20 @@ import android.media.MediaMetadataRetriever;
 import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.decoder.VideoDecoder;
 import com.example.intern.giftest.R;
-import com.example.intern.giftest.clipart.MainView;
 import com.example.intern.giftest.utils.GifItConst;
 import com.example.intern.giftest.utils.Utils;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -55,6 +38,7 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         Fresco.initialize(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -115,11 +99,6 @@ public class MainActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
-
-            /*Intent i = new Intent();
-            i.setAction(Intent.ACTION_CAMERA_BUTTON);
-            i.putExtra(Intent.EXTRA_KEY_EVENT, new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_CAMERA));
-            sendOrderedBroadcast(i, null);*/
 
             return true;
         }

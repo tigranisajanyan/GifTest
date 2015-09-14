@@ -8,13 +8,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
 import com.example.intern.giftest.R;
+import com.example.intern.giftest.adapter.VideoPickerAdapter;
 import com.example.intern.giftest.adapter.GalleryAdapter;
 import com.example.intern.giftest.items.GalleryItem;
 import com.example.intern.giftest.utils.GifItConst;
@@ -30,7 +30,9 @@ public class GalleryActivity extends AppCompatActivity {
     private StaggeredGridLayoutManager staggeredGridLayoutManager;
     private RecyclerView.ItemAnimator itemAnimator;
     private GalleryAdapter galleryAdapter;
+    private VideoPickerAdapter videoPickerAdapter;
     private ArrayList<GalleryItem> customGalleryArrayList = new ArrayList<>();
+    private ArrayList<GalleryItem> videoArrayList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +48,7 @@ public class GalleryActivity extends AppCompatActivity {
         context = this;
 
         galleryAdapter = new GalleryAdapter(customGalleryArrayList, this, getSupportActionBar());
+        videoPickerAdapter = new VideoPickerAdapter(videoArrayList, this);
 
         recyclerView = (RecyclerView) findViewById(R.id.gallery_rec_view);
         staggeredGridLayoutManager = new StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL);
@@ -89,6 +92,9 @@ public class GalleryActivity extends AppCompatActivity {
 
             return true;
         }
+        if (id == R.id.action_save) {
+            recyclerView.setAdapter(videoPickerAdapter);
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -107,6 +113,7 @@ public class GalleryActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... params) {
             customGalleryArrayList.addAll(Utils.getGalleryPhotos(GalleryActivity.this));
+            videoArrayList.addAll(Utils.getGalleryVideos(GalleryActivity.this));
             return null;
         }
 
@@ -116,12 +123,8 @@ public class GalleryActivity extends AppCompatActivity {
             findViewById(R.id.progress).setVisibility(View.GONE);
             recyclerView.setBackgroundColor(getResources().getColor(R.color.yellow));
             galleryAdapter.notifyDataSetChanged();
+            videoPickerAdapter.notifyDataSetChanged();
         }
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        return super.onKeyDown(keyCode, event);
     }
 
 }

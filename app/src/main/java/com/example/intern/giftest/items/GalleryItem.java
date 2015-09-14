@@ -10,6 +10,7 @@ public class GalleryItem {
     private int width;
     private int height;
     private boolean isFile;
+    private Type type;
 
     private int position;
 
@@ -30,6 +31,18 @@ public class GalleryItem {
         this.isFile = isFile;
         this.width = width;
         this.height = height;
+
+    }
+
+    public GalleryItem(Bitmap bitmap, String imagePath, boolean isSeleted, boolean isFile, int width, int height, Type type) {
+
+        this.bitmap = bitmap;
+        this.imagePath = imagePath;
+        this.isSeleted = isSeleted;
+        this.isFile = isFile;
+        this.width = width;
+        this.height = height;
+        this.type = type;
 
     }
 
@@ -87,6 +100,20 @@ public class GalleryItem {
 
     public void setHeight(int height) {
         this.height = height;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    public enum Type {
+        IMAGE,
+        GIF,
+        VIDEO
     }
 
 }
