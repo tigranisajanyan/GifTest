@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.intern.giftest.items.GalleryItem;
 import com.example.intern.giftest.R;
@@ -25,6 +26,7 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
     private ActionBar actionBar;
 
     private ArrayList<GalleryItem> selected = new ArrayList<>();
+    private ArrayList<Integer> integers = new ArrayList<>();
 
     public GalleryAdapter(ArrayList<GalleryItem> arr, Context c, ActionBar actionBar) {
 
@@ -48,7 +50,6 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
 
                 if (array.get(position).isSeleted()) {
                     array.get(position).setIsSeleted(false);
-                    array.get(position).setPosition(getSelected().size());
                     selected.remove(array.get(position));
                     actionBar.setTitle(getSelected().size() + " Selected");
                     if (getSelected().size() < 1) {
@@ -57,7 +58,6 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
 
                 } else {
                     array.get(position).setIsSeleted(true);
-                    array.get(position).setPosition(getSelected().size());
                     selected.add(array.get(position));
                     actionBar.setTitle(getSelected().size() + " Selected");
                 }
@@ -91,13 +91,13 @@ public class GalleryAdapter extends RecyclerView.Adapter<GalleryAdapter.ViewHold
             holder.select
                     .setSelected(array.get(position).isSeleted());
 
-
         } catch (Exception e) {
             e.printStackTrace();
         }
         if (array.get(position).getType() == GalleryItem.Type.VIDEO) {
             holder.isVideo.setVisibility(View.VISIBLE);
         }
+
     }
 
     @Override

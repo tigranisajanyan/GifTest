@@ -6,9 +6,12 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.widget.Toast;
 
+import com.example.intern.giftest.R;
 import com.example.intern.giftest.activity.GifViewActivity;
 import com.example.intern.giftest.adapter.Adapter;
 import com.example.intern.giftest.gifutils.AnimatedGifEncoder;
@@ -33,6 +36,7 @@ public class SaveGIFAsyncTask extends AsyncTask<Void, Integer, Void> {
     private Adapter adapter;
     private ArrayList<GalleryItem> bitmaps = new ArrayList<>();
     private ProgressDialog progressDialog;
+    private static final String root = Environment.getExternalStorageDirectory().toString();
 
     public SaveGIFAsyncTask(String outputDir, ArrayList<GalleryItem> bitmaps, int speed, Adapter adapter, Activity activity) {
         this.outputDir = outputDir;
@@ -111,14 +115,25 @@ public class SaveGIFAsyncTask extends AsyncTask<Void, Integer, Void> {
                 activity.finish();
             }
         });
-        gifSavedDialogBuilder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+        gifSavedDialogBuilder.setNeutralButton("Share", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Utils.shareImage(activity, outputDir);
+                dialog.dismiss();
+                activity.finish();
+            }
+        });
+        gifSavedDialogBuilder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
+                activity.finish();
             }
         });
         AlertDialog alertDialog = gifSavedDialogBuilder.create();
         alertDialog.show();
+
+
     }
 
 }

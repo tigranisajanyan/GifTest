@@ -18,14 +18,14 @@ public class VideoDecoder {
     private String inputFilePath = "";
     private String outputDirectory = "";
 
-    private FrameSize frameSize;
+    private int frameSize;
     private Context context;
     private int frameCount;
 
     private ArrayList<String> savedFramePath = new ArrayList<>();
     private static OnDecodeFinishedListener onDecodeFinishedListener;
 
-    public VideoDecoder(Context context, String inputFilePath, int frameCount, FrameSize frameSize, String outputDirectory) {
+    public VideoDecoder(Context context, String inputFilePath, int frameCount, int frameSize, String outputDirectory) {
 
         this.context = context;
         this.inputFilePath = inputFilePath;
@@ -59,7 +59,7 @@ public class VideoDecoder {
 
             ExtractMpegFrames extractMpegFrames = new ExtractMpegFrames();
             try {
-                extractMpegFrames.extractMpegFrames(context, inputFilePath, frameCount, frameSize.ordinal() + 1, outputDirectory);
+                extractMpegFrames.extractMpegFrames(context, inputFilePath, frameCount, frameSize, outputDirectory);
 
             } catch (Throwable throwable) {
                 throwable.printStackTrace();
@@ -90,7 +90,8 @@ public class VideoDecoder {
     public enum FrameSize {
         ORIGINAL,
         NORMAL,
-        SMALL
+        SMALL,
+        EXTRA_SMALL
     }
 
 }

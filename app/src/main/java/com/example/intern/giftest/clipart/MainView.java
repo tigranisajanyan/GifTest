@@ -258,6 +258,7 @@ public class MainView extends View {
         if (clipartView != null) {
             clipartView = null;
         }
+        invalidate();
     }
 
 //    public void saveItemsToBitmap() {

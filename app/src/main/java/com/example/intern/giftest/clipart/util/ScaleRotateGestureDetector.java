@@ -291,18 +291,18 @@ public final class ScaleRotateGestureDetector {
                     primaryPoint.set(primPointerX, primPointerY);
                     secondaryPoint.set(secPointerX, secPointerY);
 
-                    final float newDistance = Math.max(Utils.getDistance(primaryPoint, secondaryPoint), 1);
+                    final float newDistance = Math.max(ClipArtUtils.getDistance(primaryPoint, secondaryPoint), 1);
 
                     if (LOG_ENABLED) Log.d(LOG_TAG, "distance : " + newDistance);
 
                     if (newDistance >= touchTolerance) {
                         if (scalingEnabled) {
-                            final float oldDistance = Math.max(Utils.getDistance(oldPrimaryPoint, oldSecondaryPoint), 1);
+                            final float oldDistance = Math.max(ClipArtUtils.getDistance(oldPrimaryPoint, oldSecondaryPoint), 1);
 
                             float scale = newDistance / oldDistance;
 
                             if (edgeCheckingEnabled) {
-                                final float currentScale = Utils.getCurrentScaleFromMatrix(matrix);
+                                final float currentScale = ClipArtUtils.getCurrentScaleFromMatrix(matrix);
 
                                 float postScale = currentScale * scale;
 
@@ -313,7 +313,7 @@ public final class ScaleRotateGestureDetector {
                                 scale = postScale / currentScale;
                             }
 
-                            Utils.getMidPoint(primaryPoint, secondaryPoint, midPoint);
+                            ClipArtUtils.getMidPoint(primaryPoint, secondaryPoint, midPoint);
                             matrix.postScale(scale, scale, midPoint.x, midPoint.y);
 
                             if (gestureListener != null) {
@@ -347,7 +347,7 @@ public final class ScaleRotateGestureDetector {
                         }
 
                         if (rotationEnabled) {
-                            final float rotation = Utils.getAngleBetweenLines(oldPrimaryPoint, oldSecondaryPoint, primaryPoint, secondaryPoint);
+                            final float rotation = ClipArtUtils.getAngleBetweenLines(oldPrimaryPoint, oldSecondaryPoint, primaryPoint, secondaryPoint);
 
                             if (LOG_ENABLED) Log.d(LOG_TAG, "rotation : " + rotation);
 
@@ -376,7 +376,7 @@ public final class ScaleRotateGestureDetector {
                                 gestureListener.onDrag(dx, dy);
                             }
                         } else {
-                            Utils.getMidPointDelta(oldPrimaryPoint, oldSecondaryPoint, primaryPoint, secondaryPoint, translateXY);
+                            ClipArtUtils.getMidPointDelta(oldPrimaryPoint, oldSecondaryPoint, primaryPoint, secondaryPoint, translateXY);
                             matrix.postTranslate(translateXY.x, translateXY.y);
                             if (gestureListener != null) {
                                 gestureListener.onDrag(translateXY.x, translateXY.y);

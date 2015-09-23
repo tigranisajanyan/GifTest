@@ -11,7 +11,6 @@ import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Display;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -185,16 +184,16 @@ public class ShootingGifActivity extends ActionBarActivity {
 
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
         mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
-        mediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_720P));
+        mediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_480P));
 
         //mediaRecorder.setVideoFrameRate(2);
 
-        mediaRecorder.setOrientationHint(90);
+        mediaRecorder.setOrientationHint(GifItConst.CAMERA_OUTPUT_ORIENTATION);
 
         File file = new File(root, GifItConst.VIDEO_NAME);
         mediaRecorder.setOutputFile(file.getAbsolutePath());
-        mediaRecorder.setMaxDuration(900000); // Set max duration 90 sec.
-        mediaRecorder.setMaxFileSize(50000000); // Set max file size 50M
+        mediaRecorder.setMaxDuration(GifItConst.VIDEO_MAX_DURATION); // Set max duration 90 sec.
+        mediaRecorder.setMaxFileSize(GifItConst.VIDEO_FILE_MAX_SIZE); // Set max file size 50M
 
         try {
             mediaRecorder.prepare();
@@ -294,13 +293,15 @@ public class ShootingGifActivity extends ActionBarActivity {
                 progressDialog.setMessage("Please Wait");
                 progressDialog.setCancelable(false);
                 progressDialog.show();
-                VideoDecoder videoDecoder = new VideoDecoder(ShootingGifActivity.this, root + GifItConst.SLASH + GifItConst.VIDEO_NAME, Integer.MAX_VALUE, VideoDecoder.FrameSize.NORMAL, root + GifItConst.SLASH + GifItConst.MY_DIR);
+                VideoDecoder videoDecoder = new VideoDecoder(ShootingGifActivity.this, root + GifItConst.SLASH + GifItConst.VIDEO_NAME, Integer.MAX_VALUE, 2, root + GifItConst.SLASH + GifItConst.MY_DIR);
                 videoDecoder.extractVideoFrames();
                 videoDecoder.setOnDecodeFinishedListener(new VideoDecoder.OnDecodeFinishedListener() {
                     @Override
                     public void onFinish(boolean isDone) {
                         Intent intent = new Intent(ShootingGifActivity.this, MakeGifActivity.class);
+                        intent.putExtra(GifItConst.FRONT_CAMERA, cameraFront);
                         intent.putExtra(GifItConst.INDEX, GifItConst.SHOOT_GIF_INDEX);
+                        intent.putExtra("frame_size", 2);
                         intent.putExtra(GifItConst.VIDEO_PATH, root + GifItConst.SLASH + GifItConst.VIDEO_NAME);
                         startActivity(intent);
                         progressDialog.dismiss();
@@ -325,7 +326,6 @@ public class ShootingGifActivity extends ActionBarActivity {
                         // If there are stories, add them to the table
                         try {
                             mediaRecorder.start();
-
 
                         } catch (final Exception ex) {
                             // Log.i("---","Exception in thread");
@@ -357,13 +357,14 @@ public class ShootingGifActivity extends ActionBarActivity {
                         progressDialog.setMessage("Please Wait");
                         progressDialog.setCancelable(false);
                         progressDialog.show();
-                        VideoDecoder videoDecoder = new VideoDecoder(ShootingGifActivity.this, root + GifItConst.SLASH + GifItConst.VIDEO_NAME, Integer.MAX_VALUE, VideoDecoder.FrameSize.NORMAL, root + GifItConst.SLASH + GifItConst.MY_DIR);
+                        VideoDecoder videoDecoder = new VideoDecoder(ShootingGifActivity.this, root + GifItConst.SLASH + GifItConst.VIDEO_NAME, Integer.MAX_VALUE, 2, root + GifItConst.SLASH + GifItConst.MY_DIR);
                         videoDecoder.extractVideoFrames();
                         videoDecoder.setOnDecodeFinishedListener(new VideoDecoder.OnDecodeFinishedListener() {
                             @Override
                             public void onFinish(boolean isDone) {
                                 Intent intent = new Intent(ShootingGifActivity.this, MakeGifActivity.class);
                                 intent.putExtra(GifItConst.INDEX, GifItConst.SHOOT_GIF_INDEX);
+                                intent.putExtra("frame_size", 2);
                                 intent.putExtra(GifItConst.VIDEO_PATH, root + GifItConst.SLASH + GifItConst.MY_DIR);
                                 startActivity(intent);
                                 progressDialog.dismiss();

@@ -21,9 +21,8 @@ import java.util.Collections;
 /**
  * Created by Tigran on 6/23/15.
  */
-public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> implements ItemTouchHelperAdapter{
+public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> implements ItemTouchHelperAdapter {
 
-    public static final String FILE_PREFIX = "file://";
     private ArrayList<GalleryItem> array;
     private Context context;
 
@@ -59,33 +58,10 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> implements
 
 
         try {
-            if (array.get(position).isFile()) {
-                ImageLoader.getInstance().displayImage(FILE_PREFIX + array.get(position).getImagePath()
-                        , holder.icon, new SimpleImageLoadingListener() {
-
-                    @Override
-                    public void onLoadingStarted(String imageUri, View view) {
-                        holder.icon.setImageBitmap(null);
-                        super.onLoadingStarted(imageUri, view);
-                    }
-
-                    @Override
-                    public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
-
-
-                        holder.icon.setImageBitmap(Utils.scaleCenterCrop(loadedImage, 400, 400));
-                        super.onLoadingComplete(imageUri, view, loadedImage);
-                    }
-                });
-            } else {
-                holder.icon.setImageBitmap(array.get(position).getBitmap());
-            }
-
             holder.icon.setImageBitmap(array.get(position).getBitmap());
 
             holder.selected
                     .setSelected(array.get(position).isSeleted());
-
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -110,6 +86,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> implements
         array.remove(position);
         //animatrRemoveImpl(position);
         notifyItemRemoved(position);
+        notifyItemRangeChanged(position, array.size());
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {

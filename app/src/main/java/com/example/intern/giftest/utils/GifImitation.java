@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by Tigran on 8/6/15.
  */
-public class GifImitation {
+public class GifImitation extends AsyncTask<Void, Integer, Void> {
 
     private Context context;
     private ImageView imageView;
@@ -20,7 +20,6 @@ public class GifImitation {
     private int duration;
     private boolean play = false;
     private int k = 0;
-    private MyTask myTask = new MyTask();
 
     public GifImitation(Context context, ImageView imageView, ArrayList<GalleryItem> bitmaps, int duration) {
 
@@ -30,63 +29,49 @@ public class GifImitation {
         this.context = context;
     }
 
-    public void start() {
-        play = true;
-        myTask.execute();
-    }
-
-    public void stop() {
-        play = false;
-        myTask.cancel(true);
-    }
-
     public void changeDuration(int duration) {
         this.duration = duration;
     }
 
-    class MyTask extends AsyncTask<Void, Integer, Void> {
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+        play = true;
+    }
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-
-            while (play) {
-                try {
-                    TimeUnit.MILLISECONDS.sleep(duration);
-                } catch (InterruptedException e) {
-                    //e.printStackTrace();
-                }
-                int i = 0;
-                while (!bitmaps.get(k%bitmaps.size()).isSeleted()){
-                    if (i == bitmaps.size())
-                        break;
-                    i++;
-                    k++;
-                }
-                if (i != bitmaps.size())
-                    publishProgress(k % bitmaps.size());
+    @Override
+    protected Void doInBackground(Void... params) {
+        while (play) {
+            try {
+                TimeUnit.MILLISECONDS.sleep(duration);
+            } catch (InterruptedException e) {
+                //e.printStackTrace();
+            }
+            int i = 0;
+            while (!bitmaps.get(k % bitmaps.size()).isSeleted()) {
+                if (i == bitmaps.size())
+                    break;
+                i++;
                 k++;
             }
-
-            return null;
+            if (i != bitmaps.size())
+                publishProgress(k % bitmaps.size());
+            k++;
         }
 
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
+        return null;
+    }
 
-        }
+    @Override
+    protected void onProgressUpdate(Integer... values) {
+        super.onProgressUpdate(values);
+        imageView.setImageBitmap(bitmaps.get(values[0]).getBitmap());
+    }
 
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            super.onProgressUpdate(values);
-            imageView.setImageBitmap(bitmaps.get(values[0]).getBitmap());
-            imageView.setPadding(50,50,50,50);
-        }
+    @Override
+    protected void onCancelled() {
+        super.onCancelled();
+        play = false;
     }
 
 }

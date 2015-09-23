@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">GifTest</string>
+    <string name="app_name">Gifit</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
@@ -7,4 +7,5 @@
     <string name="title_activity_shooting_gif">ShootingGifActivity</string>
     <string name="title_activity_main_activity2">MainActivity2Activity</string>
     <string name="title_activity_">Act</string>
+    <string name="send_to">gag</string>
 </resources>

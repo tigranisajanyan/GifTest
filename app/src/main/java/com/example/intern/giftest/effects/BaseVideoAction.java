@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 
+import com.example.intern.giftest.adapter.Adapter;
 import com.example.intern.giftest.clipart.OnVideoActionFinishListener;
 import com.example.intern.giftest.effects.Utils.OnEffectApplyFinishedListener;
 import com.example.intern.giftest.items.GalleryItem;
@@ -27,7 +28,7 @@ public abstract class BaseVideoAction<T> {
         this.activity = activity;
     }
 
-    public void startAction(final ArrayList<GalleryItem> galleryItems, final T... parameters) {
+    public void startAction(final ArrayList<GalleryItem> galleryItems, final Adapter adapter, final T... parameters) {
 
         AsyncTask<Void, Integer, Void> doActionTask = new AsyncTask<Void, Integer, Void>() {
             ProgressDialog progressDialog;
@@ -38,9 +39,12 @@ public abstract class BaseVideoAction<T> {
                 int count = galleryItems.size();
                 for (int i = 0; i < count; i++) {
                     GalleryItem item = galleryItems.get(i);
-                    Bitmap bitmapAfterAction = doActionOnBitmap(item.getBitmap());
-                    item.setBitmap(bitmapAfterAction);
-                    onProgressUpdate(i, count);
+                    if (item.isSeleted()) {
+                        Bitmap bitmapAfterAction = doActionOnBitmap(item.getBitmap());
+                        item.setBitmap(bitmapAfterAction);
+                        galleryItems.set(i, item);
+                        onProgressUpdate(i, count);
+                    }
                 }
                 return null;
             }
@@ -50,7 +54,7 @@ public abstract class BaseVideoAction<T> {
                 super.onPreExecute();
                 progressDialog = new ProgressDialog(activity);
                 progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                progressDialog.setMax(galleryItems.size());
+                progressDialog.setMax(adapter.getSelected().size());
                 progressDialog.setCancelable(false);
                 progressDialog.show();
 
@@ -65,6 +69,7 @@ public abstract class BaseVideoAction<T> {
                     listener.onSuccess();
                 }
                 progressDialog.dismiss();
+                adapter.notifyDataSetChanged();
             }
 
             @Override

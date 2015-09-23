@@ -37,6 +37,5 @@ public class GifViewActivity extends ActionBarActivity {
         if (gifFromPath != null)
             gifImageView.setImageDrawable(gifFromPath);
 
-
     }
 }

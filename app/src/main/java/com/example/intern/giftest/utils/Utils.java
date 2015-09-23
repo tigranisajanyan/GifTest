@@ -501,4 +501,23 @@ public class Utils {
         return true;
     }
 
+    public static void shareImage(Activity activity, String outputDir) {
+        Intent share = new Intent(Intent.ACTION_SEND);
+
+        // If you want to share a png image only, you can do:
+        // setType("image/png"); OR for jpeg: setType("image/jpeg");
+        share.setType("image/*");
+
+        // Make sure you put example png image named myImage.png in your
+        // directory
+        String imagePath = outputDir;
+
+        File imageFileToShare = new File(imagePath);
+
+        Uri uri = Uri.fromFile(imageFileToShare);
+        share.putExtra(Intent.EXTRA_STREAM, uri);
+
+        activity.startActivity(Intent.createChooser(share, "Share Image!"));
+    }
+
 }

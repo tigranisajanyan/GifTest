@@ -321,6 +321,8 @@ public final class ImageOpCommon {
 
 	public static native void reverseBitmap(Buffer inPixels, int w, int h);
 
+	public static native void flipHorizontal(Buffer inPixels, int w, int h);
+
 	public static native void getPowerOfTwoSizeBuffer(Buffer origBuffer, Buffer powerOfTwoSizeBuffer, int origW, int origH, int powerOfTwoSize, int pixelValue);
 
 	static public native void changeRedEyeRegions(Buffer inPixels, Buffer outPixels, int centerX, int centerY, int radius, int rectLeft, int rectsTop, int rectWidth, int rectsHeight, int width, int height);

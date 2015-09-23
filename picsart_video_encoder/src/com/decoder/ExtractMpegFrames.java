@@ -5,6 +5,7 @@ package com.decoder;
  */
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.SurfaceTexture;
 import android.media.MediaCodec;
 import android.media.MediaExtractor;
@@ -22,10 +23,13 @@ import android.test.AndroidTestCase;
 import android.util.Log;
 import android.view.Surface;
 
+import com.socialin.android.photo.imgop.ImageOp;
 import com.socialin.android.photo.imgop.ImageOpCommon;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -54,13 +58,14 @@ public class ExtractMpegFrames extends AndroidTestCase {
     private static final String TAG = "ExtractMpegFrames";
     private static final boolean VERBOSE = false;        // lots of logging
 
-    // where to find files (note: requires WRITE_EXTERNAL_STORAGE permission)
     private static final File FILES_DIR = Environment.getExternalStorageDirectory();
     private static String INPUT_FILE_PATH = "";
     private static String OUTPUT_DIR = FILES_DIR + "/" + "test_images";
 
     private static int MAX_FRAMES = 0;       // stop extracting after this many
     private static boolean isPortriet = false;
+    private static int ori = 0;
+    private static int SDK_VERSION_INT;
     private int savedFrameWidth = 0;
     private int savedFrameHeight = 0;
     private int size;
@@ -73,6 +78,7 @@ public class ExtractMpegFrames extends AndroidTestCase {
      */
     public void extractMpegFrames(Context context, String filePath, int frameCount, int size, String outputDir) throws Throwable {
 
+        SDK_VERSION_INT = android.os.Build.VERSION.SDK_INT;
         this.frameCount = frameCount;
         this.context = context;
         this.size = size;
@@ -122,6 +128,7 @@ public class ExtractMpegFrames extends AndroidTestCase {
 
     /**
      * Tests extraction from an MP4 to a series of PNG files.
+     * Tests extraction from an MP4 to a series of PNG files.
      * <p/>
      * We scale the video to 640x480 for the PNG just to demonstrate that we can scale the
      * video with the GPU.  If the input video has a different aspect ratio, we could preserve
@@ -159,39 +166,50 @@ public class ExtractMpegFrames extends AndroidTestCase {
             mediaMetadataRetriever.setDataSource(inputFile.getAbsolutePath());
             String orientation = mediaMetadataRetriever.extractMetadata(
                     MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION);
+            ori = Integer.parseInt(orientation);
+            Log.d(TAG, "orient: " + orientation);
 
-            // Checking duration by
+
+            // Checking duration by milliseconds
             String duration = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+            Log.d(TAG, "video duration: " + duration);
+
 
             // We must set MAX_FRAMES for deocde
+            int FPS = 30;
             if (frameCount == Integer.MAX_VALUE) {
-                MAX_FRAMES = (int) (25 * Integer.parseInt(duration) / 1000);
+                MAX_FRAMES = (FPS * Integer.parseInt(duration) / 1000);
             } else {
                 MAX_FRAMES = frameCount;
             }
 
-            Log.d(TAG, "video duration: " + duration);
 
             height = format.getInteger(MediaFormat.KEY_HEIGHT);
             width = format.getInteger(MediaFormat.KEY_WIDTH);
+            Log.d(TAG, height + "  h : w  " + width);
 
-            Log.d(TAG, height + "  :  " + width);
 
+            // Checking video orientation is portriet or landscape
             if (Integer.parseInt(orientation) == 90 || Integer.parseInt(orientation) == 270) {
                 isPortriet = true;
             } else {
                 isPortriet = false;
             }
-
             Log.d(TAG, "isportriet:  " + isPortriet);
 
-            if (isPortriet) {
-                savedFrameHeight = (width > height ? width : height) / size;
-                savedFrameWidth = (height < width ? height : width) / size;
+            if (SDK_VERSION_INT >= 21) {
+                if (isPortriet) {
+                    savedFrameHeight = (width > height ? width : height) / size;
+                    savedFrameWidth = (height < width ? height : width) / size;
+                } else {
+                    savedFrameHeight = height / size;
+                    savedFrameWidth = width / size;
+                }
             } else {
-                savedFrameHeight = (height < width ? height : width) / size;
-                savedFrameWidth = (width > height ? width : height) / size;
+                savedFrameHeight = height / size;
+                savedFrameWidth = width / size;
             }
+
 
             if (VERBOSE) {
                 Log.d(TAG, "Video size is " + format.getInteger(MediaFormat.KEY_WIDTH) + "x" +
@@ -627,10 +645,25 @@ public class ExtractMpegFrames extends AndroidTestCase {
                     mPixelBuf);
 
             ByteBuffer byteBuffer = ByteBuffer.allocateDirect(mWidth * mHeight * 4);
-            if (isPortriet) {
-                ImageOpCommon.rotateBuffer(mPixelBuf, byteBuffer, mWidth, mHeight, 180);
-            } else {
-                ImageOpCommon.rotateBuffer(mPixelBuf, byteBuffer, mWidth, mHeight, 0);
+
+            if (android.os.Build.VERSION.SDK_INT >= 21) {  // SDK_VERSION is higher then android 5.0.0 (api 21)
+                if (isPortriet) {
+
+                    ImageOpCommon.rotateBuffer(mPixelBuf, byteBuffer, mWidth, mHeight, 180);
+                    ImageOpCommon.flipHorizontal(byteBuffer, mWidth, mHeight);
+
+                } else {
+
+                    ImageOpCommon.rotateBuffer(mPixelBuf, byteBuffer, mWidth, mHeight, 0);
+
+                }
+            } else {    // SDK_VERSION is lower then android 5.0.0 (api 21)
+
+                ImageOpCommon.rotateBuffer(mPixelBuf, byteBuffer, mWidth, mHeight, ori);
+
+                if (isPortriet) {
+                    ImageOpCommon.flipHorizontal(byteBuffer, mHeight, mWidth);
+                }
             }
 
             PhotoUtils.saveBufferToSDCard(filename, byteBuffer);

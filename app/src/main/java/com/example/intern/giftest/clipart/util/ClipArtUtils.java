@@ -14,7 +14,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Utils {
+public class ClipArtUtils {
 
 
     private static void copyFile(InputStream in, OutputStream out) throws IOException {

@@ -18,6 +18,13 @@ import java.nio.channels.FileChannel;
  */
 public class PhotoUtils {
 
+    /**
+     * Saving byte buffer to sd card
+     *
+     * @param filePath
+     * @param buffer
+     * @throws UnsatisfiedLinkError
+     */
     public static void saveBufferToSDCard(String filePath, ByteBuffer buffer) throws UnsatisfiedLinkError {
 
         try {
@@ -27,6 +34,13 @@ public class PhotoUtils {
         }
     }
 
+    /**
+     * Reading byte buffer from given path
+     *
+     * @param bufferPath
+     * @param bufferSize
+     * @return
+     */
     public static ByteBuffer readBufferFromFile(String bufferPath, int bufferSize) {
         FileInputStream inputStream = null;
         FileChannel channel = null;
@@ -91,52 +105,65 @@ public class PhotoUtils {
         result.copyPixelsFromBuffer(buffer);
 
         Matrix m = new Matrix();
-        m.preScale(-1, 1);
+        //m.preScale(-1, 1);
         Bitmap dst = Bitmap.createBitmap(result, 0, 0, result.getWidth(), result.getHeight(), m, false);
         dst.setDensity(DisplayMetrics.DENSITY_DEFAULT);
 
         return dst;
     }
 
-    public static int checkBufferSize(String videoPath, VideoDecoder.FrameSize frameSize) {
-
+    public static int checkBufferSize(String videoPath, int frameSize) {
         MediaMetadataRetriever metaRetriever = new MediaMetadataRetriever();
         metaRetriever.setDataSource(videoPath);
         int height = Integer.parseInt(metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT));
         int width = Integer.parseInt(metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH));
-        int newHeight = height / (frameSize.ordinal() + 1);
-        int newWidth = width / (frameSize.ordinal() + 1);
+        int newHeight = height / frameSize;
+        int newWidth = width / frameSize;
         return (newHeight * newWidth * 4);
     }
 
-    public static int checkFrameWidth(String videoPath, VideoDecoder.FrameSize frameSize) {
+    public static int checkFrameWidth(String videoPath, int frameSize) {
         MediaMetadataRetriever metaRetriever = new MediaMetadataRetriever();
         metaRetriever.setDataSource(videoPath);
         int height = Integer.parseInt(metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT));
         int width = Integer.parseInt(metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH));
         int orientation = checkFrameOrientation(videoPath);
+
         int x;
+        int SDK_INT = android.os.Build.VERSION.SDK_INT;
+        //if (SDK_INT >= 21) {
+
         if (orientation == 90 || orientation == 270) {
             x = height < width ? height : width;
         } else {
-            x = height > width ? height : width;
+            x = width;
         }
-        return x / (frameSize.ordinal() + 1);
+        //} else {
+        // x = width;
+        //}
+        return x / frameSize;
     }
 
-    public static int checkFrameHeight(String videoPath, VideoDecoder.FrameSize frameSize) {
+    public static int checkFrameHeight(String videoPath, int frameSize) {
         MediaMetadataRetriever metaRetriever = new MediaMetadataRetriever();
         metaRetriever.setDataSource(videoPath);
         int height = Integer.parseInt(metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT));
         int width = Integer.parseInt(metaRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH));
         int orientation = checkFrameOrientation(videoPath);
+
         int x;
+        int SDK_INT = android.os.Build.VERSION.SDK_INT;
+        //if (SDK_INT >= 21) {
+
         if (orientation == 90 || orientation == 270) {
             x = height > width ? height : width;
         } else {
-            x = height < width ? height : width;
+            x = height;
         }
-        return x / (frameSize.ordinal() + 1);
+        //} else {
+        //  x = height;
+        //}
+        return x / frameSize;
     }
 
     public static int checkFrameOrientation(String videoPath) {
@@ -144,7 +171,6 @@ public class PhotoUtils {
         metaRetriever.setDataSource(videoPath);
         String orientation = metaRetriever.extractMetadata(
                 MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION);
-
         return Integer.parseInt(orientation);
     }
 

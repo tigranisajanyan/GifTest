@@ -1,4 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:pushtouch="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,23 +11,22 @@
     <FrameLayout
         android:id="@+id/main_view_container"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="1dp"
         android:background="@color/yellow">
 
         <ImageView
             android:id="@+id/image"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            android:padding="30dp" />
 
         <com.facebook.drawee.view.SimpleDraweeView
             android:id="@+id/gif_art"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-        <VideoView
-            android:id="@+id/video_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:scaleType="matrix"
             android:visibility="gone" />
 
     </FrameLayout>
